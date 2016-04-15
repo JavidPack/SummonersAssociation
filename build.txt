@@ -1,0 +1,6 @@
+author = jopojelly
+version = 0.2.1
+displayName = Summoners Association
+homepage = http://forums.terraria.org/index.php?threads/summoners-association.30041/
+buildIgnore = .vs\*, Properties\*, *.csproj, *.user, obj\*, bin\*, *.config
+includePDB = true

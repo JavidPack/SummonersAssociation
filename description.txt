@@ -1,0 +1,7 @@
+﻿This mod aims to fix a few grievances with summons and flesh out Summoner to be a fully developed class. This vision of Summoner is a summoner who has his hands full buffing and controlling his minions and has little time for weapons himself.
+
+Includes 3 items:
+
+Summoners Association Card
+Minion Control Rod
+Blood Talisman
