@@ -4,8 +4,8 @@ using Terraria.ModLoader;
 
 namespace SummonersAssociation
 {
-    public class SummonersAssociation : Mod
-    {
+	public class SummonersAssociation : Mod
+	{
 		public SummonersAssociation()
 		{
 			Properties = new ModProperties()
@@ -14,13 +14,32 @@ namespace SummonersAssociation
 			};
 		}
 
-		public override void AddCraftGroups()
+		public override void AddRecipeGroups()
 		{
-			AddCraftGroup("MinionStaffs", Lang.misc[37] + " " + "Minion Staff", ItemID.SlimeStaff, 
-				ItemID.ImpStaff, ItemID.HornetStaff, ItemID.SpiderStaff, ItemID.OpticStaff, 
-				ItemID.PirateStaff, ItemID.PygmyStaff, ItemID.XenoStaff, ItemID.RavenStaff,
-				ItemID.TempestStaff, ItemID.DeadlySphereStaff, ItemID.StardustCellStaff, ItemID.StardustDragonStaff);
-			AddCraftGroup("MagicMirrors", Lang.misc[37] + " " + "Magic Mirror", ItemID.IceMirror,ItemID.MagicMirror);
+			RecipeGroup group = new RecipeGroup(() => Lang.misc[37] + " Minion Staff", new int[]
+			{
+				ItemID.SlimeStaff,
+				ItemID.ImpStaff,
+				ItemID.HornetStaff,
+				ItemID.SpiderStaff,
+				ItemID.OpticStaff,
+				ItemID.PirateStaff,
+				ItemID.PygmyStaff,
+				ItemID.XenoStaff,
+				ItemID.RavenStaff,
+				ItemID.TempestStaff,
+				ItemID.DeadlySphereStaff,
+				ItemID.StardustCellStaff,
+				ItemID.StardustDragonStaff
+			});
+			RecipeGroup.RegisterGroup("SummonersAssociation:MinionStaffs", group);
+
+			group = new RecipeGroup(() => Lang.misc[37] + " Magic Mirror", new int[]
+			{
+				ItemID.IceMirror,
+				ItemID.MagicMirror
+			});
+			RecipeGroup.RegisterGroup("SummonersAssociation:MagicMirrors", group);
 		}
 
 		// TODO: summonersAssociation.Call("Buff->Projectile", BuffType("CoolMinionBuff"), ProjectileType("CoolMinionProjectile")); style call.

@@ -37,7 +37,8 @@ namespace SummonersAssociation.Items
 		{
 			ModRecipe recipe = new ModRecipe(mod);
 			recipe.AddIngredient(ItemID.Gel, 10);
-			recipe.AddCraftGroup(CraftGroup.Wood, 2);
+			recipe.AddRecipeGroup("Wood");
+			//recipe.AddCraftGroup(CraftGroup.Wood, 2);
 			recipe.AddTile(TileID.Chairs);
 			recipe.AddTile(TileID.Tables);
 			recipe.SetResult(this);
@@ -63,7 +64,7 @@ namespace SummonersAssociation.Items
 				if (!player.GetModPlayer<SummonersAssociationCardPlayer>(mod).SummonersAssociationCardInInventory)
 					return;
 
-				if (!Main.ingameOptionsWindow && !Main.playerInventory && !Main.achievementsWindow)
+				if (!Main.ingameOptionsWindow && !Main.playerInventory/* && !Main.achievementsWindow*/)
 				{
 					float vanillaMinionSlots = 0;
 					int xPosition;

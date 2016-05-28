@@ -32,8 +32,10 @@ namespace SummonersAssociation.Items
 		public override void AddRecipes()
 		{
 			ModRecipe recipe = new ModRecipe(mod);
-			recipe.AddCraftGroup(mod, "MagicMirrors");
-			recipe.AddCraftGroup(mod, "MinionStaffs");
+			recipe.AddRecipeGroup("SummonersAssociation:MinionStaffs");
+			recipe.AddRecipeGroup("SummonersAssociation:MagicMirrors");
+			//recipe.AddCraftGroup(mod, "MagicMirrors");
+			//recipe.AddCraftGroup(mod, "MinionStaffs");
 			recipe.AddTile(TileID.Chairs);
 			recipe.AddTile(TileID.Tables);
 			recipe.SetResult(this);
