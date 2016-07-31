@@ -23,29 +23,23 @@ namespace SummonersAssociation.Items
 			item.useTime = 45;
 			item.useStyle = 4;
 			item.useTurn = true;
-
 			item.useSound = 6;
-
 		}
-
 
 		public override void AddRecipes()
 		{
 			ModRecipe recipe = new ModRecipe(mod);
 			recipe.AddRecipeGroup("SummonersAssociation:MinionStaffs");
 			recipe.AddRecipeGroup("SummonersAssociation:MagicMirrors");
-			//recipe.AddCraftGroup(mod, "MagicMirrors");
-			//recipe.AddCraftGroup(mod, "MinionStaffs");
 			recipe.AddTile(TileID.Chairs);
 			recipe.AddTile(TileID.Tables);
 			recipe.SetResult(this);
 			recipe.AddRecipe();
-			
 		}
 
 		public override void UseStyle(Player player)
 		{
-			player.itemLocation.X += player.direction * -8;
+			player.itemLocation.X += player.direction * -16;
 			player.itemLocation.Y += -16;
 
 			if (player.itemTime == 0)
@@ -81,20 +75,9 @@ namespace SummonersAssociation.Items
 				for (int i = 0; i < 60; i++)
 				{
 					Dust.NewDust(mousePoint, player.width, player.height, 15, 0f, 0f, 150, default(Color), 1.1f);
-					
 					//	Dust.NewDust(player.position, player.width, player.height, 15, 0f, 0f, 150, default(Color), 1.1f);
 				}
 			}
 		}
-
-		//public override bool UseItem(Player player)
-		//{
-		//	ErrorLogger.Log("AA");
-			
-
-			
-
-		//	return true;
-		//}
 	}
 }
