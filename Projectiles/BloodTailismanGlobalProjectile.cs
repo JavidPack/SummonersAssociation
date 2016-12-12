@@ -38,11 +38,11 @@ namespace SummonersAssociation.Projectiles
 		//	}
 		//}
 
-		public override void ModifyHitNPC(Projectile projectile, NPC target, ref int damage, ref float knockback, ref bool crit)
+		public override void ModifyHitNPC(Projectile projectile, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
 			// if intersecting with bloodtalismantarget
-
-			if (projectile.minion || projectile.type == ProjectileID.HornetStinger || projectile.type == ProjectileID.MiniRetinaLaser || projectile.type == ProjectileID.ImpFireball || projectile.type == ProjectileID.PygmySpear || projectile.type == ProjectileID.UFOLaser || projectile.type == ProjectileID.MiniSharkron || projectile.type == ProjectileID.StardustCellMinionShot)
+			//projectile.type == ProjectileID.HornetStinger || projectile.type == ProjectileID.MiniRetinaLaser || projectile.type == ProjectileID.ImpFireball || projectile.type == ProjectileID.PygmySpear || projectile.type == ProjectileID.UFOLaser || projectile.type == ProjectileID.MiniSharkron || projectile.type == ProjectileID.StardustCellMinionShot
+			if (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type])
 			{
 				Projectile p = null;
 				//if pro owner is channel and 

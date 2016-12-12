@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -23,7 +22,7 @@ namespace SummonersAssociation.Items
 			item.useTime = 45;
 			item.useStyle = 4;
 			item.useTurn = true;
-			item.useSound = 6;
+			item.UseSound = SoundID.Item6;
 		}
 
 		public override void AddRecipes()

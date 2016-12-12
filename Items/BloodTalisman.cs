@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
+using static Terraria.ID.ItemID;
 
 namespace SummonersAssociation.Items
 {
@@ -48,7 +49,7 @@ namespace SummonersAssociation.Items
 		{
 			ModRecipe recipe = new ModRecipe(mod);
 			//recipe.AddIngredient(ItemID.Wood);
-			recipe.AddIngredient(ItemID.CrossNecklace);
+			recipe.AddIngredient(CrossNecklace);
 			recipe.AddIngredient(ItemID.PhilosophersStone);
 			recipe.AddTile(TileID.Chairs);
 			recipe.AddTile(TileID.Tables);
