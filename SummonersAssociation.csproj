@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{37E19856-3C3D-478E-A2AA-2A22FF516E95}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SummonersAssociation</RootNamespace>
     <AssemblyName>SummonersAssociation</AssemblyName>
@@ -32,17 +32,17 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Items\BloodTalisman.cs" />
-    <Compile Include="Items\MinionControlRod.cs" />
     <Compile Include="Items\SummonersAssociationCard.cs" />
     <Compile Include="Projectiles\BloodTalismanTargetProjectile.cs" />
+    <Compile Include="Items\MinionControlRod.cs" />
     <Compile Include="Projectiles\BloodTalismanProjectile.cs" />
-    <Compile Include="Projectiles\BloodTailismanGlobalProjectile.cs" />
     <Compile Include="SummonersAssiciation.cs" />
+    <Compile Include="Projectiles\BloodTailismanGlobalProjectile.cs" />
+    <Compile Include="Items\BloodTalisman.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
@@ -62,18 +62,18 @@
       <HintPath>..\..\XNA Framework Dlls\Microsoft.Xna.Framework.Xact.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Modding\tModLoader\src\tModLoader\Terraria.csproj">
-      <Project>{3996d5fa-6e59-4fe4-9f2b-40eeef9645d5}</Project>
-      <Name>Terraria</Name>
-    </ProjectReference>
+    <Reference Include="tModLoader">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Terraria\tModLoader.exe</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="build.txt" />
     <Content Include="description.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files (x86)\Steam\steamapps\common\terraria\tModLoaderDebug.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

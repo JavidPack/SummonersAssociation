@@ -1,5 +1,5 @@
 author = jopojelly
-version = 0.2.3.3
+version = 0.2.3.4
 displayName = Summoners Association
 homepage = http://forums.terraria.org/index.php?threads/summoners-association.30041/
 buildIgnore = .vs\*, Properties\*, *.csproj, *.user, obj\*, bin\*, *.config
