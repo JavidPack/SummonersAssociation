@@ -61,9 +61,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\XNA Framework Dlls\Microsoft.Xna.Framework.Xact.dll</HintPath>
     </Reference>
+    <Reference Include="ReLogic">
+      <HintPath>..\..\..\Modding\tModLoader\references\ReLogic.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="tModLoader">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Terraria\tModLoader.exe</HintPath>
+    <Reference Include="tModLoaderDebug">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Terraria\tModLoaderDebug.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

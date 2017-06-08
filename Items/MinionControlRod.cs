@@ -7,15 +7,17 @@ namespace SummonersAssociation.Items
 {
 	public class MinionControlRod : ModItem
 	{
-		private static bool inInventory = false;
+		public override void SetStaticDefaults()
+		{
+			DisplayName.SetDefault("Minion Control Rod");
+			Tooltip.SetDefault("Dominate and direct your minions.");
+		}
 
 		public override void SetDefaults()
 		{
-			item.name = "Minion Control Rod";
 			item.width = 48;
 			item.height = 48;
 			item.maxStack = 1;
-			item.toolTip = "Dominate and direct your minions";
 			item.value = 500;
 			item.rare = 2;
 			item.useAnimation = 45;
@@ -70,12 +72,12 @@ namespace SummonersAssociation.Items
 						}
 					}
 				}
-				if(teleAny)
-				for (int i = 0; i < 60; i++)
-				{
-					Dust.NewDust(mousePoint, player.width, player.height, 15, 0f, 0f, 150, default(Color), 1.1f);
-					//	Dust.NewDust(player.position, player.width, player.height, 15, 0f, 0f, 150, default(Color), 1.1f);
-				}
+				if (teleAny)
+					for (int i = 0; i < 60; i++)
+					{
+						Dust.NewDust(mousePoint, player.width, player.height, 15, 0f, 0f, 150, default(Color), 1.1f);
+						//	Dust.NewDust(player.position, player.width, player.height, 15, 0f, 0f, 150, default(Color), 1.1f);
+					}
 			}
 		}
 	}

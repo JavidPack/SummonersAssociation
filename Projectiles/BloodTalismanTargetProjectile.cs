@@ -8,9 +8,13 @@ namespace SummonersAssociation.Projectiles
 {
 	public class BloodTalismanTargetProjectile : ModProjectile
 	{
+		public override void SetStaticDefaults()
+		{
+			DisplayName.SetDefault("Blood Talisman Target Projectile");
+		}
+
 		public override void SetDefaults()
 		{
-			projectile.name = "Blood Talisman Target Projectile";
 			projectile.width = 100;
 			projectile.height = 100;
 			projectile.alpha = 255;// 55;
@@ -30,18 +34,18 @@ namespace SummonersAssociation.Projectiles
 			//projectile.
 		}
 
-		public override void TileCollideStyle(ref int width, ref int height, ref bool fallThrough)
+		public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough)
 		{
 			width = 0;
 			height = 0;
-			
+			return true;
 		}
 
 		public override Color? GetAlpha(Color lightColor)
 		{
 			//byte alpha = (byte)(projectile.ai[0] > projectile.alpha ? projectile.alpha : projectile.ai[0]);
 			return Color.White * ((255 - projectile.alpha) / 255f);
-   //         Color a = Color.White;
+			//         Color a = Color.White;
 			//a.A = (byte)projectile.alpha;
 			//return a;
 		}
@@ -79,7 +83,7 @@ namespace SummonersAssociation.Projectiles
 
 					projectile.ai[0] += .01f;
 					projectile.alpha -= 1;
-				//	ErrorLogger.Log("a" + projectile.alpha);
+					//	ErrorLogger.Log("a" + projectile.alpha);
 					if (projectile.alpha < 155)
 					{
 						projectile.alpha = 155;

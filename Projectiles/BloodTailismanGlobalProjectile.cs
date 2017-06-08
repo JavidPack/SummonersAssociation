@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
@@ -50,7 +49,7 @@ namespace SummonersAssociation.Projectiles
 				{
 					if (Main.projectile[j].active && Main.projectile[j].owner == projectile.owner)
 					{
-						if (Main.projectile[j].type == mod.ProjectileType("BloodTalismanTargetProjectile")){
+						if (Main.projectile[j].type == mod.ProjectileType<Projectiles.BloodTalismanTargetProjectile>()){
 							p = Main.projectile[j];
 							break;
 						}
@@ -89,8 +88,6 @@ namespace SummonersAssociation.Projectiles
 							damage = (int)(1.1f * damage);
 							knockback *= 1.05f;
 						}
-
-
 					}
 				}
 			}

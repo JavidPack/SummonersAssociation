@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -18,14 +16,17 @@ namespace SummonersAssociation.Items
 
 	public class SummonersAssociationCard : ModItem
 	{
+		public override void SetStaticDefaults()
+		{
+			DisplayName.SetDefault("Summoners Association Card");
+			Tooltip.SetDefault("Welcome to the Summoners Association\nDisplays Summoner-related information");
+		}
+
 		public override void SetDefaults()
 		{
-			item.name = "Summoners Association Card";
 			item.width = 20;
 			item.height = 20;
 			item.maxStack = 1;
-			item.toolTip = "Welcome to the Summoners Association";
-			item.toolTip = "Displays Summoner-related information";
 			item.value = 500;
 			item.rare = 2;
 			item.useAnimation = 45;
@@ -46,7 +47,7 @@ namespace SummonersAssociation.Items
 
 		public override void UpdateInventory(Player player)
 		{
-			player.GetModPlayer<SummonersAssociationCardPlayer>(mod).SummonersAssociationCardInInventory = true;
+			player.GetModPlayer<SummonersAssociationCardPlayer>().SummonersAssociationCardInInventory = true;
 		}
 	}
 }

@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using SummonersAssociation.Items;
+using ReLogic.Graphics;
 
 namespace SummonersAssociation
 {
@@ -11,15 +12,11 @@ namespace SummonersAssociation
 	{
 		public SummonersAssociation()
 		{
-			Properties = new ModProperties()
-			{
-				Autoload = true,
-			};
 		}
 
 		public override void AddRecipeGroups()
 		{
-			RecipeGroup group = new RecipeGroup(() => Lang.misc[37] + " Minion Staff", new int[]
+			RecipeGroup group = new RecipeGroup(() => Lang.misc[37].Value + " Minion Staff", new int[]
 			{
 				ItemID.SlimeStaff,
 				ItemID.ImpStaff,
@@ -37,7 +34,7 @@ namespace SummonersAssociation
 			});
 			RecipeGroup.RegisterGroup("SummonersAssociation:MinionStaffs", group);
 
-			group = new RecipeGroup(() => Lang.misc[37] + " Magic Mirror", new int[]
+			group = new RecipeGroup(() => Lang.misc[37].Value + " Magic Mirror", new int[]
 			{
 				ItemID.IceMirror,
 				ItemID.MagicMirror
@@ -49,7 +46,7 @@ namespace SummonersAssociation
 		{
 			Player player = Main.player[Main.myPlayer];
 
-			if (!player.GetModPlayer<SummonersAssociationCardPlayer>(this).SummonersAssociationCardInInventory)
+			if (!player.GetModPlayer<SummonersAssociationCardPlayer>().SummonersAssociationCardInInventory)
 				return;
 
 			if (!Main.ingameOptionsWindow && !Main.playerInventory/* && !Main.achievementsWindow*/)
@@ -164,7 +161,7 @@ namespace SummonersAssociation
 				}
 				// Count mod minions.
 				//color = new Color(Main.buffAlpha[1], Main.buffAlpha[1], Main.buffAlpha[1], Main.buffAlpha[1]);
-				color = new Color(.4f,.4f,.4f,.4f);
+				color = new Color(.4f, .4f, .4f, .4f);
 				xPosition = 32;
 				yPosition = 76 + 20;
 				if (TwoLines)
@@ -213,10 +210,10 @@ namespace SummonersAssociation
 
 					int num11 = mH + (int)((double)(174 + 0) + (double)(slot * 56) * (double)inventoryScale);
 					Vector2 vector2_1 = new Vector2((float)(num9 - 10 - 47 - 47 - 14), (float)num11 + (float)Main.inventoryBackTexture.Height * 0.5f);
-					Main.spriteBatch.Draw(Main.buffTexture[150], vector2_1, new Microsoft.Xna.Framework.Rectangle?(), Microsoft.Xna.Framework.Color.White, 0.0f, Utils.Size(Main.buffTexture[150]) / 2f, inventoryScale, SpriteEffects.None, 0.0f);
+					Main.spriteBatch.Draw(Main.buffTexture[150], vector2_1, new Microsoft.Xna.Framework.Rectangle?(), Color.White, 0.0f, Utils.Size(Main.buffTexture[150]) / 2f, inventoryScale, SpriteEffects.None, 0.0f);
 					Vector2 vector2_2 = Main.fontMouseText.MeasureString(player.maxMinions.ToString());
-					Terraria.UI.Chat.ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, player.maxMinions.ToString(), vector2_1 - vector2_2 * 0.5f * inventoryScale, Microsoft.Xna.Framework.Color.White, 0.0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
-					if (Utils.CenteredRectangle(vector2_1, Utils.Size(Main.buffTexture[150])).Contains(new Microsoft.Xna.Framework.Point(Main.mouseX, Main.mouseY)))
+					Terraria.UI.Chat.ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, player.maxMinions.ToString(), vector2_1 - vector2_2 * 0.5f * inventoryScale, Color.White, 0.0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
+					if (Utils.CenteredRectangle(vector2_1, Utils.Size(Main.buffTexture[150])).Contains(new Point(Main.mouseX, Main.mouseY)))
 					{
 						player.mouseInterface = true;
 						string str = "" + player.maxMinions + " Max Minions";

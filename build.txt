@@ -1,8 +1,8 @@
 author = jopojelly
-version = 0.2.3.4
+version = 0.2.4
 displayName = Summoners Association
 homepage = http://forums.terraria.org/index.php?threads/summoners-association.30041/
-buildIgnore = .vs\*, Properties\*, *.csproj, *.user, obj\*, bin\*, *.config
+buildIgnore = .vs\*, *.csproj, *.user, obj\*, bin\*, *.config, .git\*, .travis.yml, README.md, .gitignore
 includePDB = true
 hideCode = false
 hideResources = false

@@ -8,22 +8,26 @@ namespace SummonersAssociation.Projectiles
 {
 	public class BloodTalismanProjectile : ModProjectile
 	{
+		public override void SetStaticDefaults()
+		{
+			DisplayName.SetDefault("Blood Talisman Projectile");
+		}
+
 		public override void SetDefaults()
 		{
-			projectile.name = "Blood Talisman Projectile";
 			projectile.width = 30;
 			projectile.height = 30;
 			//projectile.alpha = 255;
 			projectile.timeLeft = 2;
 			projectile.penetrate = -1;
 
-		//	projectile.aiStyle = 20;
+			//	projectile.aiStyle = 20;
 			projectile.friendly = true;
 			projectile.penetrate = -1;
 			projectile.tileCollide = false;
 			projectile.hide = true;
 			projectile.ownerHitCheck = true;
-		//	projectile.melee = true;
+			//	projectile.melee = true;
 			//projectile.scale = 1.2f;
 		}
 		public override void AI()
@@ -34,7 +38,7 @@ namespace SummonersAssociation.Projectiles
 			{
 				if (Main.player[projectile.owner].channel)
 				{
-				
+
 
 					projectile.timeLeft = 2;
 					float num263 = Main.player[projectile.owner].inventory[Main.player[projectile.owner].selectedItem].shootSpeed * projectile.scale;
@@ -58,7 +62,7 @@ namespace SummonersAssociation.Projectiles
 					projectile.velocity.Y = num265;
 					Vector2 dir = Main.MouseWorld - Main.player[projectile.owner].Center;
 					dir *= (1f + (float)Main.rand.Next(-3, 4) * 0.01f);
-					int num14 = Dust.NewDust(Main.player[projectile.owner].Center,0,0, 218, dir.X*.05f, dir.Y* .05f, 0, default(Color), 1f);
+					int num14 = Dust.NewDust(Main.player[projectile.owner].Center, 0, 0, 218, dir.X * .05f, dir.Y * .05f, 0, default(Color), 1f);
 
 				}
 				else
@@ -93,7 +97,5 @@ namespace SummonersAssociation.Projectiles
 			}
 			projectile.velocity.X = projectile.velocity.X * (1f + (float)Main.rand.Next(-3, 4) * 0.01f);
 		}
-
-
 	}
 }
