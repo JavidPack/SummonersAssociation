@@ -14,7 +14,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -36,11 +36,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Models\MinionModel.cs" />
     <Compile Include="Items\SummonersAssociationCard.cs" />
     <Compile Include="Projectiles\BloodTalismanTargetProjectile.cs" />
     <Compile Include="Items\MinionControlRod.cs" />
     <Compile Include="Projectiles\BloodTalismanProjectile.cs" />
-    <Compile Include="SummonersAssiciation.cs" />
+    <Compile Include="SummonersAssociation.cs" />
     <Compile Include="Projectiles\BloodTailismanGlobalProjectile.cs" />
     <Compile Include="Items\BloodTalisman.cs" />
   </ItemGroup>
@@ -62,11 +63,11 @@
       <HintPath>..\..\XNA Framework Dlls\Microsoft.Xna.Framework.Xact.dll</HintPath>
     </Reference>
     <Reference Include="ReLogic">
-      <HintPath>..\..\..\Modding\tModLoader\references\ReLogic.dll</HintPath>
+      <HintPath>D:\Work\Terraria\tModLoader\references\ReLogic.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="tModLoaderDebug">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Terraria\tModLoaderDebug.exe</HintPath>
+    <Reference Include="Terraria">
+      <HintPath>D:\Work\Terraria\tModLoader\tModLoader.Windows.v0.10.1.1\Terraria.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
