@@ -49,39 +49,40 @@ namespace SummonersAssociation.Projectiles
 				{
 					if (Main.projectile[j].active && Main.projectile[j].owner == projectile.owner)
 					{
-						if (Main.projectile[j].type == mod.ProjectileType<Projectiles.BloodTalismanTargetProjectile>()){
+						if (Main.projectile[j].type == mod.ProjectileType<Projectiles.BloodTalismanTargetProjectile>())
+						{
 							p = Main.projectile[j];
 							break;
 						}
-                    }
+					}
 				}
 				if (p != null)
 				{
-					if(Vector2.Distance(p.Center , target.Center/*projectile.Center*/) < 50)
+					if (Vector2.Distance(p.Center, target.Center/*projectile.Center*/) < 50)
 					{
 						// 155 max
 						// 10x damage
-						if(p.alpha == 155)
+						if (p.alpha == 155)
 						{
 							damage *= 10;
 							knockback *= 2.5f; // 1.5
 						}
 						// 5 to almost 10x
-						else if(p.alpha < 170)
+						else if (p.alpha < 170)
 						{
 							damage = (int)((5 + ((170 - p.alpha) / 5f)) * damage); // 5 to 10
-							knockback *= (1.75f + .75f*((195 - p.alpha) / 25f)); // .75 to 1.5
+							knockback *= (1.75f + .75f * ((195 - p.alpha) / 25f)); // .75 to 1.5
 						}
 						//
 						else if (p.alpha < 195)
 						{
 							damage = (int)((2.5 + ((195 - p.alpha) / 10f)) * damage);
-							knockback *= ((1.3f + .3f*((195 - p.alpha) / 25f)) );
+							knockback *= ((1.3f + .3f * ((195 - p.alpha) / 25f)));
 						}
 						else if (p.alpha < 220)
 						{
 							damage = (int)((1.25 + ((220 - p.alpha) / 20f)) * damage);
-							knockback *= ((1.15f + .15f*((195 - p.alpha) / 25f)));
+							knockback *= ((1.15f + .15f * ((195 - p.alpha) / 25f)));
 						}
 						else /*if (p.alpha < 255)*/
 						{

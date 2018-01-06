@@ -36,14 +36,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Models\MinionModel.cs" />
-    <Compile Include="Items\SummonersAssociationCard.cs" />
-    <Compile Include="Projectiles\BloodTalismanTargetProjectile.cs" />
-    <Compile Include="Items\MinionControlRod.cs" />
-    <Compile Include="Projectiles\BloodTalismanProjectile.cs" />
-    <Compile Include="SummonersAssociation.cs" />
-    <Compile Include="Projectiles\BloodTailismanGlobalProjectile.cs" />
-    <Compile Include="Items\BloodTalisman.cs" />
+    <Compile Include="**/*.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
@@ -63,11 +56,11 @@
       <HintPath>..\..\XNA Framework Dlls\Microsoft.Xna.Framework.Xact.dll</HintPath>
     </Reference>
     <Reference Include="ReLogic">
-      <HintPath>D:\Work\Terraria\tModLoader\references\ReLogic.dll</HintPath>
+      <HintPath>..\..\..\Modding\tModLoader\references\ReLogic.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="Terraria">
-      <HintPath>D:\Work\Terraria\tModLoader\tModLoader.Windows.v0.10.1.1\Terraria.exe</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Terraria\Terraria.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
