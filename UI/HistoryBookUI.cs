@@ -10,6 +10,16 @@ using SummonersAssociation.Items;
 
 namespace SummonersAssociation.UI
 {
+	/*
+	* How it works basically:
+	* In SAPlayer.ProcessTriggers(), it sets two bools used to open/close the UI.
+	* SAPlayer.PostUpdate() handles the opening/closing, and general handling of the UI.
+	* The other custom methods are all over the place right now (Some in this class, some in the SAPlayer class)
+	* Caveats:
+	* 1. spawning the UI in ProcessTriggers didn't work because the custom conditions I setup
+	* don't work there (AllowedToOpenHistoryBookUI)
+	* 2. can't think of more right now, but there are some others
+	*/
 	class HistoryBookUI : UIState
 	{
 		//output

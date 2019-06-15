@@ -42,9 +42,8 @@ namespace SummonersAssociation
 		public static SummonersAssociation Instance;
 
 		/// <summary>
-		/// Accurate in-UI Mouse position (maybe use it to spawn UI outside UpdateUI())
+		/// Accurate in-UI Mouse position maybe used to spawn UI outside UpdateUI()
 		/// </summary>
-
 		public static Vector2 MousePositionUI;
 
 		public SummonersAssociation()
@@ -145,7 +144,7 @@ namespace SummonersAssociation
 				}
 			}
 
-			//this thing here is just in cause I was testing with it
+			//This is updated to the "in UI" Mouse Position, because the UI itself is spawned in SAPlayer.PostUpdate()
 			MousePositionUI = Main.MouseScreen;
 		}
 

@@ -58,6 +58,7 @@ namespace SummonersAssociation
 		/// Uses the first found item of the specified type from the players inventory
 		/// </summary>
 		public void QuickUseItemOfType(int type) {
+			//unused yet, this is mostly for the history later
 			//Not efficient to call it once per item later, need better method, maybe with a passed array of types, and then a single loop, and a scheduler for used items
 			if (type > 0) {
 				for (int i = 0; i < Main.LocalPlayer.inventory.Length; i++) {
@@ -90,6 +91,7 @@ namespace SummonersAssociation
 				}
 			}
 
+			//TODO Change the trigger type here
 			bool triggerStart = mouseRightPressed;
 			bool triggerStop = mouseRightPressed; //or mouseRightReleased
 
