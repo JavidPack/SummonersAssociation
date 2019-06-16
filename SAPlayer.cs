@@ -91,35 +91,38 @@ namespace SummonersAssociation
 				}
 			}
 
-			//TODO Change the trigger type here
-			bool triggerStart = mouseRightPressed;
-			bool triggerStop = mouseRightPressed; //or mouseRightReleased
+			//Since this is UI related, make sure to only run on client
+			if (Main.myPlayer == player.whoAmI) {
+				//TODO Change the trigger type here
+				bool triggerStart = mouseRightPressed;
+				bool triggerStop = mouseRightPressed; //or mouseRightReleased
 
-			if (triggerStart && AllowedToOpenHistoryBookUI) {
-				bool success = HistoryBookUI.Start();
-				if (!success) Main.NewText("Couldn't find any summon weapons in inventory");
-			}
-			else if (HistoryBookUI.visible && triggerStop) {
-				if (HistoryBookUI.returned > HistoryBookUI.NONE) {
-					//If something returned
-
-					try {
-						Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position);
-					}
-					catch {
-						//No idea why but this threw errors one time
-					}
-					ItemModel selected = HistoryBookUI.itemModels[HistoryBookUI.returned];
-					CombatText.NewText(player.getRect(), CombatText.HealLife, "Selected: " + selected.Name);
-
-					//Update
-					HistoryBookUI.UpdateHistoryBookItemsInInventory();
-
-					//Try to use selected summon item
-					QuickUseItemInSlot(selected.InventoryIndex);
+				if (triggerStart && AllowedToOpenHistoryBookUI) {
+					bool success = HistoryBookUI.Start();
+					if (!success) Main.NewText("Couldn't find any summon weapons in inventory");
 				}
+				else if (HistoryBookUI.visible && triggerStop) {
+					if (HistoryBookUI.returned > HistoryBookUI.NONE) {
+						//If something returned
 
-				HistoryBookUI.Stop();
+						try {
+							Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position);
+						}
+						catch {
+							//No idea why but this threw errors one time
+						}
+						ItemModel selected = HistoryBookUI.itemModels[HistoryBookUI.returned];
+						CombatText.NewText(player.getRect(), CombatText.HealLife, "Selected: " + selected.Name);
+
+						//Update
+						HistoryBookUI.UpdateHistoryBookItemsInInventory();
+
+						//Try to use selected summon item
+						QuickUseItemInSlot(selected.InventoryIndex);
+					}
+
+					HistoryBookUI.Stop();
+				}
 			}
 		}
 	}

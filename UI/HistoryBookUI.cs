@@ -108,7 +108,7 @@ namespace SummonersAssociation.UI
 				spriteBatch.Draw(Main.wireUITexture[isMouseWithin ? 1 : 0], bgRect, drawColor);
 
 				//Draw sprites over the icons
-				Texture2D itemTexture = Main.itemTexture[itemModels[done].Item.type];
+				Texture2D itemTexture = Main.itemTexture[itemModels[done].ItemType];
 				int width = itemTexture.Width;
 				int height = itemTexture.Height;
 				var projRect = new Rectangle((int)(spawnPosition.X + x) - (width / 2), (int)(spawnPosition.Y + y) - (height / 2), width, height);
@@ -230,7 +230,7 @@ namespace SummonersAssociation.UI
 			var list = new List<ItemModel>();
 			for (int i = 0; i < Main.LocalPlayer.inventory.Length; i++) {
 				Item item = Main.LocalPlayer.inventory[i];
-				if (item.summon && list.FindIndex(itemModel => itemModel.Item.type == item.type) < 0) {
+				if (item.summon && list.FindIndex(itemModel => itemModel.ItemType == item.type) < 0) {
 					list.Add(new ItemModel(item, i));
 				}
 			}
@@ -249,8 +249,8 @@ namespace SummonersAssociation.UI
 			spawnPosition = SummonersAssociation.MousePositionUI;
 			heldItemIndex = Main.LocalPlayer.selectedItem;
 			//We know the HeldItem is the book, so directly cast it
-			int currentSel = ((MinionHistoryBook)Main.LocalPlayer.HeldItem.modItem).currentMinionWeaponType;
-			lastSelected = itemModels.FindIndex(item => item.Item.type == currentSel);
+			int currentSel = ((MinionHistoryBook)Main.LocalPlayer.HeldItem.modItem).itemModel.ItemType;
+			lastSelected = itemModels.FindIndex(item => item.ItemType == currentSel);
 			return true;
 		}
 		
@@ -272,9 +272,11 @@ namespace SummonersAssociation.UI
 					Item item = Main.LocalPlayer.inventory[i];
 					if (item.type == SummonersAssociation.Instance.ItemType<MinionHistoryBook>()) {
 						var mItem = (MinionHistoryBook)item.modItem;
-						mItem.currentMinionWeaponType = itemModels[returned].Item.type;
-						mItem.testStringName = itemModels[returned].Name;
-						//Main.NewText("set in item at " + i);
+						mItem.itemModel = itemModels[returned].Clone();
+						//mItem.currentMinionWeaponType = itemModels[returned].ItemType;
+						//mItem.testStringName = itemModels[returned].Name;
+						Main.NewText("set model in item at " + i);
+						Main.NewText(mItem.itemModel);
 					}
 				}
 			}
