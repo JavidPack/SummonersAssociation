@@ -56,6 +56,16 @@ namespace SummonersAssociation.UI
 		internal static int returned = NONE;
 
 		/// <summary>
+		/// Is cursor currently in the middle or not?
+		/// </summary>
+		internal static bool middle = true;
+
+		/// <summary>
+		/// Is cursor currently inside the outer radius of the UI?
+		/// </summary>
+		internal static bool isMouseWithinUI = false;
+
+		/// <summary>
 		/// Which thing was the previously selected one?
 		/// </summary>
 		internal static int lastSelected = NONE;
@@ -89,23 +99,27 @@ namespace SummonersAssociation.UI
 			Main.LocalPlayer.mouseInterface = true;
 
 			int outerRadius = 48;
-			if (itemModels.Count > 5) outerRadius += 5 * (itemModels.Count - 5); //increase by 5 after having more than 5 options, starts getting clumped at about 24 circles
+			if (itemModels.Count > 5) outerRadius += 6 * (itemModels.Count - 5); //increase by 6 after having more than 5 options, starts getting clumped at about 30(?) circles
 			if (fadeIn < outerRadius) outerRadius = (int)(fadeIn += (float)outerRadius / 10);
 
+			isMouseWithinUI = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, outerRadius + mainRadius);
+
 			double angleSteps = 2.0d / itemModels.Count;
-			//done --> ID of currently drawn circle
+			double x;
+			double y;
+			//done --> index of currently drawn circle
 			for (int done = 0; done < itemModels.Count; done++) {
-				double x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
-				double y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
+				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
+				y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
 
 				var bgRect = new Rectangle((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y), mainDiameter, mainDiameter);
 				//Check if mouse is within the circle checked
-				bool isMouseWithin = CheckMouseWithinWheel(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
+				bool isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
 
 				//Actually draw the bg circle
 				Color drawColor = Color.White;
 				if (done == lastSelected) drawColor = Color.Gray;
-				spriteBatch.Draw(Main.wireUITexture[isMouseWithin ? 1 : 0], bgRect, drawColor);
+				spriteBatch.Draw(Main.wireUITexture[isMouseWithinSegment ? 1 : 0], bgRect, drawColor);
 
 				//Draw sprites over the icons
 				Texture2D itemTexture = Main.itemTexture[itemModels[done].ItemType];
@@ -118,7 +132,7 @@ namespace SummonersAssociation.UI
 
 				spriteBatch.Draw(itemTexture, projRect, itemTexture.Bounds, drawColor);
 
-				if (isMouseWithin) {
+				if (isMouseWithinSegment) {
 					//Set the "returned" new type
 					returned = done;
 				}
@@ -127,7 +141,7 @@ namespace SummonersAssociation.UI
 			//Draw held item bg circle
 			var outputRect = new Rectangle((int)TopLeftCorner.X, (int)TopLeftCorner.Y, mainDiameter, mainDiameter);
 
-			bool middle = CheckMouseWithinCircle(Main.MouseScreen, mainRadius, spawnPosition);
+			middle = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, mainRadius);
 
 			spriteBatch.Draw(Main.wireUITexture[middle ? 1 : 0], outputRect, Color.White);
 
@@ -141,7 +155,7 @@ namespace SummonersAssociation.UI
 			if (middle) {
 				//If hovering over the middle, reset maybe
 				//Currently, don't return anything
-				returned = NONE;
+				//returned = NONE;
 
 				//if (hasEquipped) {
 				//	//Draw the red cross
@@ -159,35 +173,46 @@ namespace SummonersAssociation.UI
 
 			//Extra loop so tooltips are always drawn after the circles
 			for (int done = 0; done < itemModels.Count; done++) {
-				bool isMouseWithin = CheckMouseWithinWheel(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
+				bool isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
 				string tooltip = itemModels[done].Name;
+				Color fontColor = Color.White;
+				Vector2 drawPos;
 
-				if (isMouseWithin) {
+				if (isMouseWithinSegment) {
 					//Draw the tooltip
-					Color fontColor = Color.White;
-					Vector2 mousePos = new Vector2(16, 16) + Main.MouseScreen;
-					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, mousePos, fontColor, 0, Vector2.Zero, Vector2.One);
+					fontColor = Color.White;
+					drawPos = new Vector2(16, 16) + Main.MouseScreen;
+					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
 				}
+
+				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
+				y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
+
+				tooltip = itemModels[done].SummonCount.ToString();
+				drawPos = new Vector2((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y)) + new Vector2(-4, mainRadius + 4);
+
+				//Draw the number (SummonCount)
+				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
 			}
 		}
 
 		/// <summary>
 		/// Check if the mouse cursor is within the radius around the position specified by center
 		/// </summary>
-		internal static bool CheckMouseWithinCircle(Vector2 mousePos, int radius, Vector2 center)
+		internal static bool CheckMouseWithinCircle(Vector2 mousePos, Vector2 center, int radius)
 			=> ((mousePos.X - center.X) * (mousePos.X - center.X) + (mousePos.Y - center.Y) * (mousePos.Y - center.Y)) <= radius * radius;
 
 		/// <summary>
 		/// Checks if the mouse cursor is currently inside the segment specified by the arguments. Decided by angle (radius only matters for the inner element).
 		/// </summary>
-		internal static bool CheckMouseWithinWheel(Vector2 mousePos, Vector2 center, int innerRadius, int outerRadius, int pieceCount, int elementNumber) {
+		internal static bool CheckMouseWithinWheelSegment(Vector2 mousePos, Vector2 center, int innerRadius, int outerRadius, int pieceCount, int elementNumber) {
 			//Check if mouse cursor is outside the inner circle
-			bool outsideInner = ((mousePos.X - center.X) * (mousePos.X - center.X) + (mousePos.Y - center.Y) * (mousePos.Y - center.Y)) > innerRadius * innerRadius;
+			bool outsideInner = !CheckMouseWithinCircle(mousePos, center, innerRadius);
 
 			//padding
 			outerRadius += mainRadius;
 			//Check if mouse cursor is inside the outer circle
-			bool insideOuter = ((mousePos.X - center.X) * (mousePos.X - center.X) + (mousePos.Y - center.Y) * (mousePos.Y - center.Y)) < outerRadius * outerRadius;
+			bool insideOuter = CheckMouseWithinCircle(mousePos, center, outerRadius);
 			if (!outsideInner || !insideOuter) return false;
 
 			double step = 360 / pieceCount;
@@ -248,6 +273,8 @@ namespace SummonersAssociation.UI
 			visible = true;
 			spawnPosition = SummonersAssociation.MousePositionUI;
 			heldItemIndex = Main.LocalPlayer.selectedItem;
+			//the next code is still WIP (up to how to handle the List later)
+
 			//We know the HeldItem is the book, so directly cast it
 			int currentSel = ((MinionHistoryBook)Main.LocalPlayer.HeldItem.modItem).itemModel.ItemType;
 			lastSelected = itemModels.FindIndex(item => item.ItemType == currentSel);
@@ -255,7 +282,7 @@ namespace SummonersAssociation.UI
 		}
 		
 		/// <summary>
-		 /// Called to forcibly close the UI
+		 /// Called to close the UI
 		 /// </summary>
 		public static void Stop() {
 			returned = NONE;

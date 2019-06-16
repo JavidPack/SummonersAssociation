@@ -19,7 +19,7 @@ namespace SummonersAssociation.Models
 
 		public int InventoryIndex { get; set; }
 
-		//unused yet
+		//unused yet, will only get drawn
 		public byte SummonCount { get; set; }
 
 		public ItemModel() {
