@@ -66,7 +66,6 @@ namespace SummonersAssociation.Items
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
-			//TODO Some loop to check history against current inventory
 			List<ItemModel> localHistory = HistoryBookUI.MergeHistoryIntoInventory(this);
 			if (localHistory.Count > 0) {
 				for (int i = 0; i < localHistory.Count; i++) {

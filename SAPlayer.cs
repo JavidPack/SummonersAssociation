@@ -5,7 +5,6 @@ using SummonersAssociation.Models;
 using SummonersAssociation.Items;
 using SummonersAssociation.UI;
 using Terraria.ID;
-using System;
 
 namespace SummonersAssociation
 {
@@ -37,11 +36,11 @@ namespace SummonersAssociation
 
 		private bool mouseLeftPressed;
 
-		private bool mouseLeftReleased;
+		private bool mouseLeftReleased; //Unused
 
 		private bool mouseRightPressed;
 
-		private bool mouseRightReleased;
+		private bool mouseRightReleased; //Unused
 
 		/// <summary>
 		/// Uses the item in the specified index from the players inventory
@@ -61,7 +60,8 @@ namespace SummonersAssociation
 		/// Uses the first found item of the specified type from the players inventory
 		/// </summary>
 		public void QuickUseItemOfType(int type) {
-			//unused yet, this is mostly for the history later
+			//Prefer to use this when spawning from an ItemModel because InventoryIndex won't be accurate after the UI is closed and the inventory is modified
+			//Unused yet, this is mostly for the history later
 			//Not efficient to call it once per item later, need better method, maybe with a passed array of types, and then a single loop, and a scheduler for used items
 			if (type > 0) {
 				for (int i = 0; i < Main.maxInventory; i++) {
@@ -81,7 +81,6 @@ namespace SummonersAssociation
 				//Any of the four: mouse(Left/Right)(Pressed/Released)
 				bool triggerStart = mouseRightPressed;
 				bool triggerStop = mouseRightPressed;
-				//Used for third approach
 				bool triggerDelete = mouseLeftPressed;
 				bool triggerInc = mouseLeftPressed;
 				bool triggerDec = mouseRightPressed;
