@@ -134,17 +134,8 @@ namespace SummonersAssociation
 		/// Called in UpdateUI
 		/// </summary>
 		private void UpdateHistoryBookUI() {
-			if (HistoryBookUI.visible) {
 
-				//Check on the variables set in ProcessTriggers for the +/- stuff later
-
-				if (HistoryBookUI.heldItemIndex != Main.LocalPlayer.selectedItem) {
-					//cancel the UI when you switch items
-					HistoryBookUI.Stop();
-				}
-			}
-
-			//This is updated to the "in UI" Mouse Position, because the UI itself is spawned in SAPlayer.PostUpdate()
+			//This is updated to the "in UI" Mouse Position, because the UI itself is spawned in SAPlayer.PreUpdate()
 			MousePositionUI = Main.MouseScreen;
 		}
 

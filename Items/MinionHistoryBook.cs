@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using SummonersAssociation.Models;
+using SummonersAssociation.UI;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
@@ -13,14 +14,7 @@ namespace SummonersAssociation.Items
 	{
 		public override bool CloneNewInstances => true;
 
-		//More fields later, this is temporary
-		//public int currentMinionWeaponType = 0;
-		//public string testStringName = "";
-
-		public ItemModel itemModel;
-
-		//Something like this?
-		//public List<ItemModel> itemModels;
+		public List<ItemModel> history = new List<ItemModel>();
 
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Minion History Book");
@@ -38,48 +32,56 @@ namespace SummonersAssociation.Items
 			item.useStyle = 4;
 			item.UseSound = SoundID.Item44;
 			item.value = Item.sellPrice(silver: 10);
-			//If I don't do this it gives me a null error on Clone
-			itemModel = new ItemModel();
 		}
 
 		public override ModItem Clone() {
 			var clone = (MinionHistoryBook)base.Clone();
-			clone.itemModel = itemModel.Clone();
-			//primitive type, no need to clone
-			//clone.currentMinionWeapon = currentMinionWeapon;
+			clone.history = history.ConvertAll((itemModel) => new ItemModel(itemModel));
 			return clone;
 		}
 
 		public override TagCompound Save() {
 			return new TagCompound {
-				//{ nameof(currentMinionWeaponType), currentMinionWeaponType },
-				//{ nameof(testStringName), testStringName },
-				{ nameof(itemModel), itemModel }
+				{nameof(history), history}
 			};
 		}
 
 		public override void Load(TagCompound tag) {
-			//currentMinionWeaponType = tag.GetInt(nameof(currentMinionWeaponType));
-			//testStringName = tag.GetString(nameof(testStringName));
-			itemModel = tag.Get<ItemModel>(nameof(itemModel));
+			var list = tag.GetList<ItemModel>(nameof(history));
+			history = new List<ItemModel>(list);
 		}
 
 		public override void NetRecieve(BinaryReader reader) {
-			//currentMinionWeaponType = reader.ReadInt32();
-			//testStringName = reader.ReadString();
-			itemModel.NetRecieve(reader);
+			int length = reader.ReadByte();
+			for (int i = 0; i < length; i++) {
+				history[i].NetRecieve(reader);
+			}
 		}
 
 		public override void NetSend(BinaryWriter writer) {
-			//writer.Write(currentMinionWeaponType);
-			//writer.Write(testStringName);
-			itemModel.NetSend(writer);
+			writer.Write((byte)history.Count);
+			for (int i = 0; i < history.Count; i++) {
+				history[i].NetSend(writer);
+			}
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
-			if (itemModel.Name != null) tooltips.Add(new TooltipLine(mod, "Name",  (itemModel.Name == "") ? "No summon weapon specified" : itemModel.Name) {
-				overrideColor = Color.Orange
-			});
+			//TODO Some loop to check history against current inventory
+			List<ItemModel> localHistory = HistoryBookUI.MergeHistoryIntoInventory(this);
+			if (localHistory.Count > 0) {
+				for (int i = 0; i < localHistory.Count; i++) {
+					ItemModel itemModel = localHistory[i];
+					string name = itemModel.Name;
+					int summonCount = itemModel.SummonCount;
+
+					tooltips.Add(new TooltipLine(mod, "ItemModel", name + ": " + summonCount) {
+						overrideColor = itemModel.Active ? Color.White : Color.Red
+					});
+				}
+			}
+			else {
+				tooltips.Add(new TooltipLine(mod, "None", "No summon history specified"));
+			}
 		}
 
 		public override bool UseItem(Player player) {

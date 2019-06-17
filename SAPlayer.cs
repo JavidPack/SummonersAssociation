@@ -13,8 +13,6 @@ namespace SummonersAssociation
 	{
 		internal int originalSelectedItem;
 		internal bool autoRevertSelectedItem = false;
-		internal bool canOpenUI = false;
-		public bool justspawned = false;
 
 		/// <summary>
 		/// Checks if player can open HistoryBookUI
@@ -49,7 +47,7 @@ namespace SummonersAssociation
 		/// Uses the item in the specified index from the players inventory
 		/// </summary>
 		public void QuickUseItemInSlot(int index) {
-			if (index > HistoryBookUI.NONE && index < player.inventory.Length && player.inventory[index].type != 0) {
+			if (index > -1 && index < Main.maxInventory && player.inventory[index].type != 0) {
 				if (!player.inventory[index].summon) return; //safety check
 				originalSelectedItem = player.selectedItem;
 				autoRevertSelectedItem = true;
@@ -66,7 +64,7 @@ namespace SummonersAssociation
 			//unused yet, this is mostly for the history later
 			//Not efficient to call it once per item later, need better method, maybe with a passed array of types, and then a single loop, and a scheduler for used items
 			if (type > 0) {
-				for (int i = 0; i < Main.LocalPlayer.inventory.Length; i++) {
+				for (int i = 0; i < Main.maxInventory; i++) {
 					Item item = Main.LocalPlayer.inventory[i];
 					if (item.type == type) {
 						QuickUseItemInSlot(i);
@@ -76,11 +74,93 @@ namespace SummonersAssociation
 			}
 		}
 
+		private void UpdateHistoryBookUI() {
+			//Since this is UI related, make sure to only run on client
+			if (Main.myPlayer == player.whoAmI) {
+				//Change the trigger type here
+				//Any of the four: mouse(Left/Right)(Pressed/Released)
+				bool triggerStart = mouseRightPressed;
+				bool triggerStop = mouseRightPressed;
+				//Used for third approach
+				bool triggerDelete = mouseLeftPressed;
+				bool triggerInc = mouseLeftPressed;
+				bool triggerDec = mouseRightPressed;
+
+				if (triggerStart && AllowedToOpenHistoryBookUI) {
+					bool success = HistoryBookUI.Start();
+					if (!success) Main.NewText("Couldn't find any summon weapons in inventory");
+				}
+				else if (HistoryBookUI.visible) {
+					if (HistoryBookUI.heldItemIndex == Main.LocalPlayer.selectedItem) {
+						//Keep it updated
+						//should this substract from currently summoned minions aswell?
+						HistoryBookUI.summonCountTotal = player.maxMinions /*- (int)Math.Round(player.slotsMinions)*/;
+
+						if (HistoryBookUI.middle) {
+							if (triggerDelete) {
+								if (!HistoryBookUI.aboutToDelete) {
+									HistoryBookUI.aboutToDelete = true;
+								}
+								else {
+									//Clear history, and use fresh inventory data
+									HistoryBookUI.itemModels = HistoryBookUI.GetSummonWeapons();
+									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Reset history");
+									HistoryBookUI.aboutToDelete = false;
+								}
+							}
+							else if (triggerStop) {
+								if (HistoryBookUI.aboutToDelete) {
+									HistoryBookUI.aboutToDelete = false;
+								}
+								else if (HistoryBookUI.returned == HistoryBookUI.UPDATE) {
+									HistoryBookUI.UpdateHistoryBook((MinionHistoryBook)Main.LocalPlayer.HeldItem.modItem);
+
+									HistoryBookUI.Stop();
+									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Saved history");
+								}
+								else if (HistoryBookUI.returned == HistoryBookUI.NONE) {
+									//Nothing, just close
+									HistoryBookUI.Stop();
+								}
+							}
+						}
+						//if in a segment
+						else if (HistoryBookUI.IsMouseWithinAnySegment) {
+							ItemModel selected = HistoryBookUI.itemModels[HistoryBookUI.returned];
+							if (selected.Active) {
+								if (triggerInc) {
+									selected.SummonCount = (byte)((selected.SummonCount + 1) % (HistoryBookUI.summonCountTotal + 1));
+									try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
+									catch { /*No idea why but this threw errors one time*/ }
+								}
+								else if (triggerDec) {
+									selected.SummonCount = (byte)((selected.SummonCount - 1) % (HistoryBookUI.summonCountTotal + 1));
+									if (selected.SummonCount == byte.MaxValue) selected.SummonCount = (byte)HistoryBookUI.summonCountTotal;
+									try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
+									catch { /*No idea why but this threw errors one time*/ }
+								}
+							}
+						}
+						//outside the UI
+						else {
+							if (triggerStop) {
+								HistoryBookUI.Stop();
+							}
+						}
+					}
+					else {
+						//cancel the UI when you switch items
+						HistoryBookUI.Stop();
+					}
+				}
+			}
+		}
+
 		public override void ProcessTriggers(TriggersSet triggersSet) {
 			//In here things like Main.MouseScreen are not correct (related to UI)
 			//and in UpdateUI Main.mouseRight etc aren't correct
 			//but you need both to properly open/close the UI
-			//these two are used in PostUpdate(), together with AllowedToOpenHistoryBookUI
+			//these two are used in PreUpdate(), together with AllowedToOpenHistoryBookUI
 			//since that also doesn't work in ProcessTriggers
 
 			mouseLeftPressed = Main.mouseLeft && Main.mouseLeftRelease;
@@ -92,7 +172,7 @@ namespace SummonersAssociation
 			mouseRightReleased = !Main.mouseRight && !Main.mouseRightRelease;
 		}
 
-		public override void PostUpdate() {
+		public override void PreUpdate() {
 			if (autoRevertSelectedItem) {
 				if (player.itemTime == 0 && player.itemAnimation == 0) {
 					player.selectedItem = originalSelectedItem;
@@ -100,105 +180,7 @@ namespace SummonersAssociation
 				}
 			}
 
-			//Since this is UI related, make sure to only run on client
-			if (Main.myPlayer == player.whoAmI) {
-				Main.NewText(HistoryBookUI.returned);
-				//Change the trigger type here
-				//any of the four: mouse(Left/Right)(Pressed/Released)
-				bool triggerStart = mouseRightPressed;
-				bool triggerStop = mouseRightPressed;
-				//used for third approach
-				bool triggerInc = mouseLeftPressed;
-				bool triggerDec = mouseRightPressed;
-
-				if (triggerStart && AllowedToOpenHistoryBookUI) {
-					bool success = HistoryBookUI.Start();
-					if (!success) Main.NewText("Couldn't find any summon weapons in inventory");
-				}
-				else if (HistoryBookUI.visible) {
-					//first simple approach, exit whereever you clicked (and spawn the selected one)
-					//if triggerStop == mouseRightReleased: exit whereever you let go of mouseRight
-
-					//if (triggerStop && HistoryBookUI.returned > HistoryBookUI.NONE) {
-					//	//If something returned
-
-					//	try {
-					//		Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position);
-					//	}
-					//	catch {
-					//		//No idea why but this threw errors one time
-					//	}
-					//	ItemModel selected = HistoryBookUI.itemModels[HistoryBookUI.returned];
-					//	CombatText.NewText(player.getRect(), CombatText.HealLife, "Selected: " + selected.Name);
-
-					//	//Update
-					//	HistoryBookUI.UpdateHistoryBookItemsInInventory();
-
-					//	//Try to use selected summon item
-					//	QuickUseItemInSlot(selected.InventoryIndex);
-					//}
-					//
-					//HistoryBookUI.Stop();
-
-					//second simple approach, only exit when clicked in the middle (and spawn the latest selected one)
-					//if (triggerStop && HistoryBookUI.middle) {
-					//	if (HistoryBookUI.returned > HistoryBookUI.NONE) {
-					//		//If something returned
-					//		try {
-					//			Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position);
-					//		}
-					//		catch {
-					//			//No idea why but this threw errors one time
-					//		}
-					//		ItemModel selected = HistoryBookUI.itemModels[HistoryBookUI.returned];
-					//		CombatText.NewText(player.getRect(), CombatText.HealLife, "Selected: " + selected.Name);
-
-					//		//Update
-					//		HistoryBookUI.UpdateHistoryBookItemsInInventory();
-
-					//		//Try to use selected summon item
-					//		QuickUseItemInSlot(selected.InventoryIndex);
-					//	}
-
-					//	HistoryBookUI.Stop();
-					//}
-
-					//third more advanced approach, increment/decrement when not clicked in the middle,
-					//only exit when clicked in the middle (no logic regarding what to do with the counter yet)
-					if (triggerStop && HistoryBookUI.middle) {
-						if (HistoryBookUI.returned > HistoryBookUI.NONE) {
-							//If something returned
-							try {
-								Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position);
-							}
-							catch {
-								//No idea why but this threw errors one time
-							}
-							ItemModel selected = HistoryBookUI.itemModels[HistoryBookUI.returned];
-							CombatText.NewText(player.getRect(), CombatText.HealLife, "Selected: " + selected.Name);
-
-							//Update
-							HistoryBookUI.UpdateHistoryBookItemsInInventory();
-
-							//Try to use selected summon item
-							QuickUseItemInSlot(selected.InventoryIndex);
-						}
-
-						HistoryBookUI.Stop();
-					}
-					//if in a segment
-					else if (HistoryBookUI.isMouseWithinUI && !HistoryBookUI.middle && HistoryBookUI.returned > HistoryBookUI.NONE) {
-						ItemModel selected = HistoryBookUI.itemModels[HistoryBookUI.returned];
-						if (triggerInc) {
-							selected.SummonCount = (byte)((selected.SummonCount + 1) % 11);
-						}
-						else if (triggerDec) {
-							selected.SummonCount = (byte)((selected.SummonCount - 1) % 11);
-							if (selected.SummonCount == byte.MaxValue) selected.SummonCount = 10;
-						}
-					}
-				}
-			}
+			UpdateHistoryBookUI();
 		}
 	}
 }

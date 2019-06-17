@@ -8,7 +8,7 @@ namespace SummonersAssociation.Models
 	/// <summary>
 	/// Holds the Item reference and its index in LocalPlayers inventory
 	/// </summary>
-	public class ItemModel : TagSerializable
+	public class ItemModel : TagSerializable, IComparable<ItemModel>
 	{
 		public static readonly Func<TagCompound, ItemModel> DESERIALIZER = Load;
 
@@ -17,34 +17,83 @@ namespace SummonersAssociation.Models
 
 		public string Name { get; set; }
 
+		/// <summary>
+		/// This is just for sorting on the UI and in the tooltip.
+		/// dont use it for QuickUseItemInSlot(), do an ItemType check instead!
+		/// </summary>
 		public int InventoryIndex { get; set; }
 
-		//unused yet, will only get drawn
+		//Unused yet, will only get drawn
 		public byte SummonCount { get; set; }
 
+		//Unused yet, will only get drawn
+		//Basically if this ItemModel corresponds to an item in the players inventory
+		public bool Active { get; set; }
+
+		/// <summary>
+		/// Default constructor. Is it needed?
+		/// </summary>
 		public ItemModel() {
 			ItemType = 0;
 			Name = "";
 			InventoryIndex = 0;
 			SummonCount = 0;
+			Active = false;
 		}
 
-		public ItemModel(Item item, int inventoryIndex, byte summonCount = 0) {
+		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		public ItemModel(ItemModel itemModel) {
+			ItemType = itemModel.ItemType;
+			Name = itemModel.Name;
+			InventoryIndex = itemModel.InventoryIndex;
+			SummonCount = itemModel.SummonCount;
+			Active = itemModel.Active;
+		}
+
+		/// <summary>
+		/// Convenience constructor
+		/// </summary>
+		public ItemModel(Item item, int inventoryIndex, byte summonCount = 0, bool active = true) {
+			//If created from an item, it is by definition active
 			ItemType = item.type;
 			Name = item.Name;
 			InventoryIndex = inventoryIndex;
 			SummonCount = summonCount;
+			Active = active;
 		}
 
-		public ItemModel(int itemType, string name, int inventoryIndex, byte summonCount = 0) {
+		/// <summary>
+		/// Proper constructor
+		/// </summary>
+		public ItemModel(int itemType, string name, int inventoryIndex, byte summonCount = 0, bool active = false) {
 			ItemType = itemType;
 			Name = name;
 			InventoryIndex = inventoryIndex;
 			SummonCount = summonCount;
+			Active = active;
+		}
+
+		/// <summary>
+		/// Set current itemModel SummonCount to what the history had
+		/// </summary>
+		public void OverrideValuesFromHistory(ItemModel historyModel) {
+			SummonCount = historyModel.SummonCount;
+			Active = true;
+		}
+
+		/// <summary>
+		/// Set InventoryIndex (sorting criteria) to a high value outside of the inventory array
+		/// and deactivate it
+		/// </summary>
+		public void OverrideValuesToInactive(int i) {
+			InventoryIndex = Main.maxInventory + i;
+			Active = false;
 		}
 
 		public override string ToString() =>
-			"Name: " + Name + "; Index: " + InventoryIndex + "; Count: " + SummonCount;
+			"Name: " + Name + "; Active: " + Active + "; Index: " + InventoryIndex + "; Count: " + SummonCount;
 
 		public TagCompound SerializeData() {
 			return new TagCompound {
@@ -52,14 +101,22 @@ namespace SummonersAssociation.Models
 				{nameof(Name), Name },
 				{nameof(InventoryIndex), InventoryIndex },
 				{nameof(SummonCount), SummonCount },
+				{nameof(Active), Active },
 			};
 		}
+
+		/// <summary>
+		/// Sorted by InventoryIndex
+		/// </summary>
+		public int CompareTo(ItemModel other) => InventoryIndex.CompareTo(other.InventoryIndex);
+
 		public static ItemModel Load(TagCompound tag) {
 			return new ItemModel {
 				ItemType = tag.GetInt(nameof(ItemType)),
 				Name = tag.GetString(nameof(Name)),
 				InventoryIndex = tag.GetInt(nameof(InventoryIndex)),
-				SummonCount = tag.GetByte(nameof(SummonCount))
+				SummonCount = tag.GetByte(nameof(SummonCount)),
+				Active = tag.GetBool(nameof(Active))
 			};
 		}
 
@@ -68,6 +125,7 @@ namespace SummonersAssociation.Models
 			Name = reader.ReadString();
 			InventoryIndex = reader.ReadInt32();
 			SummonCount = reader.ReadByte();
+			Active = reader.ReadBoolean();
 		}
 
 		public void NetSend(BinaryWriter writer) {
@@ -75,8 +133,7 @@ namespace SummonersAssociation.Models
 			writer.Write((string)Name);
 			writer.Write((int)InventoryIndex);
 			writer.Write((byte)SummonCount);
+			writer.Write((bool)Active);
 		}
-
-		public ItemModel Clone() => new ItemModel(ItemType, Name, InventoryIndex, SummonCount);
 	}
 }

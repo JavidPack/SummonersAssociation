@@ -7,23 +7,26 @@ using System;
 using System.Collections.Generic;
 using SummonersAssociation.Models;
 using SummonersAssociation.Items;
+using Terraria.ID;
 
 namespace SummonersAssociation.UI
 {
 	/*
 	* How it works basically:
 	* In SAPlayer.ProcessTriggers(), it sets two bools used to open/close the UI.
-	* SAPlayer.PostUpdate() handles the opening/closing, and general handling of the UI.
+	* SAPlayer.PreUpdate() handles the opening/closing, and general handling of the UI.
 	* The other custom methods are all over the place right now (Some in this class, some in the SAPlayer class)
 	* Caveats:
 	* 1. spawning the UI in ProcessTriggers didn't work because the custom conditions I setup
 	* don't work there (AllowedToOpenHistoryBookUI)
-	* 2. can't think of more right now, but there are some others
+	* 2. Read comments in ProcessTriggers
 	*/
 	class HistoryBookUI : UIState
 	{
 		//output
 		internal const int NONE = -1;
+
+		internal const int UPDATE = -2;
 
 		/// <summary>
 		/// Circle diameter
@@ -46,6 +49,11 @@ namespace SummonersAssociation.UI
 		internal static Vector2 spawnPosition = default(Vector2);
 
 		/// <summary>
+		/// Number of casts in total (player.numMinions)
+		/// </summary>
+		internal static int summonCountTotal = -1;
+
+		/// <summary>
 		/// Held item index
 		/// </summary>
 		internal static int heldItemIndex = -1;
@@ -66,9 +74,9 @@ namespace SummonersAssociation.UI
 		internal static bool isMouseWithinUI = false;
 
 		/// <summary>
-		/// Which thing was the previously selected one?
+		/// Was the delete initiated once?
 		/// </summary>
-		internal static int lastSelected = NONE;
+		internal static bool aboutToDelete = false;
 
 		/// <summary>
 		/// Fade in animation when opening the UI
@@ -86,9 +94,14 @@ namespace SummonersAssociation.UI
 		internal static List<ItemModel> itemModels;
 
 		/// <summary>
+		/// Is cursor within a segment?
+		/// </summary>
+		public static bool IsMouseWithinAnySegment => isMouseWithinUI && !middle && returned > NONE;
+
+		/// <summary>
 		/// Spawn position offset to top left corner of that to draw the icons
 		/// </summary>
-		private Vector2 TopLeftCorner => spawnPosition - new Vector2(mainRadius, mainRadius);
+		private static Vector2 TopLeftCorner => spawnPosition - new Vector2(mainRadius, mainRadius);
 
 		//Update, unused
 		public override void Update(GameTime gameTime) => base.Update(gameTime);
@@ -104,11 +117,17 @@ namespace SummonersAssociation.UI
 
 			isMouseWithinUI = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, outerRadius + mainRadius);
 
+			int width;
+			int height;
 			double angleSteps = 2.0d / itemModels.Count;
 			double x;
 			double y;
+			ItemModel itemModel;
+
 			//done --> index of currently drawn circle
+			//starts at the top and goes clockwise
 			for (int done = 0; done < itemModels.Count; done++) {
+				itemModel = itemModels[done];
 				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
 				y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
 
@@ -118,17 +137,14 @@ namespace SummonersAssociation.UI
 
 				//Actually draw the bg circle
 				Color drawColor = Color.White;
-				if (done == lastSelected) drawColor = Color.Gray;
+				if (!itemModel.Active) drawColor = Color.Gray;
 				spriteBatch.Draw(Main.wireUITexture[isMouseWithinSegment ? 1 : 0], bgRect, drawColor);
 
 				//Draw sprites over the icons
-				Texture2D itemTexture = Main.itemTexture[itemModels[done].ItemType];
-				int width = itemTexture.Width;
-				int height = itemTexture.Height;
+				Texture2D itemTexture = Main.itemTexture[itemModel.ItemType];
+				width = itemTexture.Width;
+				height = itemTexture.Height;
 				var projRect = new Rectangle((int)(spawnPosition.X + x) - (width / 2), (int)(spawnPosition.Y + y) - (height / 2), width, height);
-
-				//drawColor = Color.White;
-				//if (done == lastSelected) drawColor = Color.Gray;
 
 				spriteBatch.Draw(itemTexture, projRect, itemTexture.Bounds, drawColor);
 
@@ -147,52 +163,92 @@ namespace SummonersAssociation.UI
 
 			//Draw held item inside circle
 			Texture2D historyBookTexture = Main.itemTexture[SummonersAssociation.Instance.ItemType<MinionHistoryBook>()];
-			int finalWidth = historyBookTexture.Width;
-			int finalHeight = historyBookTexture.Height;
-			var outputWeaponRect = new Rectangle((int)spawnPosition.X - (finalWidth / 2), (int)spawnPosition.Y - (finalHeight / 2), finalWidth, finalHeight);
+			width = historyBookTexture.Width;
+			height = historyBookTexture.Height;
+			var outputWeaponRect = new Rectangle((int)spawnPosition.X - (width / 2), (int)spawnPosition.Y - (height / 2), width, height);
 			spriteBatch.Draw(historyBookTexture, outputWeaponRect, Color.White);
 
-			if (middle) {
-				//If hovering over the middle, reset maybe
-				//Currently, don't return anything
-				//returned = NONE;
+			//Draw the number (summonCountTotal)
+			Color fontColor = Color.White;
+			Vector2 mousePos = new Vector2(16, 16) + Main.MouseScreen;
 
-				//if (hasEquipped) {
-				//	//Draw the red cross
-				//	int finalWidth = redCrossTexture.Width;
-				//	int finalHeight = redCrossTexture.Height;
-				//	Rectangle outputCrossRect = new Rectangle((int)spawnPosition.X - (finalWidth / 2), (int)spawnPosition.Y - (finalHeight / 2), finalWidth, finalHeight);
-				//	spriteBatch.Draw(redCrossTexture, outputCrossRect, Color.White);
+			Vector2 drawPos = new Vector2((int)TopLeftCorner.X, (int)TopLeftCorner.Y + height) + new Vector2(-4, - 8);
+			int difference = summonCountTotal - SumSummonCounts();
 
-				//	//Draw the tooltip
-				//	Color fontColor = Color.White;
-				//	Vector2 mousePos = new Vector2(Main.mouseX, Main.mouseY);
-				//	ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, "Unequip", mousePos + new Vector2(16, 16), fontColor, 0, Vector2.Zero, Vector2.One);
-				//}
-			}
+			if (difference < 0) fontColor = Color.Red;
+			string tooltip = difference.ToString() + "/" + summonCountTotal.ToString();
+
+			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+
+			fontColor = Color.White;
 
 			//Extra loop so tooltips are always drawn after the circles
 			for (int done = 0; done < itemModels.Count; done++) {
+				itemModel = itemModels[done];
 				bool isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
-				string tooltip = itemModels[done].Name;
-				Color fontColor = Color.White;
-				Vector2 drawPos;
 
 				if (isMouseWithinSegment) {
 					//Draw the tooltip
-					fontColor = Color.White;
-					drawPos = new Vector2(16, 16) + Main.MouseScreen;
+					drawPos = mousePos;
+					tooltip = itemModel.Name;
 					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
 				}
 
 				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
 				y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
 
-				tooltip = itemModels[done].SummonCount.ToString();
 				drawPos = new Vector2((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y)) + new Vector2(-4, mainRadius + 4);
+				tooltip = itemModel.SummonCount.ToString();
+
+				if (!itemModel.Active) fontColor = Color.Red;
 
 				//Draw the number (SummonCount)
 				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+			}
+
+			//If hovering over the middle
+			if (middle) {
+				returned = NONE;
+				fontColor = Color.White;
+				drawPos = mousePos;
+
+				if (aboutToDelete) {
+					//Draw the red cross
+					width = redCrossTexture.Width;
+					height = redCrossTexture.Height;
+					var crossRect = new Rectangle((int)spawnPosition.X - (width / 2), (int)spawnPosition.Y - (height / 2), width, height);
+					spriteBatch.Draw(redCrossTexture, crossRect, Color.White);
+
+					//Draw the tooltip
+					tooltip = "Click left to clear history";
+					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+
+					drawPos.Y += 22;
+					tooltip = "Click right to cancel";
+					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+				}
+				else {
+					returned = UPDATE;
+
+					//Draw the tooltip
+					drawPos = mousePos;
+					tooltip = "Click left twice to clear history";
+					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+					drawPos.Y += 22;
+					tooltip = "Click right to save history";
+					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+				}
+
+				////Check if SummonCount of everything is 0
+				//bool atleastOneAboveZero = false;
+				//for (int i = 0; i < itemModels.Count; i++) {
+				//	if (itemModels[i].Active && itemModels[i].SummonCount > 0) {
+				//		atleastOneAboveZero = true;
+				//		break;
+				//	}
+				//}
+				////If all are zero, return nothing
+				//if (!atleastOneAboveZero) returned = NONE;
 			}
 		}
 
@@ -251,33 +307,77 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// Creates a list of summon weapons from the players inventory, ignoring duplicates
 		/// </summary>
-		private static bool GetSummonWeapons() {
+		public static List<ItemModel> GetSummonWeapons() {
 			var list = new List<ItemModel>();
-			for (int i = 0; i < Main.LocalPlayer.inventory.Length; i++) {
+			for (int i = 0; i < Main.maxInventory; i++) {
 				Item item = Main.LocalPlayer.inventory[i];
 				if (item.summon && list.FindIndex(itemModel => itemModel.ItemType == item.type) < 0) {
+					//ItemModels added here have SummonCount set to 0, will be checked later in Start() and adjusted
 					list.Add(new ItemModel(item, i));
 				}
 			}
-			itemModels = list;
-			return itemModels.Count > 0;
+			return list;
+		}
+
+		public static List<ItemModel> MergeHistoryIntoInventory(MinionHistoryBook book) {
+			List<ItemModel> historyCopy = book.history.ConvertAll(model => new ItemModel(model));
+			return MergeHistoryIntoInventory(historyCopy);
+		}
+
+		/// <summary>
+		/// Returns an "updated" history and removes duplicate entries from the passed history
+		/// </summary>
+		public static List<ItemModel> MergeHistoryIntoInventory(List<ItemModel> history) {
+			//Get all summon weapons currently in inventory
+			List<ItemModel> inventoryModels = GetSummonWeapons();
+
+			//if (inventoryModels.Count <= 0 && history.Count <= 0) return ;
+
+			//From now on, inventoryModels is going to be the list passed into the UI
+			List<ItemModel> passedModels = inventoryModels;
+
+			//Adjust the list passed to the UI in a way that matches the history of items that were
+			//once used but aren't in the inventory anymore,
+			//and those just found
+			for (int i = 0; i < passedModels.Count; i++) {
+				ItemModel itemModel = passedModels[i];
+				int index = history.FindIndex(model => model.ItemType == itemModel.ItemType);
+				if (index > -1) {
+					itemModel.OverrideValuesFromHistory(history[index]);
+					history.RemoveAt(index);
+				}
+			}
+
+			//here, history only contains "old" items that don't exist in the inventory
+			//set their InventoryIndex to a high value (so they are all sorted last)
+			//and add them in
+
+			for (int i = 0; i < history.Count; i++) {
+				history[i].OverrideValuesToInactive(i);
+			}
+
+			passedModels.AddRange(history);
+			//Sorted by InventoryIndex
+			passedModels.Sort();
+
+			return passedModels;
 		}
 
 		/// <summary>
 		/// Called when the UI is about to appear
 		/// </summary>
 		public static bool Start() {
-			//Get all summon weapons
-			if (!GetSummonWeapons()) return false;
+			List<ItemModel> historyCopy = ((MinionHistoryBook)Main.LocalPlayer.HeldItem.modItem).history.ConvertAll(model => new ItemModel(model));
+			List<ItemModel> passedModels = MergeHistoryIntoInventory(historyCopy);
 
 			visible = true;
 			spawnPosition = SummonersAssociation.MousePositionUI;
 			heldItemIndex = Main.LocalPlayer.selectedItem;
-			//the next code is still WIP (up to how to handle the List later)
+			itemModels = passedModels;
 
-			//We know the HeldItem is the book, so directly cast it
-			int currentSel = ((MinionHistoryBook)Main.LocalPlayer.HeldItem.modItem).itemModel.ItemType;
-			lastSelected = itemModels.FindIndex(item => item.ItemType == currentSel);
+			try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
+			catch { /*No idea why but this threw errors one time*/ }
+
 			return true;
 		}
 		
@@ -287,26 +387,32 @@ namespace SummonersAssociation.UI
 		public static void Stop() {
 			returned = NONE;
 			fadeIn = 0;
+			aboutToDelete = false;
 			visible = false;
+
+			try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
+			catch { /*No idea why but this threw errors one time*/ }
 		}
 
 		/// <summary>
-		/// Sets currentMinionWeaponType in all History Book items to the returned type
+		/// Sets the history of the passed History Book based on the one in the UI
 		/// </summary>
-		public static void UpdateHistoryBookItemsInInventory() {
-			if (returned > NONE) {
-				for (int i = 0; i < Main.LocalPlayer.inventory.Length; i++) {
-					Item item = Main.LocalPlayer.inventory[i];
-					if (item.type == SummonersAssociation.Instance.ItemType<MinionHistoryBook>()) {
-						var mItem = (MinionHistoryBook)item.modItem;
-						mItem.itemModel = itemModels[returned].Clone();
-						//mItem.currentMinionWeaponType = itemModels[returned].ItemType;
-						//mItem.testStringName = itemModels[returned].Name;
-						Main.NewText("set model in item at " + i);
-						Main.NewText(mItem.itemModel);
-					}
+		public static void UpdateHistoryBook(MinionHistoryBook book)
+			=> book.history = itemModels.ConvertAll((itemModel) => new ItemModel(itemModel));
+
+		public static int SumSummonCounts() {
+			int sum = 0;
+			for (int i = 0; i < itemModels.Count; i++) {
+				ItemModel itemModel = itemModels[i];
+				if (itemModel.Active) {
+					sum += itemModel.SummonCount;
 				}
 			}
+			return sum;
+		}
+
+		public static void UpdateCurrentHistoryBookAfterStop() {
+			//Eh
 		}
 	}
 }
