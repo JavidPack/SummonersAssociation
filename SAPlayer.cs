@@ -129,6 +129,7 @@ namespace SummonersAssociation
 							if (selected.Active) {
 								bool triggered = false;
 								if (triggerInc) {
+									PlayerInput.ScrollWheelDelta = 0;
 									//Only allow to increase if total summon count differential is above zero
 									if (HistoryBookUI.summonCountDelta > 0) {
 										triggered = true;
@@ -136,6 +137,7 @@ namespace SummonersAssociation
 									}
 								}
 								else if (triggerDec) {
+									PlayerInput.ScrollWheelDelta = 0;
 									//Only allow to decrease if current sumon count is above zero
 									if (selected.SummonCount > 0) {
 										triggered = true;
@@ -144,7 +146,6 @@ namespace SummonersAssociation
 								}
 
 								if (triggered) {
-									PlayerInput.ScrollWheelDelta = 0;
 									try { Main.PlaySound(12); }
 									catch { /*No idea why but this threw errors one time*/ }
 								}

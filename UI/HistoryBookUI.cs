@@ -74,11 +74,6 @@ namespace SummonersAssociation.UI
 		internal static bool middle = true;
 
 		/// <summary>
-		/// Is cursor currently inside the outer radius of the UI?
-		/// </summary>
-		internal static bool isMouseWithinUI = false;
-
-		/// <summary>
 		/// Was the delete initiated once?
 		/// </summary>
 		internal static bool aboutToDelete = false;
@@ -101,7 +96,7 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// Is cursor within a segment?
 		/// </summary>
-		public static bool IsMouseWithinAnySegment => isMouseWithinUI && !middle && returned > NONE;
+		public static bool IsMouseWithinAnySegment => !middle && returned > NONE;
 
 		/// <summary>
 		/// Spawn position offset to top left corner of that to draw the icons
@@ -120,8 +115,6 @@ namespace SummonersAssociation.UI
 			if (itemModels.Count > 5) outerRadius += 6 * (itemModels.Count - 5); //increase by 6 after having more than 5 options, starts getting clumped at about 30(?) circles
 			if (fadeIn < outerRadius) outerRadius = (int)(fadeIn += (float)outerRadius / 10);
 
-			isMouseWithinUI = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, outerRadius + mainRadius);
-
 			int width;
 			int height;
 			double angleSteps = 2.0d / itemModels.Count;
@@ -138,7 +131,7 @@ namespace SummonersAssociation.UI
 
 				var bgRect = new Rectangle((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y), mainDiameter, mainDiameter);
 				//Check if mouse is within the circle checked
-				bool isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
+				bool isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, itemModels.Count, done);
 
 				//Actually draw the bg circle
 				Color drawColor = Color.White;
@@ -190,7 +183,7 @@ namespace SummonersAssociation.UI
 			//Extra loop so tooltips are always drawn after the circles
 			for (int done = 0; done < itemModels.Count; done++) {
 				itemModel = itemModels[done];
-				bool isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
+				bool isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, itemModels.Count, done);
 
 				if (isMouseWithinSegment) {
 					//Draw the tooltip
@@ -255,15 +248,11 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// Checks if the mouse cursor is currently inside the segment specified by the arguments. Decided by angle (radius only matters for the inner element).
 		/// </summary>
-		internal static bool CheckMouseWithinWheelSegment(Vector2 mousePos, Vector2 center, int innerRadius, int outerRadius, int pieceCount, int elementNumber) {
+		internal static bool CheckMouseWithinWheelSegment(Vector2 mousePos, Vector2 center, int innerRadius, int pieceCount, int elementNumber) {
 			//Check if mouse cursor is outside the inner circle
 			bool outsideInner = !CheckMouseWithinCircle(mousePos, center, innerRadius);
 
-			//Padding
-			outerRadius += mainRadius;
-			//Check if mouse cursor is inside the outer circle
-			bool insideOuter = CheckMouseWithinCircle(mousePos, center, outerRadius);
-			if (!outsideInner || !insideOuter) return false;
+			if (!outsideInner) return false;
 
 			double step = 360 / pieceCount;
 			double finalOffset = -step / 2;
