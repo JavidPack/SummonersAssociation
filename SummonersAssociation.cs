@@ -94,7 +94,7 @@ namespace SummonersAssociation
 			int inventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Hotbar"));
 			if (inventoryIndex != -1) {
 				if (HistoryBookUI.visible) {
-					//remove the item icon when using the item while held outside the inventory
+					//Remove the item icon when using the item while held outside the inventory (selectedItem == 58)
 					int mouseItemIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Item / NPC Head"));
 					if (mouseItemIndex != -1) layers.RemoveAt(mouseItemIndex);
 					layers.Insert(++inventoryIndex, new LegacyGameInterfaceLayer

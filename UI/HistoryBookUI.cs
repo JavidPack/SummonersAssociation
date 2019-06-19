@@ -194,6 +194,7 @@ namespace SummonersAssociation.UI
 					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
 				}
 
+				//Draw the number (SummonCount)
 				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
 				y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
 
@@ -202,7 +203,6 @@ namespace SummonersAssociation.UI
 
 				if (!itemModel.Active) fontColor = Color.Red;
 
-				//Draw the number (SummonCount)
 				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
 			}
 
@@ -384,14 +384,16 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		 /// Called to close the UI
 		 /// </summary>
-		public static void Stop() {
+		public static void Stop(bool playSound = true) {
 			returned = NONE;
 			fadeIn = 0;
 			aboutToDelete = false;
 			visible = false;
 
-			try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
-			catch { /*No idea why but this threw errors one time*/ }
+			if (playSound) {
+				try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
+				catch { /*No idea why but this threw errors one time*/ }
+			}
 		}
 
 		/// <summary>
@@ -409,10 +411,6 @@ namespace SummonersAssociation.UI
 				}
 			}
 			return sum;
-		}
-
-		public static void UpdateCurrentHistoryBookAfterStop() {
-			//Eh
 		}
 	}
 }

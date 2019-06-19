@@ -62,7 +62,7 @@ namespace SummonersAssociation
 		public void QuickUseItemOfType(int type) {
 			//Prefer to use this when spawning from an ItemModel because InventoryIndex won't be accurate after the UI is closed and the inventory is modified
 			//Unused yet, this is mostly for the history later
-			//Not efficient to call it once per item later, need better method, maybe with a passed array of types, and then a single loop, and a scheduler for used items
+			//Need better method, maybe with a passed array of types, and then a single loop, and a scheduler for used items
 			if (type > 0) {
 				for (int i = 0; i < Main.maxInventory; i++) {
 					Item item = Main.LocalPlayer.inventory[i];
@@ -82,8 +82,8 @@ namespace SummonersAssociation
 				bool triggerStart = mouseRightPressed;
 				bool triggerStop = mouseRightPressed;
 				bool triggerDelete = mouseLeftPressed;
-				bool triggerInc = mouseLeftPressed;
-				bool triggerDec = mouseRightPressed;
+				bool triggerInc = PlayerInput.ScrollWheelDelta > 0;
+				bool triggerDec = PlayerInput.ScrollWheelDelta < 0;
 
 				if (triggerStart && AllowedToOpenHistoryBookUI) {
 					bool success = HistoryBookUI.Start();
@@ -92,7 +92,7 @@ namespace SummonersAssociation
 				else if (HistoryBookUI.visible) {
 					if (HistoryBookUI.heldItemIndex == Main.LocalPlayer.selectedItem) {
 						//Keep it updated
-						//should this substract from currently summoned minions aswell?
+						//Should this substract from currently summoned minions aswell?
 						HistoryBookUI.summonCountTotal = player.maxMinions /*- (int)Math.Round(player.slotsMinions)*/;
 
 						if (HistoryBookUI.middle) {
@@ -123,24 +123,26 @@ namespace SummonersAssociation
 								}
 							}
 						}
-						//if in a segment
+						//If in a segment
 						else if (HistoryBookUI.IsMouseWithinAnySegment) {
 							ItemModel selected = HistoryBookUI.itemModels[HistoryBookUI.returned];
 							if (selected.Active) {
 								if (triggerInc) {
 									selected.SummonCount = (byte)((selected.SummonCount + 1) % (HistoryBookUI.summonCountTotal + 1));
-									try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
-									catch { /*No idea why but this threw errors one time*/ }
 								}
 								else if (triggerDec) {
 									selected.SummonCount = (byte)((selected.SummonCount - 1) % (HistoryBookUI.summonCountTotal + 1));
 									if (selected.SummonCount == byte.MaxValue) selected.SummonCount = (byte)HistoryBookUI.summonCountTotal;
-									try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
+								}
+
+								if (triggerInc || triggerDec) {
+									PlayerInput.ScrollWheelDelta = 0;
+									try { Main.PlaySound(12); }
 									catch { /*No idea why but this threw errors one time*/ }
 								}
 							}
 						}
-						//outside the UI
+						//Outside the UI
 						else {
 							if (triggerStop) {
 								HistoryBookUI.Stop();
@@ -148,8 +150,8 @@ namespace SummonersAssociation
 						}
 					}
 					else {
-						//cancel the UI when you switch items
-						HistoryBookUI.Stop();
+						//Cancel the UI when you switch items
+						HistoryBookUI.Stop(false);
 					}
 				}
 			}
