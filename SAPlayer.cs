@@ -127,15 +127,23 @@ namespace SummonersAssociation
 						else if (HistoryBookUI.IsMouseWithinAnySegment) {
 							ItemModel selected = HistoryBookUI.itemModels[HistoryBookUI.returned];
 							if (selected.Active) {
+								bool triggered = false;
 								if (triggerInc) {
-									selected.SummonCount = (byte)((selected.SummonCount + 1) % (HistoryBookUI.summonCountTotal + 1));
+									//Only allow to increase if total summon count differential is above zero
+									if (HistoryBookUI.summonCountDelta > 0) {
+										triggered = true;
+										selected.SummonCount = (byte)((selected.SummonCount + 1) % (HistoryBookUI.summonCountTotal + 1));
+									}
 								}
 								else if (triggerDec) {
-									selected.SummonCount = (byte)((selected.SummonCount - 1) % (HistoryBookUI.summonCountTotal + 1));
-									if (selected.SummonCount == byte.MaxValue) selected.SummonCount = (byte)HistoryBookUI.summonCountTotal;
+									//Only allow to decrease if current sumon count is above zero
+									if (selected.SummonCount > 0) {
+										triggered = true;
+										selected.SummonCount = (byte)((selected.SummonCount - 1) % (HistoryBookUI.summonCountTotal + 1));
+									}
 								}
 
-								if (triggerInc || triggerDec) {
+								if (triggered) {
 									PlayerInput.ScrollWheelDelta = 0;
 									try { Main.PlaySound(12); }
 									catch { /*No idea why but this threw errors one time*/ }

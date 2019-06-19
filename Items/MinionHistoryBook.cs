@@ -70,7 +70,7 @@ namespace SummonersAssociation.Items
 			if (localHistory.Count > 0) {
 				for (int i = 0; i < localHistory.Count; i++) {
 					ItemModel itemModel = localHistory[i];
-					//only show in the tooltip if theres a number assigned
+					//Only show in the tooltip if theres a number assigned
 					if (itemModel.SummonCount > 0) {
 						tooltips.Add(new TooltipLine(mod, "ItemModel", itemModel.Name + ": " + itemModel.SummonCount) {
 							overrideColor = itemModel.Active ? Color.White : Color.Red

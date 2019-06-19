@@ -54,6 +54,11 @@ namespace SummonersAssociation.UI
 		internal static int summonCountTotal = -1;
 
 		/// <summary>
+		/// Difference of summonCountTotal - SumSummonCounts()
+		/// </summary>
+		internal static int summonCountDelta = 0;
+
+		/// <summary>
 		/// Held item index
 		/// </summary>
 		internal static int heldItemIndex = -1;
@@ -124,8 +129,8 @@ namespace SummonersAssociation.UI
 			double y;
 			ItemModel itemModel;
 
-			//done --> index of currently drawn circle
-			//starts at the top and goes clockwise
+			//done --> Index of currently drawn circle
+			//Starts at the top and goes clockwise
 			for (int done = 0; done < itemModels.Count; done++) {
 				itemModel = itemModels[done];
 				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
@@ -173,10 +178,10 @@ namespace SummonersAssociation.UI
 			Vector2 mousePos = new Vector2(16, 16) + Main.MouseScreen;
 
 			Vector2 drawPos = new Vector2((int)TopLeftCorner.X, (int)TopLeftCorner.Y + height) + new Vector2(-4, - 8);
-			int difference = summonCountTotal - SumSummonCounts();
+			summonCountDelta = summonCountTotal - SumSummonCounts();
 
-			if (difference < 0) fontColor = Color.Red;
-			string tooltip = difference.ToString() + "/" + summonCountTotal.ToString();
+			if (summonCountDelta < 0) fontColor = Color.Red;
+			string tooltip = summonCountDelta.ToString() + "/" + summonCountTotal.ToString();
 
 			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
 
@@ -238,17 +243,6 @@ namespace SummonersAssociation.UI
 					tooltip = "Click right to save history";
 					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
 				}
-
-				////Check if SummonCount of everything is 0
-				//bool atleastOneAboveZero = false;
-				//for (int i = 0; i < itemModels.Count; i++) {
-				//	if (itemModels[i].Active && itemModels[i].SummonCount > 0) {
-				//		atleastOneAboveZero = true;
-				//		break;
-				//	}
-				//}
-				////If all are zero, return nothing
-				//if (!atleastOneAboveZero) returned = NONE;
 			}
 		}
 
@@ -265,7 +259,7 @@ namespace SummonersAssociation.UI
 			//Check if mouse cursor is outside the inner circle
 			bool outsideInner = !CheckMouseWithinCircle(mousePos, center, innerRadius);
 
-			//padding
+			//Padding
 			outerRadius += mainRadius;
 			//Check if mouse cursor is inside the outer circle
 			bool insideOuter = CheckMouseWithinCircle(mousePos, center, outerRadius);
@@ -331,7 +325,7 @@ namespace SummonersAssociation.UI
 			//Get all summon weapons currently in inventory
 			List<ItemModel> inventoryModels = GetSummonWeapons();
 
-			//if (inventoryModels.Count <= 0 && history.Count <= 0) return ;
+			//If (inventoryModels.Count <= 0 && history.Count <= 0) return ;
 
 			//From now on, inventoryModels is going to be the list passed into the UI
 			List<ItemModel> passedModels = inventoryModels;
@@ -348,7 +342,7 @@ namespace SummonersAssociation.UI
 				}
 			}
 
-			//here, history only contains "old" items that don't exist in the inventory
+			//Here, history only contains "old" items that don't exist in the inventory
 			//set their InventoryIndex to a high value (so they are all sorted last)
 			//and add them in
 
