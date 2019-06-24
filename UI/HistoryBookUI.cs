@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using SummonersAssociation.Models;
 using SummonersAssociation.Items;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace SummonersAssociation.UI
 {
@@ -328,6 +327,9 @@ namespace SummonersAssociation.UI
 			List<ItemModel> passedModels = GetSummonWeapons();
 
 			ItemModel itemModel;
+
+			//Remove unloaded items from history
+			history.RemoveAll(model => model.ModName == ItemModel.UNLOADED);
 
 			//Adjust the list passed to the UI in a way that matches the history of items that were
 			//once used but aren't in the inventory anymore,
