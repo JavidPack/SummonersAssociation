@@ -312,18 +312,15 @@ namespace SummonersAssociation.UI
 		/// </summary>
 		public static List<ItemModel> MergeHistoryIntoInventory(List<ItemModel> history) {
 			//Get all summon weapons currently in inventory
-			List<ItemModel> inventoryModels = GetSummonWeapons();
+			List<ItemModel> passedModels = GetSummonWeapons();
 
-			//If (inventoryModels.Count <= 0 && history.Count <= 0) return ;
-
-			//From now on, inventoryModels is going to be the list passed into the UI
-			List<ItemModel> passedModels = inventoryModels;
+			ItemModel itemModel;
 
 			//Adjust the list passed to the UI in a way that matches the history of items that were
 			//once used but aren't in the inventory anymore,
 			//and those just found
 			for (int i = 0; i < passedModels.Count; i++) {
-				ItemModel itemModel = passedModels[i];
+				itemModel = passedModels[i];
 				int index = history.FindIndex(model => model.ItemType == itemModel.ItemType);
 				if (index > -1) {
 					itemModel.OverrideValuesFromHistory(history[index]);
@@ -333,13 +330,14 @@ namespace SummonersAssociation.UI
 
 			//Here, history only contains "old" items that don't exist in the inventory
 			//set their InventoryIndex to a high value (so they are all sorted last)
-			//and add them in
+			//and add them in if there was atleast one summonCount specified
 
 			for (int i = 0; i < history.Count; i++) {
-				history[i].OverrideValuesToInactive(i);
+				itemModel = history[i];
+				itemModel.OverrideValuesToInactive(i);
+				if (itemModel.SummonCount > 0) passedModels.Add(itemModel);
 			}
 
-			passedModels.AddRange(history);
 			//Sorted by InventoryIndex
 			passedModels.Sort();
 
