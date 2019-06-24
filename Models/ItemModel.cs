@@ -12,7 +12,6 @@ namespace SummonersAssociation.Models
 	{
 		public static readonly Func<TagCompound, ItemModel> DESERIALIZER = Load;
 
-		//More fields later, this is all just temporary
 		public int ItemType { get; set; }
 
 		public string Name { get; set; }
@@ -23,11 +22,11 @@ namespace SummonersAssociation.Models
 		/// </summary>
 		public int InventoryIndex { get; set; }
 
-		//Unused yet, will only get drawn
 		public byte SummonCount { get; set; }
 
-		//Unused yet, will only get drawn
-		//Basically if this ItemModel corresponds to an item in the players inventory
+		/// <summary>
+		///If this ItemModel corresponds to an item in the players inventory
+		/// </summary>
 		public bool Active { get; set; }
 
 		/// <summary>

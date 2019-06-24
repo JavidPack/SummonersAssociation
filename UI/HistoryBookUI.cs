@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using SummonersAssociation.Models;
 using SummonersAssociation.Items;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace SummonersAssociation.UI
 {
@@ -74,6 +75,11 @@ namespace SummonersAssociation.UI
 		internal static bool middle = true;
 
 		/// <summary>
+		/// Is cursor currently inside the outer radius of the UI?
+		/// </summary>
+		internal static bool isMouseWithinUI = false;
+
+		/// <summary>
 		/// Was the delete initiated once?
 		/// </summary>
 		internal static bool aboutToDelete = false;
@@ -96,7 +102,7 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// Is cursor within a segment?
 		/// </summary>
-		public static bool IsMouseWithinAnySegment => !middle && returned > NONE;
+		public static bool IsMouseWithinAnySegment => isMouseWithinUI && !middle && returned > NONE;
 
 		/// <summary>
 		/// Spawn position offset to top left corner of that to draw the icons
@@ -131,7 +137,7 @@ namespace SummonersAssociation.UI
 
 				var bgRect = new Rectangle((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y), mainDiameter, mainDiameter);
 				//Check if mouse is within the circle checked
-				bool isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, itemModels.Count, done);
+				bool isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
 
 				//Actually draw the bg circle
 				Color drawColor = Color.White;
@@ -156,6 +162,8 @@ namespace SummonersAssociation.UI
 			var outputRect = new Rectangle((int)TopLeftCorner.X, (int)TopLeftCorner.Y, mainDiameter, mainDiameter);
 
 			middle = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, mainRadius);
+
+			isMouseWithinUI = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, outerRadius + mainRadius);
 
 			spriteBatch.Draw(Main.wireUITexture[middle ? 1 : 0], outputRect, Color.White);
 
@@ -183,7 +191,7 @@ namespace SummonersAssociation.UI
 			//Extra loop so tooltips are always drawn after the circles
 			for (int done = 0; done < itemModels.Count; done++) {
 				itemModel = itemModels[done];
-				bool isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, itemModels.Count, done);
+				bool isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
 
 				if (isMouseWithinSegment) {
 					//Draw the tooltip
@@ -248,11 +256,15 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// Checks if the mouse cursor is currently inside the segment specified by the arguments. Decided by angle (radius only matters for the inner element).
 		/// </summary>
-		internal static bool CheckMouseWithinWheelSegment(Vector2 mousePos, Vector2 center, int innerRadius, int pieceCount, int elementNumber) {
+		internal static bool CheckMouseWithinWheelSegment(Vector2 mousePos, Vector2 center, int innerRadius, int outerRadius, int pieceCount, int elementNumber) {
 			//Check if mouse cursor is outside the inner circle
 			bool outsideInner = !CheckMouseWithinCircle(mousePos, center, innerRadius);
 
-			if (!outsideInner) return false;
+			//Padding
+			outerRadius += mainRadius;
+			//Check if mouse cursor is inside the outer circle
+			bool insideOuter = CheckMouseWithinCircle(mousePos, center, outerRadius);
+			if (!outsideInner || !insideOuter) return false;
 
 			double step = 360 / pieceCount;
 			double finalOffset = -step / 2;
@@ -294,7 +306,8 @@ namespace SummonersAssociation.UI
 			var list = new List<ItemModel>();
 			for (int i = 0; i < Main.maxInventory; i++) {
 				Item item = Main.LocalPlayer.inventory[i];
-				if (item.summon && list.FindIndex(itemModel => itemModel.ItemType == item.type) < 0) {
+				if (item.type != ItemID.Count && item.summon && !item.sentry && list.FindIndex(itemModel => itemModel.ItemType == item.type) < 0) {
+					//exclude sentry weapons, maybe separate item later
 					//ItemModels added here have SummonCount set to 0, will be checked later in Start() and adjusted
 					list.Add(new ItemModel(item, i));
 				}

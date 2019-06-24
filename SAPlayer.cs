@@ -82,8 +82,8 @@ namespace SummonersAssociation
 				bool triggerStart = mouseRightPressed;
 				bool triggerStop = mouseRightPressed;
 				bool triggerDelete = mouseLeftPressed;
-				bool triggerInc = PlayerInput.ScrollWheelDelta > 0;
-				bool triggerDec = PlayerInput.ScrollWheelDelta < 0;
+				bool triggerInc = PlayerInput.ScrollWheelDelta > 0 || mouseLeftPressed;
+				bool triggerDec = PlayerInput.ScrollWheelDelta < 0 || mouseRightPressed;
 
 				if (triggerStart && AllowedToOpenHistoryBookUI) {
 					bool success = HistoryBookUI.Start();
@@ -153,7 +153,8 @@ namespace SummonersAssociation
 						}
 						//Outside the UI
 						else {
-							if (triggerStop) {
+							/*if (triggerStop) {*/
+							if (mouseRightPressed || mouseLeftPressed) {
 								HistoryBookUI.Stop();
 							}
 						}
