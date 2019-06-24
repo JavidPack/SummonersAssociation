@@ -52,6 +52,9 @@ namespace SummonersAssociation.Items
 		public override void Load(TagCompound tag) {
 			var list = tag.GetList<ItemModel>(nameof(history));
 			history = new List<ItemModel>(list);
+
+			//Remove unloaded items from history
+			history.RemoveAll(model => model.ModName == ItemModel.UNLOADED);
 		}
 
 		public override void NetRecieve(BinaryReader reader) {

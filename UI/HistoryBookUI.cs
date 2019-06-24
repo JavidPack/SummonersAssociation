@@ -328,9 +328,6 @@ namespace SummonersAssociation.UI
 
 			ItemModel itemModel;
 
-			//Remove unloaded items from history
-			history.RemoveAll(model => model.ModName == ItemModel.UNLOADED);
-
 			//Adjust the list passed to the UI in a way that matches the history of items that were
 			//once used but aren't in the inventory anymore,
 			//and those just found
