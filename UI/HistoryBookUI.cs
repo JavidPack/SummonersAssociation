@@ -64,9 +64,24 @@ namespace SummonersAssociation.UI
 		internal static int heldItemIndex = -1;
 
 		/// <summary>
+		/// Held item type
+		/// </summary>
+		internal static int heldItemType = -1;
+
+		/// <summary>
 		/// Which thing is currently highlighted?
 		/// </summary>
 		internal static int returned = NONE;
+
+		/// <summary>
+		/// Which thing is currently selected? (Simple only)
+		/// </summary>
+		internal static int selected = NONE;
+
+		/// <summary>
+		/// Is this the simple UI without numbers and extra tooltips?
+		/// </summary>
+		internal static bool simple = false;
 
 		/// <summary>
 		/// Is cursor currently in the middle or not?
@@ -101,7 +116,7 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// Is cursor within a segment?
 		/// </summary>
-		public static bool IsMouseWithinAnySegment => isMouseWithinUI && !middle && returned > NONE;
+		internal static bool IsMouseWithinAnySegment => isMouseWithinUI && !middle && returned > NONE;
 
 		/// <summary>
 		/// Spawn position offset to top left corner of that to draw the icons
@@ -140,7 +155,7 @@ namespace SummonersAssociation.UI
 
 				//Actually draw the bg circle
 				Color drawColor = Color.White;
-				if (!itemModel.Active) drawColor = Color.Gray;
+				if (!itemModel.Active || selected == done) drawColor = Color.Gray;
 				spriteBatch.Draw(Main.wireUITexture[isMouseWithinSegment ? 1 : 0], bgRect, drawColor);
 
 				//Draw sprites over the icons
@@ -157,17 +172,19 @@ namespace SummonersAssociation.UI
 				}
 			}
 
-			//Draw held item bg circle
-			var outputRect = new Rectangle((int)TopLeftCorner.X, (int)TopLeftCorner.Y, mainDiameter, mainDiameter);
-
 			middle = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, mainRadius);
 
 			isMouseWithinUI = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, outerRadius + mainRadius);
 
+			summonCountDelta = summonCountTotal - SumSummonCounts();
+
+			//Draw held item bg circle
+			var outputRect = new Rectangle((int)TopLeftCorner.X, (int)TopLeftCorner.Y, mainDiameter, mainDiameter);
+
 			spriteBatch.Draw(Main.wireUITexture[middle ? 1 : 0], outputRect, Color.White);
 
 			//Draw held item inside circle
-			Texture2D historyBookTexture = Main.itemTexture[SummonersAssociation.Instance.ItemType<MinionHistoryBook>()];
+			Texture2D historyBookTexture = Main.itemTexture[heldItemType];
 			width = historyBookTexture.Width;
 			height = historyBookTexture.Height;
 			var outputWeaponRect = new Rectangle((int)spawnPosition.X - (width / 2), (int)spawnPosition.Y - (height / 2), width, height);
@@ -178,12 +195,13 @@ namespace SummonersAssociation.UI
 			Vector2 mousePos = new Vector2(16, 16) + Main.MouseScreen;
 
 			Vector2 drawPos = new Vector2((int)TopLeftCorner.X, (int)TopLeftCorner.Y + height) + new Vector2(-4, - 8);
-			summonCountDelta = summonCountTotal - SumSummonCounts();
 
 			if (summonCountDelta < 0) fontColor = Color.Red;
 			string tooltip = summonCountDelta.ToString() + "/" + summonCountTotal.ToString();
 
-			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+			if (!simple) {
+				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+			}
 
 			fontColor = Color.White;
 
@@ -208,7 +226,9 @@ namespace SummonersAssociation.UI
 
 				if (!itemModel.Active) fontColor = Color.Red;
 
-				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+				if (!simple) {
+					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+				}
 			}
 
 			//If hovering over the middle
@@ -224,24 +244,28 @@ namespace SummonersAssociation.UI
 					var crossRect = new Rectangle((int)spawnPosition.X - (width / 2), (int)spawnPosition.Y - (height / 2), width, height);
 					spriteBatch.Draw(redCrossTexture, crossRect, Color.White);
 
-					//Draw the tooltip
-					tooltip = "Click left to clear history";
-					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+					if (!simple) {
+						//Draw the tooltip
+						tooltip = "Click left to clear history";
+						ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
 
-					drawPos.Y += 22;
-					tooltip = "Click right to cancel";
-					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+						drawPos.Y += 22;
+						tooltip = "Click right to cancel";
+						ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+					}
 				}
 				else {
 					returned = UPDATE;
 
-					//Draw the tooltip
-					drawPos = mousePos;
-					tooltip = "Click left twice to clear history";
-					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
-					drawPos.Y += 22;
-					tooltip = "Click right to save history";
-					ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+					if (!simple) {
+						//Draw the tooltip
+						drawPos = mousePos;
+						tooltip = "Click left twice to clear history";
+						ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+						drawPos.Y += 22;
+						tooltip = "Click right to save history";
+						ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, tooltip, drawPos, fontColor, 0, Vector2.Zero, Vector2.One);
+					}
 				}
 			}
 		}
@@ -314,7 +338,7 @@ namespace SummonersAssociation.UI
 			return list;
 		}
 
-		public static List<ItemModel> MergeHistoryIntoInventory(MinionHistoryBook book) {
+		public static List<ItemModel> MergeHistoryIntoInventory(MinionHistoryBookSimple book) {
 			List<ItemModel> historyCopy = book.history.ConvertAll(model => new ItemModel(model));
 			return MergeHistoryIntoInventory(historyCopy);
 		}
@@ -342,12 +366,13 @@ namespace SummonersAssociation.UI
 
 			//Here, history only contains "old" items that don't exist in the inventory
 			//set their InventoryIndex to a high value (so they are all sorted last)
-			//and add them in if there was atleast one summonCount specified
+			//and add them in if there was atleast one summonCount specified,
+			//or this is the simple book
 
 			for (int i = 0; i < history.Count; i++) {
 				itemModel = history[i];
 				itemModel.OverrideValuesToInactive(i);
-				if (itemModel.SummonCount > 0) passedModels.Add(itemModel);
+				if (itemModel.SummonCount > 0 || simple) passedModels.Add(itemModel);
 			}
 
 			//Sorted by InventoryIndex
@@ -360,13 +385,24 @@ namespace SummonersAssociation.UI
 		/// Called when the UI is about to appear
 		/// </summary>
 		public static bool Start() {
-			List<ItemModel> historyCopy = ((MinionHistoryBook)Main.LocalPlayer.HeldItem.modItem).history.ConvertAll(model => new ItemModel(model));
-			List<ItemModel> passedModels = MergeHistoryIntoInventory(historyCopy);
-
 			visible = true;
 			spawnPosition = SummonersAssociation.MousePositionUI;
 			heldItemIndex = Main.LocalPlayer.selectedItem;
+			heldItemType = Main.LocalPlayer.HeldItem.type;
+
+			simple = Array.IndexOf(SummonersAssociation.BookTypes, heldItemType) == 0;
+
+			List<ItemModel> history = ((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.modItem).history;
+			List<ItemModel> historyCopy = history.ConvertAll(model => new ItemModel(model));
+			List<ItemModel> passedModels = MergeHistoryIntoInventory(historyCopy);
+
 			itemModels = passedModels;
+
+			if (simple && history.Count > 0) {
+				//Set the selected index to what the history has
+				//by definition, if not found it is -1 == NONE
+				selected = itemModels.FindIndex(model => model.ItemType == history[0].ItemType);
+			}
 
 			try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
 			catch { /*No idea why but this threw errors one time*/ }
@@ -379,6 +415,7 @@ namespace SummonersAssociation.UI
 		 /// </summary>
 		public static void Stop(bool playSound = true) {
 			returned = NONE;
+			selected = NONE;
 			fadeIn = 0;
 			aboutToDelete = false;
 			visible = false;
@@ -392,8 +429,17 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// Sets the history of the passed History Book based on the one in the UI
 		/// </summary>
-		public static void UpdateHistoryBook(MinionHistoryBook book)
-			=> book.history = itemModels.ConvertAll((itemModel) => new ItemModel(itemModel));
+		public static void UpdateHistoryBook(MinionHistoryBookSimple book) {
+			if (simple && selected != NONE) {
+				//Only add the first element as the selected one
+				book.history = new List<ItemModel> {
+					new ItemModel(itemModels[selected])
+				};
+			}
+			else {
+				book.history = itemModels.ConvertAll((itemModel) => new ItemModel(itemModel));
+			}
+		}
 
 		public static int SumSummonCounts() {
 			int sum = 0;

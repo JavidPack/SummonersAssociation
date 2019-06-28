@@ -13,8 +13,14 @@ namespace SummonersAssociation.Models
 	{
 		public static readonly Func<TagCompound, ItemModel> DESERIALIZER = Load;
 
+		/// <summary>
+		/// Item type of the item
+		/// </summary>
 		public int ItemType { get; set; }
 
+		/// <summary>
+		/// Display name of the item
+		/// </summary>
 		public string Name { get; set; }
 
 		/// <summary>
@@ -23,6 +29,9 @@ namespace SummonersAssociation.Models
 		/// </summary>
 		public int InventoryIndex { get; set; }
 
+		/// <summary>
+		/// Amount of times the item is cast
+		/// </summary>
 		public byte SummonCount { get; set; }
 
 		/// <summary>
@@ -31,7 +40,7 @@ namespace SummonersAssociation.Models
 		public bool Active { get; set; }
 
 		/// <summary>
-		/// Default constructor. Is it needed?
+		/// Default constructor. Used in Load
 		/// </summary>
 		public ItemModel() {
 			ItemType = 0;

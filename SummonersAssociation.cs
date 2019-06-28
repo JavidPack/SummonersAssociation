@@ -42,9 +42,14 @@ namespace SummonersAssociation
 		public static SummonersAssociation Instance;
 
 		/// <summary>
-		/// Accurate in-UI Mouse position maybe used to spawn UI outside UpdateUI()
+		/// Accurate in-UI Mouse position used to spawn UI outside UpdateUI()
 		/// </summary>
 		public static Vector2 MousePositionUI;
+
+		/// <summary>
+		/// Array of the different minion book types
+		/// </summary>
+		public static int[] BookTypes;
 
 		public SummonersAssociation()
 		{ }
@@ -61,10 +66,20 @@ namespace SummonersAssociation
 			}
 		}
 
+		public override void PostSetupContent()
+			//don't change order here (simple is first, normal is second, automatic is third)
+			=> BookTypes = new int[] {
+				ItemType<MinionHistoryBookSimple>(),
+				ItemType<MinionHistoryBook>(),
+				ItemType<MinionHistoryBookAuto>()
+			};
+
 		public override void Unload() {
 			HistoryBookUIInterface = null;
 			HistoryBookUI = null;
 			HistoryBookUI.redCrossTexture = null;
+
+			BookTypes = null;
 
 			Instance = null;
 		}
