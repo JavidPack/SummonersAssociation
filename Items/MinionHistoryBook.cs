@@ -34,7 +34,7 @@ namespace SummonersAssociation.Items
 			item.useAnimation = 16;
 			item.useTime = 16;
 			item.useStyle = 4;
-			item.UseSound = SoundID.Item44;
+			item.UseSound = SoundID.Item46;
 			item.value = Item.sellPrice(silver: 10);
 		}
 
@@ -91,7 +91,24 @@ namespace SummonersAssociation.Items
 			//Here would be code to summon the history
 			//clueless how to make it return false and still only run this code once without relying on animation duration
 			//if (player.itemTime == 0 && player.itemAnimation == item.useAnimation - 1) Main.NewText(currentMinionWeaponType);
-			return false;
+
+			if (player.whoAmI == Main.myPlayer) {
+				for (int i = 0; i < 1000; i++) {
+					Projectile p = Main.projectile[i];
+					if (p.active && p.owner == Main.myPlayer && p.minion) {
+						p.Kill();
+					}
+				}
+
+				var SAPlayer = player.GetModPlayer<SAPlayer>();
+				SAPlayer.pendingCasts.Clear();
+				foreach (var item in history) {
+					for (int i = 0; i < item.SummonCount; i++) {
+						SAPlayer.pendingCasts.Enqueue(new System.Tuple<int, int>(item.ItemType, 1));
+					}
+				}
+			}
+			return true;
 		}
 	}
 }

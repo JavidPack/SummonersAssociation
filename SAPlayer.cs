@@ -5,6 +5,8 @@ using SummonersAssociation.Models;
 using SummonersAssociation.Items;
 using SummonersAssociation.UI;
 using Terraria.ID;
+using System.Collections.Generic;
+using System;
 
 namespace SummonersAssociation
 {
@@ -12,6 +14,7 @@ namespace SummonersAssociation
 	{
 		internal int originalSelectedItem;
 		internal bool autoRevertSelectedItem = false;
+		internal Queue<Tuple<int, int>> pendingCasts = new Queue<Tuple<int, int>>();
 
 		/// <summary>
 		/// Checks if player can open HistoryBookUI
@@ -188,6 +191,13 @@ namespace SummonersAssociation
 				if (player.itemTime == 0 && player.itemAnimation == 0) {
 					player.selectedItem = originalSelectedItem;
 					autoRevertSelectedItem = false;
+				}
+			}
+
+			if (player.itemTime == 0 && player.itemAnimation == 0) {
+				if (pendingCasts.Count > 0) {
+					var cast = pendingCasts.Dequeue();
+					QuickUseItemOfType(cast.Item1);
 				}
 			}
 
