@@ -103,7 +103,7 @@ namespace SummonersAssociation
 			RecipeGroup.RegisterGroup("SummonersAssociation:MagicMirrors", group);
 		}
 
-		public override void UpdateUI(GameTime gameTime) => UpdateHistoryBookUI();
+		public override void UpdateUI(GameTime gameTime) => UpdateHistoryBookUI(gameTime);
 
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
 			int inventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Hotbar"));
@@ -148,10 +148,11 @@ namespace SummonersAssociation
 		/// <summary>
 		/// Called in UpdateUI
 		/// </summary>
-		private void UpdateHistoryBookUI() {
+		private void UpdateHistoryBookUI(GameTime gameTime) {
 
 			//This is updated to the "in UI" Mouse Position, because the UI itself is spawned in SAPlayer.PreUpdate()
 			MousePositionUI = Main.MouseScreen;
+			if (HistoryBookUI.visible) HistoryBookUI.Update(gameTime);
 		}
 
 		private void UpdateBuffText(Player player)

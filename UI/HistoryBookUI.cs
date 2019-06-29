@@ -123,13 +123,13 @@ namespace SummonersAssociation.UI
 		/// </summary>
 		private static Vector2 TopLeftCorner => spawnPosition - new Vector2(mainRadius, mainRadius);
 
-		//Update, unused
-		public override void Update(GameTime gameTime) => base.Update(gameTime);
+		public override void Update(GameTime gameTime) {
+			base.Update(gameTime);
+			Main.LocalPlayer.mouseInterface = true;
+		}
 
-		//Draw
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
 			base.DrawSelf(spriteBatch);
-			Main.LocalPlayer.mouseInterface = true;
 
 			int outerRadius = 48;
 			if (itemModels.Count > 5) outerRadius += 6 * (itemModels.Count - 5); //increase by 6 after having more than 5 options, starts getting clumped at about 30(?) circles
