@@ -59,7 +59,9 @@ namespace SummonersAssociation.Items
 
 		public override void NetRecieve(BinaryReader reader) {
 			int length = reader.ReadByte();
+			history = new List<ItemModel>();
 			for (int i = 0; i < length; i++) {
+				history.Add(new ItemModel());
 				history[i].NetRecieve(reader);
 			}
 		}

@@ -14,7 +14,7 @@ namespace SummonersAssociation.Items
 			DisplayName.SetDefault("Minion History Book");
 			//TODO
 			Tooltip.SetDefault("TODO"
-				+ "\nLeft click summon minions based on history"
+				+ "\nLeft click to summon minions based on history"
 				+ "\nRight click to open an UI"
 				+ "\nLeft/Right click on the item icons to adjust the summon count");
 		}
