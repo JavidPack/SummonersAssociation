@@ -1,4 +1,7 @@
-﻿namespace SummonersAssociation.Items
+﻿using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace SummonersAssociation.Items
 {
 	public class MinionHistoryBookAuto : MinionHistoryBook
 	{
@@ -19,6 +22,10 @@
 
 		public override void AddRecipes() {
 			//TODO
+			var recipe = new ModRecipe(mod);
+			recipe.AddIngredient(ItemID.DirtBlock, 1);
+			recipe.SetResult(this);
+			recipe.AddRecipe();
 		}
 	}
 }

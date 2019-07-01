@@ -105,7 +105,12 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// Fade in animation when opening the UI
 		/// </summary>
-		internal static float fadeIn = 0;
+		internal static float fadeIn = 0f;
+
+		/// <summary>
+		/// Fade in for the SummonCountTotal when trying to increase a SummonCount beyond limit
+		/// </summary>
+		internal static float colorFadeIn = 0f;
 
 		/// <summary>
 		/// Red cross for when to reset
@@ -139,8 +144,9 @@ namespace SummonersAssociation.UI
 			//Increase by 6 after having more than 5 options, starts getting clumped at about 30(?) circles
 			if (itemModels.Count > 5) outerRadius += 6 * (itemModels.Count - 5);
 			if (fadeIn < outerRadius) outerRadius = (int)(fadeIn += (float)outerRadius / 10);
-			//TODO: Fix "snapping back" when close to outerRadius at high itemModels.Count
+			//TODO Fix "snapping back" when close to outerRadius at high itemModels.Count
 
+			if (colorFadeIn > 0f) colorFadeIn -= 0.036f;
 
 			int width;
 			int height;
@@ -168,7 +174,8 @@ namespace SummonersAssociation.UI
 
 				#region Draw weapon background circle
 				drawColor = Color.White;
-				if (!itemModel.Active || selected == done) drawColor = Color.Gray;
+				if (!itemModel.Active) drawColor = Color.Gray;
+				if (selected == done) drawColor = Color.LimeGreen;
 				outputRect = new Rectangle((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y), mainDiameter, mainDiameter);
 				spriteBatch.Draw(Main.wireUITexture[isMouseWithinSegment ? 1 : 0], outputRect, drawColor);
 				#endregion
@@ -177,6 +184,7 @@ namespace SummonersAssociation.UI
 				texture = Main.itemTexture[itemModel.ItemType];
 				width = texture.Width;
 				height = texture.Height;
+				if (selected == done) drawColor = Color.White;
 				outputRect = new Rectangle((int)(spawnPosition.X + x) - (width / 2), (int)(spawnPosition.Y + y) - (height / 2), width, height);
 				spriteBatch.Draw(texture, outputRect, texture.Bounds, drawColor);
 				#endregion
@@ -194,6 +202,8 @@ namespace SummonersAssociation.UI
 
 			summonCountDelta = summonCountTotal - SumSummonCounts();
 
+			mousePos = new Vector2(16) + Main.MouseScreen;
+
 			#region Draw book background circle
 			outputRect = new Rectangle((int)TopLeftCorner.X, (int)TopLeftCorner.Y, mainDiameter, mainDiameter);
 			spriteBatch.Draw(Main.wireUITexture[middle ? 1 : 0], outputRect, Color.White);
@@ -208,9 +218,13 @@ namespace SummonersAssociation.UI
 			#endregion
 
 			#region Draw summonCountTotal
-			fontColor = Color.White;
-			mousePos = new Vector2(16, 16) + Main.MouseScreen;
-
+			if (colorFadeIn > 0f) {
+				//Do a fade out on the number if clicked when it can't be incremented
+				fontColor = new Color(Color.White.ToVector4() * (1f - colorFadeIn) + Color.Red.ToVector4() * colorFadeIn);
+			}
+			else {
+				fontColor = Color.White;
+			}
 			drawPos = new Vector2((int)TopLeftCorner.X, (int)TopLeftCorner.Y + height) + new Vector2(-4, mainRadius - 20);
 
 			if (summonCountDelta < 0) fontColor = Color.Red;
@@ -234,6 +248,12 @@ namespace SummonersAssociation.UI
 					drawPos = mousePos;
 					tooltip = itemModel.Name;
 					DrawText(spriteBatch, tooltip, drawPos, fontColor);
+
+					if (simple && selected == done) {
+						tooltip = "(Selected)";
+						drawPos.Y += 22;
+						DrawText(spriteBatch, tooltip, drawPos, fontColor);
+					}
 				}
 				#endregion
 
@@ -241,6 +261,15 @@ namespace SummonersAssociation.UI
 				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
 				y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
 
+				isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
+
+				if (isMouseWithinSegment && colorFadeIn > 0f) {
+					//Do a fade out on the number of this segment if clicked when it can't be incremented
+					fontColor = new Color(Color.White.ToVector4() * (1f - colorFadeIn) + Color.Red.ToVector4() * colorFadeIn);
+				}
+				else {
+					fontColor = Color.White;
+				}
 				drawPos = new Vector2((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y)) + new Vector2(-4, mainRadius + 4);
 				tooltip = itemModel.SummonCount.ToString();
 
@@ -476,7 +505,8 @@ namespace SummonersAssociation.UI
 		public static void Stop(bool playSound = true) {
 			returned = NONE;
 			selected = NONE;
-			fadeIn = 0;
+			fadeIn = 0f;
+			colorFadeIn = 0f;
 			aboutToDelete = false;
 			visible = false;
 

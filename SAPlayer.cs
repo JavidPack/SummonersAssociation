@@ -109,6 +109,9 @@ namespace SummonersAssociation
 											triggered = true;
 											highlighted.SummonCount = (byte)((highlighted.SummonCount + 1) % (HistoryBookUI.summonCountTotal + 1));
 										}
+										else {
+											HistoryBookUI.colorFadeIn = 1f;
+										}
 									}
 									else if (triggerDec) {
 										PlayerInput.ScrollWheelDelta = 0;

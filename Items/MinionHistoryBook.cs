@@ -4,6 +4,7 @@ using SummonersAssociation.UI;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace SummonersAssociation.Items
@@ -26,6 +27,10 @@ namespace SummonersAssociation.Items
 
 		public override void AddRecipes() {
 			//TODO
+			var recipe = new ModRecipe(mod);
+			recipe.AddIngredient(ItemID.DirtBlock, 1);
+			recipe.SetResult(this);
+			recipe.AddRecipe();
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {

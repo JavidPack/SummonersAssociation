@@ -75,6 +75,10 @@ namespace SummonersAssociation.Items
 
 		public override void AddRecipes() {
 			//TODO
+			var recipe = new ModRecipe(mod);
+			recipe.AddIngredient(ItemID.DirtBlock, 1);
+			recipe.SetResult(this);
+			recipe.AddRecipe();
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
