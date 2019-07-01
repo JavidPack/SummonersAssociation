@@ -34,12 +34,14 @@ namespace SummonersAssociation.Items
 			if (localHistory.Count > 0) {
 				for (int i = 0; i < localHistory.Count; i++) {
 					ItemModel itemModel = localHistory[i];
-					//Only show in the tooltip if theres a number assigned
+
+					//Only show in the tooltip if there is a number assigned
 					if (itemModel.SummonCount > 0) {
 						if (!history) {
 							history = true;
 							tooltips.Add(new TooltipLine(mod, "History", "History:"));
 						}
+
 						tooltips.Add(new TooltipLine(mod, "ItemModel", itemModel.Name + ": " + itemModel.SummonCount) {
 							overrideColor = itemModel.Active ? Color.White : Color.Red
 						});

@@ -28,36 +28,11 @@ namespace SummonersAssociation
 
 		private bool mouseRightReleased; //Unused
 
+		/// <summary>
+		/// This is so when the UI is open, it closes itself when player presses ESC (open inventory).
+		/// Feels more intuitive if the player can't figure out how to close it otherwise
+		/// </summary>
 		private bool justOpenedInventory;
-
-		/// <summary>
-		/// Uses the item in the specified index from the players inventory
-		/// </summary>
-		public void QuickUseItemInSlot(int index) {
-			if (index > -1 && index < Main.maxInventory && player.inventory[index].type != 0) {
-				originalSelectedItem = player.selectedItem;
-				autoRevertSelectedItem = true;
-				player.selectedItem = index;
-				player.controlUseItem = true;
-				player.ItemCheck(Main.myPlayer);
-			}
-		}
-
-		/// <summary>
-		/// Uses the first found item of the specified type from the players inventory
-		/// </summary>
-		public void QuickUseItemOfType(int type) {
-			//Prefer to use this when spawning from an ItemModel because InventoryIndex won't be accurate after the UI is closed and the inventory is modified
-			if (type > 0) {
-				for (int i = 0; i < Main.maxInventory; i++) {
-					Item item = player.inventory[i];
-					if (item.type == type) {
-						QuickUseItemInSlot(i);
-						return;
-					}
-				}
-			}
-		}
 
 		private void UseAutomaticHistoryBook() => QuickUseItemOfType(SummonersAssociation.BookTypes[2]);
 
@@ -77,7 +52,7 @@ namespace SummonersAssociation
 
 				if (triggerStart && holdingBook && AllowedToOpenHistoryBookUI) {
 					bool success = HistoryBookUI.Start();
-					if (!success) Main.NewText("Couldn't find any summon weapons in inventory");
+					if (!success) CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.DamagedFriendly, "No summon weapons found");
 				}
 				else if (HistoryBookUI.visible) {
 					if (HistoryBookUI.heldItemIndex == Main.LocalPlayer.selectedItem) {
@@ -113,7 +88,7 @@ namespace SummonersAssociation
 									}
 								}
 							}
-							//If simple, just stop, since middle has no function there
+							//If simple, just stop, since middle has no function there (saving is done when clicked on a weapon instead)
 							else {
 								if (mouseRightPressed || mouseLeftPressed) {
 									HistoryBookUI.Stop(false);
@@ -181,12 +156,41 @@ namespace SummonersAssociation
 			}
 		}
 
+		/// <summary>
+		/// Uses the item in the specified index from the players inventory
+		/// </summary>
+		public void QuickUseItemInSlot(int index) {
+			if (index > -1 && index < Main.maxInventory && player.inventory[index].type != 0) {
+				originalSelectedItem = player.selectedItem;
+				autoRevertSelectedItem = true;
+				player.selectedItem = index;
+				player.controlUseItem = true;
+				player.ItemCheck(Main.myPlayer);
+			}
+		}
+
+		/// <summary>
+		/// Uses the first found item of the specified type from the players inventory
+		/// </summary>
+		public void QuickUseItemOfType(int type) {
+			//Prefer to use this when spawning from an ItemModel because InventoryIndex won't be accurate after the UI is closed and the inventory is modified
+			if (type > 0) {
+				for (int i = 0; i < Main.maxInventory; i++) {
+					Item item = player.inventory[i];
+					if (item.type == type) {
+						QuickUseItemInSlot(i);
+						return;
+					}
+				}
+			}
+		}
+
 		public override void ProcessTriggers(TriggersSet triggersSet) {
 			//In here things like Main.MouseScreen are not correct (related to UI)
 			//and in UpdateUI Main.mouseRight etc aren't correct
 			//but you need both to properly open/close the UI
-			//these two are used in PreUpdate(), together with AllowedToOpenHistoryBookUI
-			//since that also doesn't work in ProcessTriggers
+			//these two are used in PreUpdate, together with AllowedToOpenHistoryBookUI
+			//since that also doesn't work in ProcessTriggers (set in PostUpdate)
 
 			mouseLeftPressed = Main.mouseLeft && Main.mouseLeftRelease;
 
@@ -218,7 +222,7 @@ namespace SummonersAssociation
 		}
 
 		public override void PostUpdate() {
-			//This has to be set in PostUpdate cause crucial fields in here are not set correctly
+			//This has to be set in PostUpdate cause crucial fields in PreUpdate are not set correctly
 			//(representative of the fields)
 			AllowedToOpenHistoryBookUI =
 				!HistoryBookUI.visible &&

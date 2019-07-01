@@ -47,7 +47,7 @@ namespace SummonersAssociation
 		public static Vector2 MousePositionUI;
 
 		/// <summary>
-		/// Array of the different minion book types
+		/// Array of the different minion book types. Simple is 0, Normal is 1, Auto is 2
 		/// </summary>
 		public static int[] BookTypes;
 
