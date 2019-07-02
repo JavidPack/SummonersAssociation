@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -25,7 +26,7 @@ namespace SummonersAssociation.Models
 
 		/// <summary>
 		/// This is just for sorting on the UI and in the tooltip.
-		/// dont use it for QuickUseItemInSlot(), do an ItemType check instead!
+		/// Don't use it for QuickUseItemInSlot, do an ItemType check instead!
 		/// </summary>
 		public int InventoryIndex { get; set; }
 
@@ -38,6 +39,11 @@ namespace SummonersAssociation.Models
 		///If this ItemModel corresponds to an item in the players inventory
 		/// </summary>
 		public bool Active { get; set; }
+
+		/// <summary>
+		///How many free minion slots this weapon needs/replaces
+		/// </summary>
+		public byte SlotsNeeded => ItemType > -1 && ItemType < ItemLoader.ItemCount? (byte)ItemID.Sets.StaffMinionSlotsRequired[ItemType] : (byte)1;
 
 		/// <summary>
 		/// Default constructor. Used in Load

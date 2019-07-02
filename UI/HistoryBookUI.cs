@@ -169,6 +169,7 @@ namespace SummonersAssociation.UI
 				itemModel = itemModels[done];
 				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
 				y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
+
 				//Check if mouse is within the circle checked
 				isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
 
@@ -200,7 +201,7 @@ namespace SummonersAssociation.UI
 
 			isMouseWithinUI = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, outerRadius + mainRadius);
 
-			summonCountDelta = summonCountTotal - SumSummonCounts();
+			summonCountDelta = GetSummonCountsDelta();
 
 			mousePos = new Vector2(16) + Main.MouseScreen;
 
@@ -249,9 +250,15 @@ namespace SummonersAssociation.UI
 					tooltip = itemModel.Name;
 					DrawText(spriteBatch, tooltip, drawPos, fontColor);
 
-					if (simple && selected == done) {
-						tooltip = "(Selected)";
+					if (itemModel.SlotsNeeded > 1) {
 						drawPos.Y += 22;
+						tooltip = "Slots required: " + itemModel.SlotsNeeded;
+						DrawText(spriteBatch, tooltip, drawPos, fontColor);
+					}
+
+					if (simple && selected == done) {
+						drawPos.Y += 22;
+						tooltip = "(Selected)";
 						DrawText(spriteBatch, tooltip, drawPos, fontColor);
 					}
 				}
@@ -459,12 +466,15 @@ namespace SummonersAssociation.UI
 			}
 		}
 
-		public static int SumSummonCounts() {
-			int sum = 0;
+		/// <summary>
+		/// summonCountTotal minus all the summon counts weighted with the slots needed
+		/// </summary>
+		public static int GetSummonCountsDelta() {
+			int sum = summonCountTotal;
 			for (int i = 0; i < itemModels.Count; i++) {
 				ItemModel itemModel = itemModels[i];
 				if (itemModel.Active) {
-					sum += itemModel.SummonCount;
+					sum -= itemModel.SummonCount * itemModel.SlotsNeeded;
 				}
 			}
 			return sum;

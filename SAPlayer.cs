@@ -104,21 +104,24 @@ namespace SummonersAssociation
 
 									if (triggerInc) {
 										PlayerInput.ScrollWheelDelta = 0;
-										//Only allow to increase if total summon count differential is above zero
-										if (HistoryBookUI.summonCountDelta > 0) {
+										//Only allow to increase if total summon count differential is above or
+										//equal to the number of slots needed to summon
+										if (HistoryBookUI.summonCountDelta >= highlighted.SlotsNeeded) {
 											triggered = true;
-											highlighted.SummonCount = (byte)((highlighted.SummonCount + 1) % (HistoryBookUI.summonCountTotal + 1));
+
+											highlighted.SummonCount += 1;
 										}
 										else {
+											//Indicate that incrementing isn't possible
 											HistoryBookUI.colorFadeIn = 1f;
 										}
 									}
 									else if (triggerDec) {
 										PlayerInput.ScrollWheelDelta = 0;
-										//Only allow to decrease if current sumon count is above zero
+										//Only allow to decrease if current summon count is above zero
 										if (highlighted.SummonCount > 0) {
 											triggered = true;
-											highlighted.SummonCount = (byte)((highlighted.SummonCount - 1) % (HistoryBookUI.summonCountTotal + 1));
+											highlighted.SummonCount -= 1;
 										}
 									}
 
