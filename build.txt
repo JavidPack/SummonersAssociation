@@ -1,4 +1,4 @@
-author = jopojelly
+author = jopojelly, direwolf420
 version = 0.3
 displayName = Summoners Association
 homepage = http://forums.terraria.org/index.php?threads/summoners-association.30041/
@@ -7,4 +7,3 @@ includePDB = true
 hideCode = false
 hideResources = false
 includeSource = false
-languageVersion = 6
