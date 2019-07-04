@@ -24,7 +24,7 @@ namespace SummonersAssociation.Items
 			//TODO
 			Tooltip.SetDefault("TODO"
 				+ "\nRight click to open an UI"
-				+ "\nLeft click on the item icon to set item"
+				+ "\nLeft/Right click on the item icon to select it"
 				+ "\nLeft click to summon the selected item");
 		}
 
@@ -84,10 +84,10 @@ namespace SummonersAssociation.Items
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
 			if (history.Count > 0) {
 				if (Main.LocalPlayer.HasItem(history[0].ItemType)) {
-					tooltips.Add(new TooltipLine(mod, "ItemModel", "Specified: " + history[0].Name));
+					tooltips.Add(new TooltipLine(mod, "ItemModel", "Selected: " + history[0].Name));
 				}
 				else {
-					tooltips.Add(new TooltipLine(mod, "NoneFound", "Specified item not found"));
+					tooltips.Add(new TooltipLine(mod, "NoneFound", "Selected item not found"));
 				}
 			}
 			else {
@@ -96,6 +96,7 @@ namespace SummonersAssociation.Items
 		}
 
 		public override bool UseItem(Player player) {
+			//When the item is first created, history is empty
 			if (history.Count > 0) {
 				var SAPlayer = player.GetModPlayer<SAPlayer>();
 				//Will fail if no item found

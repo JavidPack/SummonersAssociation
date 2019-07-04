@@ -176,7 +176,10 @@ namespace SummonersAssociation.UI
 				#region Draw weapon background circle
 				drawColor = Color.White;
 				if (!itemModel.Active) drawColor = Color.Gray;
-				if (selected == done) drawColor = Color.LimeGreen;
+				if (selected == done) {
+					if (itemModel.Active) drawColor = Color.LimeGreen;
+					else drawColor = Color.Red;
+				}
 				outputRect = new Rectangle((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y), mainDiameter, mainDiameter);
 				spriteBatch.Draw(Main.wireUITexture[isMouseWithinSegment ? 1 : 0], outputRect, drawColor);
 				#endregion
@@ -251,15 +254,21 @@ namespace SummonersAssociation.UI
 					DrawText(spriteBatch, tooltip, drawPos, fontColor);
 
 					if (itemModel.SlotsNeeded > 1) {
-						drawPos.Y += 22;
+						drawPos.Y += 24;
 						tooltip = "Slots required: " + itemModel.SlotsNeeded;
 						DrawText(spriteBatch, tooltip, drawPos, fontColor);
 					}
 
 					if (simple && selected == done) {
-						drawPos.Y += 22;
+						drawPos.Y += 24;
 						tooltip = "(Selected)";
 						DrawText(spriteBatch, tooltip, drawPos, fontColor);
+
+						if (!itemModel.Active) {
+							drawPos.Y += 24;
+							tooltip = "Not found in inventory";
+							DrawText(spriteBatch, tooltip, drawPos, fontColor);
+						}
 					}
 				}
 				#endregion
@@ -307,7 +316,7 @@ namespace SummonersAssociation.UI
 						tooltip = "Click left to clear history";
 						DrawText(spriteBatch, tooltip, drawPos, fontColor);
 
-						drawPos.Y += 22;
+						drawPos.Y += 24;
 						tooltip = "Click right to cancel";
 						DrawText(spriteBatch, tooltip, drawPos, fontColor);
 					}
@@ -321,7 +330,7 @@ namespace SummonersAssociation.UI
 						drawPos = mousePos;
 						tooltip = "Click left twice to clear history";
 						DrawText(spriteBatch, tooltip, drawPos, fontColor);
-						drawPos.Y += 22;
+						drawPos.Y += 24;
 						tooltip = "Click right to save history";
 						DrawText(spriteBatch, tooltip, drawPos, fontColor);
 					}

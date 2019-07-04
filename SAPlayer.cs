@@ -22,11 +22,7 @@ namespace SummonersAssociation
 
 		private bool mouseLeftPressed;
 
-		private bool mouseLeftReleased; //Unused
-
 		private bool mouseRightPressed;
-
-		private bool mouseRightReleased; //Unused
 
 		/// <summary>
 		/// This is so when the UI is open, it closes itself when player presses ESC (open inventory).
@@ -109,7 +105,7 @@ namespace SummonersAssociation
 										if (HistoryBookUI.summonCountDelta >= highlighted.SlotsNeeded) {
 											triggered = true;
 
-											highlighted.SummonCount += 1;
+											highlighted.SummonCount++;
 										}
 										else {
 											//Indicate that incrementing isn't possible
@@ -121,7 +117,7 @@ namespace SummonersAssociation
 										//Only allow to decrease if current summon count is above zero
 										if (highlighted.SummonCount > 0) {
 											triggered = true;
-											highlighted.SummonCount -= 1;
+											highlighted.SummonCount--;
 										}
 									}
 
@@ -138,6 +134,12 @@ namespace SummonersAssociation
 										CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Selected: " + highlighted.Name);
 										HistoryBookUI.Stop();
 									}
+								}
+							}
+							else if (HistoryBookUI.simple) {
+								if (triggerSelect) {
+									//If the selected item is saved in the history but it's not in the players inventory, just stop
+									HistoryBookUI.Stop();
 								}
 							}
 						}
@@ -194,17 +196,13 @@ namespace SummonersAssociation
 		public override void ProcessTriggers(TriggersSet triggersSet) {
 			//In here things like Main.MouseScreen are not correct (related to UI)
 			//and in UpdateUI Main.mouseRight etc aren't correct
-			//but you need both to properly open/close the UI
+			//but you need both to properly interact with the UI
 			//these two are used in PreUpdate, together with AllowedToOpenHistoryBookUI
 			//since that also doesn't work in ProcessTriggers (set in PostUpdate)
 
 			mouseLeftPressed = Main.mouseLeft && Main.mouseLeftRelease;
 
-			mouseLeftReleased = !Main.mouseLeft && !Main.mouseLeftRelease;
-
 			mouseRightPressed = Main.mouseRight && Main.mouseRightRelease;
-
-			mouseRightReleased = !Main.mouseRight && !Main.mouseRightRelease;
 
 			justOpenedInventory = PlayerInput.Triggers.JustPressed.Inventory && !Main.playerInventory;
 		}
