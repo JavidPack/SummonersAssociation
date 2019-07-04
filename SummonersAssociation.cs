@@ -133,7 +133,7 @@ namespace SummonersAssociation
 				DisplayMaxMinionIcon(Main.LocalPlayer);
 			}
 
-			if (!Main.LocalPlayer.GetModPlayer<SummonersAssociationCardPlayer>().SummonersAssociationCardInInventory)
+			if (!Main.LocalPlayer.GetModPlayer<SummonersAssociationPlayer>().SummonersAssociationCardInInventory)
 			{
 				return;
 			}
