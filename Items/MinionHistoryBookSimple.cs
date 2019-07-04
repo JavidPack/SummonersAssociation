@@ -98,7 +98,7 @@ namespace SummonersAssociation.Items
 		public override bool UseItem(Player player) {
 			//When the item is first created, history is empty
 			if (history.Count > 0) {
-				var SAPlayer = player.GetModPlayer<SAPlayer>();
+				var SAPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
 				//Will fail if no item found
 				SAPlayer.QuickUseItemOfType(history[0].ItemType);
 			}

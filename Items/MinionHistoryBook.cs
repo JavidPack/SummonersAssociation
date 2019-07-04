@@ -67,7 +67,7 @@ namespace SummonersAssociation.Items
 					}
 				}
 
-				var SAPlayer = player.GetModPlayer<SAPlayer>();
+				var SAPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
 				SAPlayer.pendingCasts.Clear();
 				foreach (var item in history) {
 					for (int i = 0; i < item.SummonCount; i++) {

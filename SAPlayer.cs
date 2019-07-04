@@ -9,10 +9,12 @@ using System;
 
 namespace SummonersAssociation
 {
-	class SAPlayer : ModPlayer
+	class SummonersAssociationPlayer : ModPlayer
 	{
+		public bool SummonersAssociationCardInInventory = false;
 		internal int originalSelectedItem;
 		internal bool autoRevertSelectedItem = false;
+
 		internal Queue<Tuple<int, int>> pendingCasts = new Queue<Tuple<int, int>>();
 
 		/// <summary>
@@ -192,6 +194,8 @@ namespace SummonersAssociation
 				}
 			}
 		}
+
+		public override void ResetEffects() => SummonersAssociationCardInInventory = false;
 
 		public override void ProcessTriggers(TriggersSet triggersSet) {
 			//In here things like Main.MouseScreen are not correct (related to UI)

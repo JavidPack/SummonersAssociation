@@ -188,7 +188,10 @@ namespace SummonersAssociation.UI
 				texture = Main.itemTexture[itemModel.ItemType];
 				width = texture.Width;
 				height = texture.Height;
-				if (selected == done) drawColor = Color.White;
+				if (selected == done) {
+					if (itemModel.Active) drawColor = Color.White;
+					else drawColor = Color.Gray;
+				}
 				outputRect = new Rectangle((int)(spawnPosition.X + x) - (width / 2), (int)(spawnPosition.Y + y) - (height / 2), width, height);
 				spriteBatch.Draw(texture, outputRect, texture.Bounds, drawColor);
 				#endregion
