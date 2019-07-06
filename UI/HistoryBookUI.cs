@@ -13,9 +13,9 @@ namespace SummonersAssociation.UI
 {
 	/*
 	* How it works basically:
-	* In SAPlayer.ProcessTriggers(), it sets two bools used to open/close the UI.
-	* SAPlayer.PreUpdate() handles the opening/closing, and general handling of the UI.
-	* The other custom methods are all over the place right now (Some in this class, some in the SAPlayer class)
+	* In SAPlayer.ProcessTriggers, it sets two bools used to open/close the UI.
+	* SummonersAssociation.PreUpdate handles the opening/closing, and general handling of the UI.
+	* The other custom methods are all over the place right now (Some in this class, some in the SummonersAssociation class)
 	* Caveats:
 	* 1. spawning the UI in ProcessTriggers didn't work because the custom conditions I setup
 	* don't work there (AllowedToOpenHistoryBookUI)
@@ -23,7 +23,7 @@ namespace SummonersAssociation.UI
 	*/
 
 	/// <summary>
-	/// UIState for the history books that handles all its logic in DrawSelf()
+	/// UIState for the history book that handles all its logic in DrawSelf
 	/// </summary>
 	class HistoryBookUI : UIState
 	{
@@ -173,6 +173,11 @@ namespace SummonersAssociation.UI
 				//Check if mouse is within the circle checked
 				isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
 
+				if (isMouseWithinSegment) {
+					//Set the returned thing
+					returned = done;
+				}
+
 				#region Draw weapon background circle
 				drawColor = Color.White;
 				if (!itemModel.Active) drawColor = Color.Gray;
@@ -195,11 +200,6 @@ namespace SummonersAssociation.UI
 				outputRect = new Rectangle((int)(spawnPosition.X + x) - (width / 2), (int)(spawnPosition.Y + y) - (height / 2), width, height);
 				spriteBatch.Draw(texture, outputRect, texture.Bounds, drawColor);
 				#endregion
-
-				if (isMouseWithinSegment) {
-					//Set the "returned" new type
-					returned = done;
-				}
 			}
 
 			//Set some values that will be accessed here and outside the UI
@@ -207,7 +207,7 @@ namespace SummonersAssociation.UI
 
 			isMouseWithinUI = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, outerRadius + mainRadius);
 
-			summonCountDelta = GetSummonCountsDelta();
+			summonCountDelta = GetSummonCountDelta();
 
 			mousePos = new Vector2(16) + Main.MouseScreen;
 
@@ -225,19 +225,19 @@ namespace SummonersAssociation.UI
 			#endregion
 
 			#region Draw summonCountTotal
-			if (colorFadeIn > 0f) {
+			if (!simple) {
+				if (colorFadeIn > 0f) {
 				//Do a fade out on the number if clicked when it can't be incremented
 				fontColor = new Color(Color.White.ToVector4() * (1f - colorFadeIn) + Color.Red.ToVector4() * colorFadeIn);
-			}
-			else {
-				fontColor = Color.White;
-			}
-			drawPos = new Vector2((int)TopLeftCorner.X, (int)TopLeftCorner.Y + height) + new Vector2(-4, mainRadius - 20);
+				}
+				else {
+					fontColor = Color.White;
+				}
+				drawPos = new Vector2((int)TopLeftCorner.X, (int)TopLeftCorner.Y + height) + new Vector2(-4, mainRadius - 20);
 
-			if (summonCountDelta < 0) fontColor = Color.Red;
-			tooltip = summonCountDelta.ToString() + "/" + summonCountTotal.ToString();
+				if (summonCountDelta < 0) fontColor = Color.Red;
+				tooltip = summonCountDelta.ToString() + "/" + summonCountTotal.ToString();
 
-			if (!simple) {
 				DrawText(spriteBatch, tooltip, drawPos, fontColor);
 			}
 			#endregion
@@ -346,7 +346,7 @@ namespace SummonersAssociation.UI
 		/// Check if the mouse cursor is within the radius around the position specified by center
 		/// </summary>
 		internal static bool CheckMouseWithinCircle(Vector2 mousePos, Vector2 center, int radius)
-			=> ((mousePos.X - center.X) * (mousePos.X - center.X) + (mousePos.Y - center.Y) * (mousePos.Y - center.Y)) <= radius * radius;
+			=> Vector2.DistanceSquared(mousePos, center) <= radius * radius;
 
 		/// <summary>
 		/// Checks if the mouse cursor is currently inside the segment specified by the arguments. Decided by angle (radius only matters for the inner element).
@@ -481,7 +481,7 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// summonCountTotal minus all the summon counts weighted with the slots needed
 		/// </summary>
-		public static int GetSummonCountsDelta() {
+		public static int GetSummonCountDelta() {
 			int sum = summonCountTotal;
 			for (int i = 0; i < itemModels.Count; i++) {
 				ItemModel itemModel = itemModels[i];

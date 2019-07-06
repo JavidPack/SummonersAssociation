@@ -96,6 +96,8 @@ namespace SummonersAssociation.Items
 		}
 
 		public override bool UseItem(Player player) {
+			//TODO Using this item doesn't replace the last summoned minion for some reason
+			//(Using the summon weapon directly does this though)
 			//When the item is first created, history is empty
 			if (history.Count > 0) {
 				var SAPlayer = player.GetModPlayer<SummonersAssociationPlayer>();

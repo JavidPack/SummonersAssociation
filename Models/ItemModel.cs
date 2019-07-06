@@ -8,7 +8,7 @@ using Terraria.ModLoader.IO;
 namespace SummonersAssociation.Models
 {
 	/// <summary>
-	/// Holds the Item reference and its index in LocalPlayers inventory
+	/// Holds the Item data relevant to the book and its index in LocalPlayers inventory
 	/// </summary>
 	public class ItemModel : TagSerializable, IComparable<ItemModel>
 	{
