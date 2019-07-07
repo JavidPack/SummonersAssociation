@@ -118,9 +118,14 @@ namespace SummonersAssociation.UI
 		internal static Texture2D redCrossTexture;
 
 		/// <summary>
-		/// Holds data about what to draw
+		/// Holds data about each ItemModel
 		/// </summary>
 		internal static List<ItemModel> itemModels;
+
+		/// <summary>
+		/// Holds data about what to draw (the outer ring)
+		/// </summary>
+		internal static List<UIModel> uiModels;
 
 		/// <summary>
 		/// Is cursor within a segment?
@@ -132,13 +137,12 @@ namespace SummonersAssociation.UI
 		/// </summary>
 		internal static Vector2 TopLeftCorner => spawnPosition - new Vector2(mainRadius, mainRadius);
 
+		public override void OnInitialize() => uiModels = new List<UIModel>();
+
 		public override void Update(GameTime gameTime) {
+			if (!visible) return;
 			base.Update(gameTime);
 			Main.LocalPlayer.mouseInterface = true;
-		}
-
-		protected override void DrawSelf(SpriteBatch spriteBatch) {
-			base.DrawSelf(spriteBatch);
 
 			int outerRadius = 48;
 			//Increase by 6 after having more than 5 options, starts getting clumped at about 30(?) circles
@@ -148,60 +152,6 @@ namespace SummonersAssociation.UI
 
 			if (colorFadeIn > 0f) colorFadeIn -= 0.036f;
 
-			int width;
-			int height;
-			double angleSteps = 2.0d / itemModels.Count;
-			double x;
-			double y;
-			bool isMouseWithinSegment;
-			string tooltip;
-			Texture2D texture;
-			Rectangle outputRect;
-			Color drawColor;
-			Color fontColor;
-			Vector2 mousePos;
-			Vector2 drawPos;
-			ItemModel itemModel;
-
-			//done --> Index of currently drawn circle
-			//Starts at the top and goes clockwise
-			for (int done = 0; done < itemModels.Count; done++) {
-				itemModel = itemModels[done];
-				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
-				y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
-
-				//Check if mouse is within the circle checked
-				isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
-
-				if (isMouseWithinSegment) {
-					//Set the returned thing
-					returned = done;
-				}
-
-				#region Draw weapon background circle
-				drawColor = Color.White;
-				if (!itemModel.Active) drawColor = Color.Gray;
-				if (selected == done) {
-					if (itemModel.Active) drawColor = Color.LimeGreen;
-					else drawColor = Color.Red;
-				}
-				outputRect = new Rectangle((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y), mainDiameter, mainDiameter);
-				spriteBatch.Draw(Main.wireUITexture[isMouseWithinSegment ? 1 : 0], outputRect, drawColor);
-				#endregion
-
-				#region Draw weapon sprite
-				texture = Main.itemTexture[itemModel.ItemType];
-				width = texture.Width;
-				height = texture.Height;
-				if (selected == done) {
-					if (itemModel.Active) drawColor = Color.White;
-					else drawColor = Color.Gray;
-				}
-				outputRect = new Rectangle((int)(spawnPosition.X + x) - (width / 2), (int)(spawnPosition.Y + y) - (height / 2), width, height);
-				spriteBatch.Draw(texture, outputRect, texture.Bounds, drawColor);
-				#endregion
-			}
-
 			//Set some values that will be accessed here and outside the UI
 			middle = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, mainRadius);
 
@@ -209,7 +159,142 @@ namespace SummonersAssociation.UI
 
 			summonCountDelta = GetSummonCountDelta();
 
-			mousePos = new Vector2(16) + Main.MouseScreen;
+			int width;
+			int height;
+			double angleSteps = 2.0d / itemModels.Count;
+			double x;
+			double y;
+			bool isMouseWithinSegment;
+			List<string> tooltip;
+			string number = "";
+			Rectangle bgRect;
+			Rectangle itemRect;
+			Color bgColor;
+			Color itemColor;
+			Color numberColor = default;
+			ItemModel itemModel;
+			Texture2D texture;
+
+			uiModels.Clear();
+
+			//done --> Index of currently drawn circle
+			//Starts at the top and goes clockwise
+			for (int done = 0; done < itemModels.Count; done++) {
+				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
+				y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
+				itemModel = itemModels[done];
+				tooltip = new List<string>();
+
+				isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
+
+				if (isMouseWithinSegment) {
+					//Set the returned thing
+					returned = done;
+
+					#region Setup weapon tooltip
+					tooltip.Add(itemModel.Name);
+
+					if (itemModel.SlotsNeeded > 1) {
+						tooltip.Add("Slots required: " + itemModel.SlotsNeeded);
+					}
+
+					if (simple && selected == done) {
+						tooltip.Add("(Selected)");
+
+						if (!itemModel.Active) {
+							tooltip.Add("Not found in inventory");
+						}
+					}
+					#endregion
+				}
+
+				#region Setup weapon background circle
+				bgColor = Color.White;
+				if (!itemModel.Active) bgColor = Color.Gray;
+				if (selected == done) {
+					if (itemModel.Active) bgColor = Color.LimeGreen;
+					else bgColor = Color.Red;
+				}
+				bgRect = new Rectangle((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y), mainDiameter, mainDiameter);
+				#endregion
+
+				#region Setup weapon sprite
+				texture = Main.itemTexture[itemModel.ItemType];
+				width = texture.Width;
+				height = texture.Height;
+				itemColor = Color.White;
+				if (selected == done) {
+					if (itemModel.Active) itemColor = Color.White;
+					else itemColor = Color.Gray;
+				}
+				itemRect = new Rectangle((int)(spawnPosition.X + x) - (width / 2), (int)(spawnPosition.Y + y) - (height / 2), width, height);
+				#endregion
+
+				#region Setup SummonCount
+				if (!simple) {
+					if (isMouseWithinSegment && colorFadeIn > 0f) {
+						//Do a fade out on the number of this segment if clicked when it can't be incremented
+						numberColor = new Color(Color.White.ToVector4() * (1f - colorFadeIn) + Color.Red.ToVector4() * colorFadeIn);
+					}
+					else {
+						numberColor = Color.White;
+					}
+					number = itemModel.SummonCount.ToString();
+
+					if (!itemModel.Active) numberColor = Color.Red;
+				}
+				#endregion
+
+				uiModels.Add(new UIModel(
+					isMouseWithinSegment,
+					itemModel.ItemType,
+					bgRect,
+					bgColor,
+					itemRect,
+					itemColor,
+					tooltip,
+					numberColor,
+					number));
+			}
+
+			//If hovering over the middle
+			if (middle) {
+				returned = NONE;
+				if (!aboutToDelete) {
+					returned = UPDATE;
+				}
+			}
+		}
+
+		protected override void DrawSelf(SpriteBatch spriteBatch) {
+			if (!visible) return;
+			base.DrawSelf(spriteBatch);
+
+			int width;
+			int height;
+			string middleTip;
+			Texture2D texture;
+			Rectangle outputRect;
+			Color fontColor;
+			Vector2 mousePos = new Vector2(16) + Main.MouseScreen;
+			Vector2 drawPos;
+
+			#region Draw each UIModel
+			foreach (UIModel model in uiModels) {
+				//Draw weapon background circle
+				spriteBatch.Draw(Main.wireUITexture[model.Mouseover ? 1 : 0], model.BackgroundRect, model.BackgroundColor);
+
+				//Draw weapon sprite
+				texture = Main.itemTexture[model.ItemType];
+				spriteBatch.Draw(texture, model.ItemRect, texture.Bounds, model.ItemColor);
+
+				//Draw SummonCount
+				if (!simple) {
+					drawPos = model.BackgroundRect.BottomLeft() + new Vector2(-4, -mainRadius + 4);
+					DrawText(spriteBatch, model.Number, drawPos, model.NumberColor);
+				}
+			}
+			#endregion
 
 			#region Draw book background circle
 			outputRect = new Rectangle((int)TopLeftCorner.X, (int)TopLeftCorner.Y, mainDiameter, mainDiameter);
@@ -227,8 +312,8 @@ namespace SummonersAssociation.UI
 			#region Draw summonCountTotal
 			if (!simple) {
 				if (colorFadeIn > 0f) {
-				//Do a fade out on the number if clicked when it can't be incremented
-				fontColor = new Color(Color.White.ToVector4() * (1f - colorFadeIn) + Color.Red.ToVector4() * colorFadeIn);
+					//Do a fade out on the number if clicked when it can't be incremented
+					fontColor = new Color(Color.White.ToVector4() * (1f - colorFadeIn) + Color.Red.ToVector4() * colorFadeIn);
 				}
 				else {
 					fontColor = Color.White;
@@ -236,73 +321,24 @@ namespace SummonersAssociation.UI
 				drawPos = new Vector2((int)TopLeftCorner.X, (int)TopLeftCorner.Y + height) + new Vector2(-4, mainRadius - 20);
 
 				if (summonCountDelta < 0) fontColor = Color.Red;
-				tooltip = summonCountDelta.ToString() + "/" + summonCountTotal.ToString();
+				middleTip = summonCountDelta.ToString() + "/" + summonCountTotal.ToString();
 
-				DrawText(spriteBatch, tooltip, drawPos, fontColor);
+				DrawText(spriteBatch, middleTip, drawPos, fontColor);
 			}
 			#endregion
 
-			fontColor = Color.White;
-
-			//Extra loop so tooltips are always drawn after the circles
-			for (int done = 0; done < itemModels.Count; done++) {
-				itemModel = itemModels[done];
-
-				#region Draw weapon tooltip
-				isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
-
-				if (isMouseWithinSegment) {
-					drawPos = mousePos;
-					tooltip = itemModel.Name;
-					DrawText(spriteBatch, tooltip, drawPos, fontColor);
-
-					if (itemModel.SlotsNeeded > 1) {
-						drawPos.Y += 24;
-						tooltip = "Slots required: " + itemModel.SlotsNeeded;
-						DrawText(spriteBatch, tooltip, drawPos, fontColor);
-					}
-
-					if (simple && selected == done) {
-						drawPos.Y += 24;
-						tooltip = "(Selected)";
-						DrawText(spriteBatch, tooltip, drawPos, fontColor);
-
-						if (!itemModel.Active) {
-							drawPos.Y += 24;
-							tooltip = "Not found in inventory";
-							DrawText(spriteBatch, tooltip, drawPos, fontColor);
-						}
-					}
+			#region Draw weapon tooltips
+			foreach (UIModel model in uiModels) {
+				drawPos = mousePos;
+				foreach (string tooltip in model.Tooltip) {
+					DrawText(spriteBatch, tooltip, drawPos, Color.White);
+					drawPos.Y += 24;
 				}
-				#endregion
-
-				#region Draw SummonCount
-				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
-				y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
-
-				isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
-
-				if (isMouseWithinSegment && colorFadeIn > 0f) {
-					//Do a fade out on the number of this segment if clicked when it can't be incremented
-					fontColor = new Color(Color.White.ToVector4() * (1f - colorFadeIn) + Color.Red.ToVector4() * colorFadeIn);
-				}
-				else {
-					fontColor = Color.White;
-				}
-				drawPos = new Vector2((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y)) + new Vector2(-4, mainRadius + 4);
-				tooltip = itemModel.SummonCount.ToString();
-
-				if (!itemModel.Active) fontColor = Color.Red;
-
-				if (!simple) {
-					DrawText(spriteBatch, tooltip, drawPos, fontColor);
-				}
-				#endregion
 			}
+			#endregion
 
-			//If hovering over the middle
+			#region Draw middle tooltip, red cross
 			if (middle) {
-				returned = NONE;
 				fontColor = Color.White;
 				drawPos = mousePos;
 
@@ -316,30 +352,29 @@ namespace SummonersAssociation.UI
 
 					#region Draw tooltip for what happens on click
 					if (!simple) {
-						tooltip = "Click left to clear history";
-						DrawText(spriteBatch, tooltip, drawPos, fontColor);
+						middleTip = "Click left to clear history";
+						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 
 						drawPos.Y += 24;
-						tooltip = "Click right to cancel";
-						DrawText(spriteBatch, tooltip, drawPos, fontColor);
+						middleTip = "Click right to cancel";
+						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 					}
 					#endregion
 				}
 				else {
-					returned = UPDATE;
-
 					#region Draw tooltip for what happens on click
 					if (!simple) {
 						drawPos = mousePos;
-						tooltip = "Click left twice to clear history";
-						DrawText(spriteBatch, tooltip, drawPos, fontColor);
+						middleTip = "Click left twice to clear history";
+						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 						drawPos.Y += 24;
-						tooltip = "Click right to save history";
-						DrawText(spriteBatch, tooltip, drawPos, fontColor);
+						middleTip = "Click right to save history";
+						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 					}
 					#endregion
 				}
 			}
+			#endregion
 		}
 
 		/// <summary>
@@ -502,6 +537,7 @@ namespace SummonersAssociation.UI
 			heldItemType = Main.LocalPlayer.HeldItem.type;
 
 			simple = Array.IndexOf(SummonersAssociation.BookTypes, heldItemType) == 0;
+			uiModels.Clear();
 
 			List<ItemModel> history = ((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.modItem).history;
 			List<ItemModel> historyCopy = history.ConvertAll(model => new ItemModel(model));

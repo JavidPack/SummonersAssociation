@@ -175,7 +175,7 @@ namespace SummonersAssociation
 				autoRevertSelectedItem = true;
 				player.selectedItem = index;
 				player.controlUseItem = true;
-				player.ItemCheck(Main.myPlayer);
+				player.ItemCheck(player.whoAmI);
 			}
 		}
 
