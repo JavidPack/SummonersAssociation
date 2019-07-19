@@ -12,6 +12,9 @@ using ReLogic.Graphics;
 using SummonersAssociation.Models;
 using SummonersAssociation.Items;
 using Terraria.Localization;
+using Terraria.UI;
+using SummonersAssociation.UI;
+using System;
 
 namespace SummonersAssociation
 {
@@ -33,8 +36,53 @@ namespace SummonersAssociation
             new MinionModel(ItemID.StardustCellStaff, BuffID.StardustMinion, new List<int>() { 613 })
 		};
 
+		internal static UserInterface HistoryBookUIInterface;
+		internal static HistoryBookUI HistoryBookUI;
+
+		public static SummonersAssociation Instance;
+
+		/// <summary>
+		/// Accurate in-UI Mouse position used to spawn UI outside UpdateUI()
+		/// </summary>
+		public static Vector2 MousePositionUI;
+
+		/// <summary>
+		/// Array of the different minion book types. Simple is 0, Normal is 1, Auto is 2
+		/// </summary>
+		public static int[] BookTypes;
+
 		public SummonersAssociation()
 		{ }
+
+		public override void Load() {
+			Instance = this;
+
+			if (!Main.dedServ && Main.netMode != 2) {
+				HistoryBookUI = new HistoryBookUI();
+				HistoryBookUI.Activate();
+				HistoryBookUIInterface = new UserInterface();
+				HistoryBookUIInterface.SetState(HistoryBookUI);
+				HistoryBookUI.redCrossTexture = GetTexture("UI/UIRedCross");
+			}
+		}
+
+		public override void PostSetupContent()
+			//don't change order here (simple is first, normal is second, automatic is third)
+			=> BookTypes = new int[] {
+				ItemType<MinionHistoryBookSimple>(),
+				ItemType<MinionHistoryBook>(),
+				ItemType<MinionHistoryBookAuto>()
+			};
+
+		public override void Unload() {
+			HistoryBookUIInterface = null;
+			HistoryBookUI = null;
+			HistoryBookUI.redCrossTexture = null;
+
+			BookTypes = null;
+
+			Instance = null;
+		}
 
 		public override void AddRecipeGroups()
 		{
@@ -55,6 +103,28 @@ namespace SummonersAssociation
 			RecipeGroup.RegisterGroup("SummonersAssociation:MagicMirrors", group);
 		}
 
+		public override void UpdateUI(GameTime gameTime) => UpdateHistoryBookUI(gameTime);
+
+		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
+			int inventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Hotbar"));
+			if (inventoryIndex != -1) {
+				if (HistoryBookUI.visible) {
+					//Remove the item icon when using the item while held outside the inventory (selectedItem == 58)
+					int mouseItemIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Item / NPC Head"));
+					if (mouseItemIndex != -1) layers.RemoveAt(mouseItemIndex);
+					layers.Insert(++inventoryIndex, new LegacyGameInterfaceLayer
+						(
+						"Summoners Association: History",
+						delegate {
+							HistoryBookUIInterface.Draw(Main.spriteBatch, new GameTime());
+							return true;
+						},
+						InterfaceScaleType.UI)
+					);
+				}
+			}
+		}
+
 		public override void PostDrawInterface(SpriteBatch spriteBatch)
 		{
 			// Give this to everyone because why not
@@ -63,7 +133,7 @@ namespace SummonersAssociation
 				DisplayMaxMinionIcon(Main.LocalPlayer);
 			}
 
-			if (!Main.LocalPlayer.GetModPlayer<SummonersAssociationCardPlayer>().SummonersAssociationCardInInventory)
+			if (!Main.LocalPlayer.GetModPlayer<SummonersAssociationPlayer>().SummonersAssociationCardInInventory)
 			{
 				return;
 			}
@@ -73,6 +143,16 @@ namespace SummonersAssociation
 			{
 				UpdateBuffText(Main.LocalPlayer);
 			}
+		}
+
+		/// <summary>
+		/// Called in UpdateUI
+		/// </summary>
+		private void UpdateHistoryBookUI(GameTime gameTime) {
+
+			//This is updated to the "in UI" Mouse Position, because the UI itself is spawned in SAPlayer.PreUpdate()
+			MousePositionUI = Main.MouseScreen;
+			if (HistoryBookUI.visible) HistoryBookUI.Update(gameTime);
 		}
 
 		private void UpdateBuffText(Player player)

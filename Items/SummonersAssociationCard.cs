@@ -4,16 +4,6 @@ using Terraria.ModLoader;
 
 namespace SummonersAssociation.Items
 {
-	public class SummonersAssociationCardPlayer : ModPlayer
-	{
-		public bool SummonersAssociationCardInInventory = false;
-
-		public override void ResetEffects()
-		{
-			SummonersAssociationCardInInventory = false;
-		}
-	}
-
 	public class SummonersAssociationCard : ModItem
 	{
 		public override void SetStaticDefaults()
@@ -47,7 +37,7 @@ namespace SummonersAssociation.Items
 
 		public override void UpdateInventory(Player player)
 		{
-			player.GetModPlayer<SummonersAssociationCardPlayer>().SummonersAssociationCardInInventory = true;
+			player.GetModPlayer<SummonersAssociationPlayer>().SummonersAssociationCardInInventory = true;
 		}
 	}
 }

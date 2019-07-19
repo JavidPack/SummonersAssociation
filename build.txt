@@ -1,5 +1,5 @@
-author = jopojelly
-version = 0.3
+author = jopojelly, direwolf420
+version = 0.4
 displayName = Summoners Association
 homepage = http://forums.terraria.org/index.php?threads/summoners-association.30041/
 buildIgnore = .vs\*, *.csproj, *.user, obj\*, bin\*, *.config, .git\*, README.md, .gitignore
@@ -7,4 +7,3 @@ includePDB = true
 hideCode = false
 hideResources = false
 includeSource = false
-languageVersion = 6
