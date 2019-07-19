@@ -13,16 +13,15 @@ namespace SummonersAssociation.Items
 	{
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Minion History Book");
-			//TODO
-			Tooltip.SetDefault("TODO"
-				+ "\nLeft click to summon minions based on history"
+			Tooltip.SetDefault("Left click to summon minions based on history"
 				+ "\nRight click to open an UI"
-				+ "\nLeft/Right click on the item icons to adjust the summon count");
+				+ "\nScroll whell over the item icons to adjust the summon count");
 		}
 
 		public override void SetDefaults() {
 			base.SetDefaults();
 			item.rare = 4;
+			item.mana = 4;
 		}
 
 		public override void AddRecipes() {
@@ -56,26 +55,6 @@ namespace SummonersAssociation.Items
 			else {
 				tooltips.Add(new TooltipLine(mod, "None", "No summon history specified"));
 			}
-		}
-
-		public override bool UseItem(Player player) {
-			if (player.whoAmI == Main.myPlayer) {
-				for (int i = 0; i < 1000; i++) {
-					Projectile p = Main.projectile[i];
-					if (p.active && p.owner == Main.myPlayer && p.minion) {
-						p.Kill();
-					}
-				}
-
-				var SAPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
-				SAPlayer.pendingCasts.Clear();
-				foreach (var item in history) {
-					for (int i = 0; i < item.SummonCount; i++) {
-						SAPlayer.pendingCasts.Enqueue(new Tuple<int, int>(item.ItemType, 1));
-					}
-				}
-			}
-			return true;
 		}
 	}
 }

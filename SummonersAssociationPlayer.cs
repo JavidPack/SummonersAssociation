@@ -144,6 +144,7 @@ namespace SummonersAssociation
 									HistoryBookUI.Stop();
 								}
 							}
+							PlayerInput.ScrollWheelDelta = 0;
 						}
 						//Outside the UI
 						else {
@@ -171,11 +172,18 @@ namespace SummonersAssociation
 		/// </summary>
 		public void QuickUseItemInSlot(int index) {
 			if (index > -1 && index < Main.maxInventory && player.inventory[index].type != 0) {
-				originalSelectedItem = player.selectedItem;
-				autoRevertSelectedItem = true;
-				player.selectedItem = index;
-				player.controlUseItem = true;
-				player.ItemCheck(player.whoAmI);
+				if (player.CheckMana(player.inventory[index], -1, false, false)) {
+					originalSelectedItem = player.selectedItem;
+					autoRevertSelectedItem = true;
+					player.selectedItem = index;
+					player.controlUseItem = true;
+					//if(Main.netMode == 1)
+					//	NetMessage.SendData(13, -1, -1, null, Main.myPlayer, 0f, 0f, 0f, 0, 0, 0);
+					// TODO: Swings not shown on other clients.
+					player.ItemCheck(player.whoAmI);
+				}
+				else
+					Main.PlaySound(39, (int)player.Center.X, (int)player.Center.Y, Main.rand.Next(3));
 			}
 		}
 
@@ -212,21 +220,23 @@ namespace SummonersAssociation
 		}
 
 		public override void PreUpdate() {
-			if (autoRevertSelectedItem) {
+			if (player.whoAmI == Main.myPlayer) {
+				if (autoRevertSelectedItem) {
+					if (player.itemTime == 0 && player.itemAnimation == 0) {
+						player.selectedItem = originalSelectedItem;
+						autoRevertSelectedItem = false;
+					}
+				}
+
 				if (player.itemTime == 0 && player.itemAnimation == 0) {
-					player.selectedItem = originalSelectedItem;
-					autoRevertSelectedItem = false;
+					if (pendingCasts.Count > 0) {
+						var cast = pendingCasts.Dequeue();
+						QuickUseItemOfType(cast.Item1);
+					}
 				}
-			}
 
-			if (player.itemTime == 0 && player.itemAnimation == 0) {
-				if (pendingCasts.Count > 0) {
-					var cast = pendingCasts.Dequeue();
-					QuickUseItemOfType(cast.Item1);
-				}
+				UpdateHistoryBookUI();
 			}
-
-			UpdateHistoryBookUI();
 		}
 
 		public override void PostUpdate() {
@@ -252,6 +262,7 @@ namespace SummonersAssociation
 
 		public override void OnRespawn(Player player) => UseAutomaticHistoryBook();
 
+		// Not working in MP for some reason. Too early?
 		public override void OnEnterWorld(Player player) => UseAutomaticHistoryBook();
 	}
 }

@@ -507,6 +507,7 @@ namespace SummonersAssociation.UI
 				book.history = new List<ItemModel> {
 					new ItemModel(itemModels[selected])
 				};
+				book.history[0].SummonCount = 1;
 			}
 			else {
 				book.history = itemModels.ConvertAll((itemModel) => new ItemModel(itemModel));

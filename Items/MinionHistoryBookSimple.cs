@@ -1,4 +1,5 @@
 ﻿using SummonersAssociation.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,9 +22,7 @@ namespace SummonersAssociation.Items
 
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Minion Selection Book");
-			//TODO
-			Tooltip.SetDefault("TODO"
-				+ "\nRight click to open an UI"
+			Tooltip.SetDefault("Right click to open the UI"
 				+ "\nLeft/Right click on the item icon to select it"
 				+ "\nLeft click to summon the selected item");
 		}
@@ -33,6 +32,7 @@ namespace SummonersAssociation.Items
 			item.height = 30;
 			item.maxStack = 1;
 			item.rare = 3;
+			item.mana = 2;
 			item.useAnimation = 16;
 			item.useTime = 16;
 			item.useStyle = 4;
@@ -96,15 +96,29 @@ namespace SummonersAssociation.Items
 		}
 
 		public override bool UseItem(Player player) {
-			//TODO Using this item doesn't replace the last summoned minion for some reason
-			//(Using the summon weapon directly does this though)
-			//When the item is first created, history is empty
-			if (history.Count > 0) {
-				var SAPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
-				//Will fail if no item found
-				SAPlayer.QuickUseItemOfType(history[0].ItemType);
-			}
+			EnqueueSpawns(player);
 			return true;
+		}
+
+		public void EnqueueSpawns(Player player) {
+			if (player.whoAmI == Main.myPlayer) {
+				if (history.Count > 1) {
+					for (int i = 0; i < 1000; i++) {
+						Projectile p = Main.projectile[i];
+						if (p.active && p.owner == Main.myPlayer && p.minion) {
+							p.Kill();
+						}
+					}
+				}
+
+				var SAPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
+				SAPlayer.pendingCasts.Clear();
+				foreach (var item in history) {
+					for (int i = 0; i < item.SummonCount; i++) {
+						SAPlayer.pendingCasts.Enqueue(new Tuple<int, int>(item.ItemType, 1));
+					}
+				}
+			}
 		}
 	}
 }
