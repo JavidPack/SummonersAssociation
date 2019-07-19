@@ -1,7 +1,10 @@
 ﻿This mod aims to fix a few grievances with summons and flesh out Summoner to be a fully developed class. This vision is of a summoner who has their hands full buffing and controlling minions and has little time for other weapons.
 
-Includes 3 items:
+Includes 6 items:
 
 Summoners Association Card
 Minion Control Rod
 Blood Talisman
+Minion Selection Book - Allows summoning any summon in inventory
+Minion History Book - Allows summoning a set of summons in invenory with one click
+Automatic Minion History Book - Upgraded Minion History Book that summons minion set automatically after respawn
