@@ -74,9 +74,12 @@ namespace SummonersAssociation.Items
 		}
 
 		public override void AddRecipes() {
-			//TODO
-			var recipe = new ModRecipe(mod);
-			recipe.AddIngredient(ItemID.DirtBlock, 1);
+			ModRecipe recipe = new ModRecipe(mod);
+			recipe.AddIngredient(ItemID.Book);
+			recipe.AddIngredient(ItemID.BlackInk);
+			recipe.AddIngredient(ItemID.FallenStar, 6);
+			recipe.AddTile(TileID.Chairs);
+			recipe.AddTile(TileID.Tables);
 			recipe.SetResult(this);
 			recipe.AddRecipe();
 		}
@@ -102,7 +105,8 @@ namespace SummonersAssociation.Items
 
 		public void EnqueueSpawns(Player player) {
 			if (player.whoAmI == Main.myPlayer) {
-				if (history.Count > 1) {
+				int count = history.Sum(x => x.SummonCount);
+				if (count > 1) {
 					for (int i = 0; i < 1000; i++) {
 						Projectile p = Main.projectile[i];
 						if (p.active && p.owner == Main.myPlayer && p.minion) {
