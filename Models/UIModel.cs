@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace SummonersAssociation.Models
 {
@@ -16,7 +16,7 @@ namespace SummonersAssociation.Models
 		public bool Mouseover { get; set; }
 
 		public UIModel(bool mouseOver, int itemType, Rectangle bgRect, Color bgCol, Rectangle itemRect, Color iCol,
-			List<string> tooltip, Color nCol = default, string number = null) {
+			List<string> tooltip, Color nCol, string number) {
 			Mouseover = mouseOver;
 			ItemType = itemType;
 			BackgroundRect = bgRect;
@@ -24,7 +24,6 @@ namespace SummonersAssociation.Models
 			ItemRect = itemRect;
 			ItemColor = iCol;
 			Tooltip = tooltip;
-			//optional
 			NumberColor = nCol;
 			Number = number;
 		}

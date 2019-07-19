@@ -6,14 +6,12 @@ namespace SummonersAssociation.Items
 {
 	public class SummonersAssociationCard : ModItem
 	{
-		public override void SetStaticDefaults()
-		{
+		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Summoners Association Card");
 			Tooltip.SetDefault("Welcome to the Summoners Association\nDisplays Summoner-related information");
 		}
 
-		public override void SetDefaults()
-		{
+		public override void SetDefaults() {
 			item.width = 20;
 			item.height = 20;
 			item.maxStack = 1;
@@ -24,9 +22,8 @@ namespace SummonersAssociation.Items
 			item.useStyle = 4;
 		}
 
-		public override void AddRecipes()
-		{
-			ModRecipe recipe = new ModRecipe(mod);
+		public override void AddRecipes() {
+			var recipe = new ModRecipe(mod);
 			recipe.AddIngredient(ItemID.Gel, 10);
 			recipe.AddRecipeGroup("Wood");
 			recipe.AddTile(TileID.Chairs);
@@ -36,8 +33,6 @@ namespace SummonersAssociation.Items
 		}
 
 		public override void UpdateInventory(Player player)
-		{
-			player.GetModPlayer<SummonersAssociationPlayer>().SummonersAssociationCardInInventory = true;
-		}
+			=> player.GetModPlayer<SummonersAssociationPlayer>().SummonersAssociationCardInInventory = true;
 	}
 }

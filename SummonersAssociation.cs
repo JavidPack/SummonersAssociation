@@ -1,26 +1,23 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-
-using System.Linq;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Graphics;
+using SummonersAssociation.Items;
+using SummonersAssociation.Models;
+using SummonersAssociation.UI;
 using System.Collections.Generic;
-
+using System.Linq;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
-using ReLogic.Graphics;
-
-using SummonersAssociation.Models;
-using SummonersAssociation.Items;
 using Terraria.Localization;
+using Terraria.ModLoader;
 using Terraria.UI;
-using SummonersAssociation.UI;
-using System;
+using Terraria.UI.Chat;
 
 namespace SummonersAssociation
 {
 	public class SummonersAssociation : Mod
 	{
-		private static List<MinionModel> SupportedMinions = new List<MinionModel>() {
+		private static readonly List<MinionModel> SupportedMinions = new List<MinionModel>() {
 			new MinionModel(ItemID.SlimeStaff, BuffID.BabySlime, new List<int>() { 266 }),
 			new MinionModel(ItemID.HornetStaff, BuffID.HornetMinion, new List<int>() { 373 }),
 			new MinionModel(ItemID.ImpStaff, BuffID.ImpMinion, new List<int>() { 375 }),
@@ -51,8 +48,7 @@ namespace SummonersAssociation
 		/// </summary>
 		public static int[] BookTypes;
 
-		public SummonersAssociation()
-		{ }
+		public SummonersAssociation() { }
 
 		public override void Load() {
 			Instance = this;
@@ -84,11 +80,9 @@ namespace SummonersAssociation
 			Instance = null;
 		}
 
-		public override void AddRecipeGroups()
-		{
+		public override void AddRecipeGroups() {
 			List<int> itemList = new List<int>();
-			foreach (MinionModel minion in SummonersAssociation.SupportedMinions)
-			{
+			foreach (MinionModel minion in SupportedMinions) {
 				itemList.Add(minion.ItemID);
 			}
 
@@ -125,22 +119,18 @@ namespace SummonersAssociation
 			}
 		}
 
-		public override void PostDrawInterface(SpriteBatch spriteBatch)
-		{
+		public override void PostDrawInterface(SpriteBatch spriteBatch) {
 			// Give this to everyone because why not
-			if (Main.playerInventory)
-			{
+			if (Main.playerInventory) {
 				DisplayMaxMinionIcon(Main.LocalPlayer);
 			}
 
-			if (!Main.LocalPlayer.GetModPlayer<SummonersAssociationPlayer>().SummonersAssociationCardInInventory)
-			{
+			if (!Main.LocalPlayer.GetModPlayer<SummonersAssociationPlayer>().SummonersAssociationCardInInventory) {
 				return;
 			}
 
 			// But only give them the buff info if they carry the card!
-			if (!Main.ingameOptionsWindow && !Main.playerInventory/* && !Main.achievementsWindow*/)
-			{
+			if (!Main.ingameOptionsWindow && !Main.playerInventory/* && !Main.achievementsWindow*/) {
 				UpdateBuffText(Main.LocalPlayer);
 			}
 		}
@@ -155,27 +145,22 @@ namespace SummonersAssociation
 			if (HistoryBookUI.visible) HistoryBookUI.Update(gameTime);
 		}
 
-		private void UpdateBuffText(Player player)
-		{
+		private void UpdateBuffText(Player player) {
 			float vanillaMinionSlots = 0;
 			int xPosition;
 			int yPosition;
 			Color color;
 			int buffsPerLine = 11;
 			bool TwoLines = false;
-			for (int b = 0; b < 22; ++b)
-			{
-				if (player.buffType[b] > 0)
-				{
-					if (b == 11)
-					{
+			for (int b = 0; b < 22; ++b) {
+				if (player.buffType[b] > 0) {
+					if (b == 11) {
 						TwoLines = true;
 					}
 					int buffID = player.buffType[b];
 					xPosition = 32 + b * 38;
 					yPosition = 76;
-					if (b >= buffsPerLine)
-					{
+					if (b >= buffsPerLine) {
 						xPosition = 32 + (b - buffsPerLine) * 38;
 						yPosition += 50;
 					}
@@ -184,27 +169,23 @@ namespace SummonersAssociation
 					int number = 0;
 
 					// Check to see if this buff represents a minion or not
-					MinionModel minion = SummonersAssociation.SupportedMinions.SingleOrDefault(minionEntry => minionEntry.BuffID == buffID);
-					if (minion != null)
-					{
+					MinionModel minion = SupportedMinions.SingleOrDefault(minionEntry => minionEntry.BuffID == buffID);
+					if (minion != null) {
 						List<int> projectileList = minion.ProjectileIDs;
 
-						foreach (int projectile in projectileList)
-						{
+						foreach (int projectile in projectileList) {
 							number += player.ownedProjectileCounts[projectile];
 						}
 
 						string text2 = number + " / " + player.maxMinions;
-						if (buffID == BuffID.TwinEyesMinion)
-						{
+						if (buffID == BuffID.TwinEyesMinion) {
 							text2 = number + " / " + 2 * player.maxMinions;
 							vanillaMinionSlots += number / 2f;
 						}
-						else
-						{
+						else {
 							vanillaMinionSlots += number;
 						}
-						Main.spriteBatch.DrawString(Main.fontItemStack, text2, new Vector2((float)xPosition, (float)(yPosition + Main.buffTexture[buffID].Height)), color, 0.0f, new Vector2(), 0.8f, SpriteEffects.None, 0.0f);
+						Main.spriteBatch.DrawString(Main.fontItemStack, text2, new Vector2(xPosition, yPosition + Main.buffTexture[buffID].Height), color, 0.0f, new Vector2(), 0.8f, SpriteEffects.None, 0.0f);
 					}
 				}
 			}
@@ -213,40 +194,31 @@ namespace SummonersAssociation
 			color = new Color(.4f, .4f, .4f, .4f);
 			xPosition = 32;
 			yPosition = 76 + 20;
-			if (TwoLines)
-			{
+			if (TwoLines) {
 				yPosition += 50;
 			}
 			float otherMinions = 0;
 
-			for (int j = 0; j < 1000; j++)
-			{
-				if (Main.projectile[j].active && Main.projectile[j].owner == player.whoAmI && Main.projectile[j].minion)
-				{
+			for (int j = 0; j < 1000; j++) {
+				if (Main.projectile[j].active && Main.projectile[j].owner == player.whoAmI && Main.projectile[j].minion) {
 					otherMinions += Main.projectile[j].minionSlots;
 				}
 			}
-			otherMinions = otherMinions - vanillaMinionSlots;
-			if (otherMinions > 0)
-			{
+			otherMinions -= vanillaMinionSlots;
+			if (otherMinions > 0) {
 				string modMinionText = "Uncountable mod minions: " + otherMinions + " / " + player.maxMinions;
-				Main.spriteBatch.DrawString(Main.fontItemStack, modMinionText, new Vector2((float)xPosition, (float)(yPosition + Main.buffTexture[1].Height)), color, 0.0f, new Vector2(), 0.8f, SpriteEffects.None, 0.0f);
+				Main.spriteBatch.DrawString(Main.fontItemStack, modMinionText, new Vector2(xPosition, yPosition + Main.buffTexture[1].Height), color, 0.0f, new Vector2(), 0.8f, SpriteEffects.None, 0.0f);
 			}
 		}
 
-		private void DisplayMaxMinionIcon(Player player)
-		{
-			if (Main.EquipPage == 0)
-			{
+		private void DisplayMaxMinionIcon(Player player) {
+			if (Main.EquipPage == 0) {
 				int mH = 0;
-				if (Main.mapEnabled)
-				{
-					if (!Main.mapFullscreen && Main.mapStyle == 1)
-					{
+				if (Main.mapEnabled) {
+					if (!Main.mapFullscreen && Main.mapStyle == 1) {
 						mH = 256;
 					}
-					if (mH + 600 > Main.screenHeight)
-					{
+					if (mH + 600 > Main.screenHeight) {
 						mH = Main.screenHeight - 600;
 					}
 				}
@@ -257,13 +229,12 @@ namespace SummonersAssociation
 
 				float inventoryScale = 0.85f;
 
-				int num11 = mH + (int)((double)(174 + 0) + (double)(slot * 56) * (double)inventoryScale);
-				Vector2 vector2_1 = new Vector2((float)(num9 - 10 - 47 - 47 - 14), (float)num11 + (float)Main.inventoryBackTexture.Height * 0.5f);
+				int num11 = mH + (int)(174 + 0 + slot * 56 * inventoryScale);
+				Vector2 vector2_1 = new Vector2(num9 - 10 - 47 - 47 - 14, num11 + Main.inventoryBackTexture.Height * 0.5f);
 				Main.spriteBatch.Draw(Main.buffTexture[150], vector2_1, new Microsoft.Xna.Framework.Rectangle?(), Color.White, 0.0f, Utils.Size(Main.buffTexture[150]) / 2f, inventoryScale, SpriteEffects.None, 0.0f);
 				Vector2 vector2_2 = Main.fontMouseText.MeasureString(player.maxMinions.ToString());
-				Terraria.UI.Chat.ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, player.maxMinions.ToString(), vector2_1 - vector2_2 * 0.5f * inventoryScale, Color.White, 0.0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
-				if (Utils.CenteredRectangle(vector2_1, Utils.Size(Main.buffTexture[150])).Contains(new Point(Main.mouseX, Main.mouseY)))
-				{
+				ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, player.maxMinions.ToString(), vector2_1 - vector2_2 * 0.5f * inventoryScale, Color.White, 0.0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
+				if (Utils.CenteredRectangle(vector2_1, Utils.Size(Main.buffTexture[150])).Contains(new Point(Main.mouseX, Main.mouseY))) {
 					player.mouseInterface = true;
 					string str = "" + player.maxMinions + " Max Minions";
 					if (!string.IsNullOrEmpty(str))

@@ -1,22 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 using static Terraria.ID.ItemID;
 
 namespace SummonersAssociation.Items
 {
 	public class BloodTalisman : ModItem
 	{
-		public override void SetStaticDefaults()
-		{
+		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Blood Talisman");
 			Tooltip.SetDefault("Sacrifice your lifeforce to greatly strengthen minions."
 				+ "\nTry not to fall into madness");
 		}
 
-		public override void SetDefaults()
-		{
+		public override void SetDefaults() {
 			//item.width = 20;
 			//item.height = 20;
 			//item.maxStack = 1;
@@ -48,9 +46,8 @@ namespace SummonersAssociation.Items
 			item.channel = true;
 		}
 
-		public override void AddRecipes()
-		{
-			ModRecipe recipe = new ModRecipe(mod);
+		public override void AddRecipes() {
+			var recipe = new ModRecipe(mod);
 			//recipe.AddIngredient(ItemID.Wood);
 			recipe.AddIngredient(CrossNecklace);
 			recipe.AddIngredient(ItemID.PhilosophersStone);
@@ -59,8 +56,7 @@ namespace SummonersAssociation.Items
 			recipe.SetResult(this);
 			recipe.AddRecipe();
 		}
-		public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
-		{
+		public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
 			Projectile.NewProjectile(Main.mouseX + Main.screenPosition.X, Main.mouseY + Main.screenPosition.Y, 0, 0, mod.ProjectileType<Projectiles.BloodTalismanTargetProjectile>(), 0, 0, player.whoAmI);
 			//return false;
 			return true;

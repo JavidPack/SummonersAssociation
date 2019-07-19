@@ -20,7 +20,7 @@ namespace SummonersAssociation.Items
 		}
 
 		public override void AddRecipes() {
-			ModRecipe recipe = new ModRecipe(mod);
+			var recipe = new ModRecipe(mod);
 			recipe.AddIngredient(mod.ItemType<MinionHistoryBook>());
 			recipe.AddIngredient(ItemID.LihzahrdPowerCell, 2);
 			recipe.AddTile(TileID.LihzahrdAltar);

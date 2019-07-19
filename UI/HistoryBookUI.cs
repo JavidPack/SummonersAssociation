@@ -1,13 +1,13 @@
-﻿using Terraria.UI;
-using Terraria;
-using Microsoft.Xna.Framework;
-using Terraria.UI.Chat;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SummonersAssociation.Items;
+using SummonersAssociation.Models;
 using System;
 using System.Collections.Generic;
-using SummonersAssociation.Models;
-using SummonersAssociation.Items;
+using Terraria;
 using Terraria.ID;
+using Terraria.UI;
+using Terraria.UI.Chat;
 
 namespace SummonersAssociation.UI
 {
@@ -532,6 +532,14 @@ namespace SummonersAssociation.UI
 		/// Called when the UI is about to appear
 		/// </summary>
 		public static bool Start() {
+			List<ItemModel> history = ((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.modItem).history;
+			List<ItemModel> historyCopy = history.ConvertAll(model => new ItemModel(model));
+			List<ItemModel> passedModels = MergeHistoryIntoInventory(historyCopy);
+
+			itemModels = passedModels;
+
+			if (itemModels.Count < 1) return false;
+
 			visible = true;
 			spawnPosition = SummonersAssociation.MousePositionUI;
 			heldItemIndex = Main.LocalPlayer.selectedItem;
@@ -539,12 +547,6 @@ namespace SummonersAssociation.UI
 
 			simple = Array.IndexOf(SummonersAssociation.BookTypes, heldItemType) == 0;
 			uiModels.Clear();
-
-			List<ItemModel> history = ((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.modItem).history;
-			List<ItemModel> historyCopy = history.ConvertAll(model => new ItemModel(model));
-			List<ItemModel> passedModels = MergeHistoryIntoInventory(historyCopy);
-
-			itemModels = passedModels;
 
 			if (simple && history.Count > 0) {
 				//Set the selected index to what the original history has

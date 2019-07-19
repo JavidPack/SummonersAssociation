@@ -1,20 +1,15 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace SummonersAssociation.Projectiles
 {
 	public class BloodTalismanTargetProjectile : ModProjectile
 	{
-		public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Blood Talisman Target Projectile");
-		}
+		public override void SetStaticDefaults() => DisplayName.SetDefault("Blood Talisman Target Projectile");
 
-		public override void SetDefaults()
-		{
+		public override void SetDefaults() {
 			projectile.width = 100;
 			projectile.height = 100;
 			projectile.alpha = 255;// 55;
@@ -34,15 +29,13 @@ namespace SummonersAssociation.Projectiles
 			//projectile.
 		}
 
-		public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough)
-		{
+		public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough) {
 			width = 0;
 			height = 0;
 			return true;
 		}
 
-		public override Color? GetAlpha(Color lightColor)
-		{
+		public override Color? GetAlpha(Color lightColor) {
 			//byte alpha = (byte)(projectile.ai[0] > projectile.alpha ? projectile.alpha : projectile.ai[0]);
 			return Color.White * ((255 - projectile.alpha) / 255f);
 			//         Color a = Color.White;
@@ -50,14 +43,11 @@ namespace SummonersAssociation.Projectiles
 			//return a;
 		}
 
-		public override void AI()
-		{
+		public override void AI() {
 			//ErrorLogger.Log("d" + projectile.damage);
 
-			if (Main.myPlayer == projectile.owner)
-			{
-				if (Main.player[projectile.owner].channel)
-				{
+			if (Main.myPlayer == projectile.owner) {
+				if (Main.player[projectile.owner].channel) {
 					if (projectile.alpha <= 255)
 						Main.player[projectile.owner].AddBuff(BuffID.Chilled, 300);
 					if (projectile.alpha <= 245)
@@ -84,8 +74,7 @@ namespace SummonersAssociation.Projectiles
 					projectile.ai[0] += .01f;
 					projectile.alpha -= 1;
 					//	ErrorLogger.Log("a" + projectile.alpha);
-					if (projectile.alpha < 155)
-					{
+					if (projectile.alpha < 155) {
 						projectile.alpha = 155;
 					}
 
@@ -94,21 +83,18 @@ namespace SummonersAssociation.Projectiles
 					//projectile.position.Y = Main.mouseY + Main.screenPosition.Y;
 					projectile.Center = new Vector2(Main.mouseX + Main.screenPosition.X, Main.mouseY + Main.screenPosition.Y);
 
-					if (Main.rand.Next(100) > projectile.alpha - 155)
-					{
+					if (Main.rand.Next(100) > projectile.alpha - 155) {
 						int num14 = Dust.NewDust(new Vector2(projectile.position.X - 4f, projectile.position.Y - 4f), projectile.width + 8, projectile.height + 8, 202, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 0, default(Color), 1f);
-						if (Main.rand.Next(2) == 0)
-						{
+						if (Main.rand.Next(2) == 0) {
 							Main.dust[num14].scale = 1.5f;
 						}
 						Main.dust[num14].noGravity = true;
 						Dust dustI = Main.dust[num14];
-						dustI.velocity.X = dustI.velocity.X * 2f;
-						dustI.velocity.Y = dustI.velocity.Y * 2f;
+						dustI.velocity.X *= 2f;
+						dustI.velocity.Y *= 2f;
 					}
 				}
-				else
-				{
+				else {
 					//projectile.alpha += 1;
 					//projectile.ai[1] = 1;
 					projectile.Kill();

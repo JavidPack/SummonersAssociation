@@ -1,11 +1,11 @@
-﻿using Terraria;
+﻿using SummonersAssociation.Items;
+using SummonersAssociation.Models;
+using SummonersAssociation.UI;
+using System;
+using System.Collections.Generic;
+using Terraria;
 using Terraria.GameInput;
 using Terraria.ModLoader;
-using SummonersAssociation.Models;
-using SummonersAssociation.Items;
-using SummonersAssociation.UI;
-using System.Collections.Generic;
-using System;
 
 namespace SummonersAssociation
 {

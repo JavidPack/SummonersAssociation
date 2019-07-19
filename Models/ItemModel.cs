@@ -43,7 +43,7 @@ namespace SummonersAssociation.Models
 		/// <summary>
 		///How many free minion slots this weapon needs/replaces
 		/// </summary>
-		public byte SlotsNeeded => ItemType > -1 && ItemType < ItemLoader.ItemCount? (byte)ItemID.Sets.StaffMinionSlotsRequired[ItemType] : (byte)1;
+		public byte SlotsNeeded => ItemType > -1 && ItemType < ItemLoader.ItemCount ? (byte)ItemID.Sets.StaffMinionSlotsRequired[ItemType] : (byte)1;
 
 		/// <summary>
 		/// Default constructor. Used in Load
@@ -114,7 +114,7 @@ namespace SummonersAssociation.Models
 			var item = new Item();
 			item.SetDefaults(ItemType);
 			return new TagCompound {
-                {"item", item },
+				{"item", item },
 				{nameof(InventoryIndex), InventoryIndex },
 				{nameof(SummonCount), SummonCount },
 				{nameof(Active), Active },

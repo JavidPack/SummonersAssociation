@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using SummonersAssociation.Models;
 using SummonersAssociation.UI;
-using System;
 using System.Collections.Generic;
-using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
