@@ -80,17 +80,6 @@ namespace SummonersAssociation.Models
 		}
 
 		/// <summary>
-		/// Proper constructor, not used anywhere
-		/// </summary>
-		public ItemModel(int itemType, string name, int inventoryIndex, byte summonCount = 0, bool active = false) {
-			ItemType = itemType;
-			Name = name;
-			InventoryIndex = inventoryIndex;
-			SummonCount = summonCount;
-			Active = active;
-		}
-
-		/// <summary>
 		/// Set current itemModel SummonCount to what the history had
 		/// </summary>
 		public void OverrideValuesFromHistory(ItemModel historyModel) {

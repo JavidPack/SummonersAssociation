@@ -22,147 +22,151 @@ namespace SummonersAssociation
 		/// </summary>
 		private bool AllowedToOpenHistoryBookUI;
 
-		private bool mouseLeftPressed;
-
-		private bool mouseRightPressed;
-
 		/// <summary>
 		/// This is so when the UI is open, it closes itself when player presses ESC (open inventory).
 		/// Feels more intuitive if the player can't figure out how to close it otherwise
 		/// </summary>
 		private bool justOpenedInventory;
 
+		private bool mouseLeftPressed;
+
+		private bool mouseRightPressed;
+
+		//Any of the four: mouse(Left/Right)(Pressed/Released)
+		private bool TriggerStart => mouseRightPressed;
+
+		private bool TriggerStop => mouseRightPressed;
+
+		private bool TriggerDelete => mouseLeftPressed;
+
+		private bool TriggerSelect => mouseLeftPressed || mouseRightPressed;
+
+		private bool TriggerInc => PlayerInput.ScrollWheelDelta > 0 || mouseLeftPressed;
+
+		private bool TriggerDec => PlayerInput.ScrollWheelDelta < 0 || mouseRightPressed;
+
 		private void UseAutomaticHistoryBook() => QuickUseItemOfType(SummonersAssociation.BookTypes[2]);
 
 		private void UpdateHistoryBookUI() {
 			//Since this is UI related, make sure to only run on client
-			if (Main.myPlayer == player.whoAmI) {
-				//Change the trigger type here
-				//Any of the four: mouse(Left/Right)(Pressed/Released)
-				bool triggerStart = mouseRightPressed;
-				bool triggerStop = mouseRightPressed;
-				bool triggerDelete = mouseLeftPressed;
-				bool triggerSelect = mouseLeftPressed || mouseRightPressed;
-				bool triggerInc = PlayerInput.ScrollWheelDelta > 0 || mouseLeftPressed;
-				bool triggerDec = PlayerInput.ScrollWheelDelta < 0 || mouseRightPressed;
+			//Change the trigger type here
 
-				bool holdingBook = Array.IndexOf(SummonersAssociation.BookTypes, player.HeldItem.type) > -1;
+			bool holdingBook = Array.IndexOf(SummonersAssociation.BookTypes, player.HeldItem.type) > -1;
 
-				if (triggerStart && holdingBook && AllowedToOpenHistoryBookUI) {
-					bool success = HistoryBookUI.Start();
-					if (!success) CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.DamagedFriendly, "No summon weapons found");
-				}
-				else if (HistoryBookUI.visible) {
-					if (HistoryBookUI.heldItemIndex == Main.LocalPlayer.selectedItem) {
-						//Keep it updated
-						HistoryBookUI.summonCountTotal = player.maxMinions;
+			if (TriggerStart && holdingBook && AllowedToOpenHistoryBookUI) {
+				bool success = HistoryBookUI.Start();
+				if (!success) CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.DamagedFriendly, "No summon weapons found");
+			}
+			else if (HistoryBookUI.visible) {
+				if (HistoryBookUI.heldItemIndex == Main.LocalPlayer.selectedItem) {
+					//Keep it updated
+					HistoryBookUI.summonCountTotal = player.maxMinions;
 
-						if (HistoryBookUI.middle) {
-							if (!HistoryBookUI.simple) {
-								if (triggerDelete) {
-									if (!HistoryBookUI.aboutToDelete) {
-										HistoryBookUI.aboutToDelete = true;
-									}
-									else {
-										//Clear history, and use fresh inventory data
-										HistoryBookUI.itemModels = HistoryBookUI.GetSummonWeapons();
-										CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Reset history");
-										HistoryBookUI.aboutToDelete = false;
-									}
+					if (HistoryBookUI.middle) {
+						if (!HistoryBookUI.simple) {
+							if (TriggerDelete) {
+								if (!HistoryBookUI.aboutToDelete) {
+									HistoryBookUI.aboutToDelete = true;
 								}
-								else if (triggerStop) {
-									if (HistoryBookUI.aboutToDelete) {
-										HistoryBookUI.aboutToDelete = false;
-									}
-									else if (HistoryBookUI.returned == HistoryBookUI.UPDATE) {
-										HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.modItem);
-
-										HistoryBookUI.Stop();
-										CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Saved history");
-									}
-									else if (HistoryBookUI.returned == HistoryBookUI.NONE) {
-										//Nothing, just close
-										HistoryBookUI.Stop();
-									}
-								}
-							}
-							//If simple, just stop, since middle has no function there (saving is done when clicked on a weapon instead)
-							else {
-								if (mouseRightPressed || mouseLeftPressed) {
-									HistoryBookUI.Stop(false);
-								}
-							}
-						}
-						//If in a segment
-						else if (HistoryBookUI.IsMouseWithinAnySegment) {
-							ItemModel highlighted = HistoryBookUI.itemModels[HistoryBookUI.returned];
-							if (highlighted.Active) {
-								if (!HistoryBookUI.simple) {
-									bool triggered = false;
-
-									if (triggerInc) {
-										PlayerInput.ScrollWheelDelta = 0;
-										//Only allow to increase if total summon count differential is above or
-										//equal to the number of slots needed to summon
-										if (HistoryBookUI.summonCountDelta >= highlighted.SlotsNeeded) {
-											triggered = true;
-
-											highlighted.SummonCount++;
-										}
-										else {
-											//Indicate that incrementing isn't possible
-											HistoryBookUI.colorFadeIn = 1f;
-										}
-									}
-									else if (triggerDec) {
-										PlayerInput.ScrollWheelDelta = 0;
-										//Only allow to decrease if current summon count is above zero
-										if (highlighted.SummonCount > 0) {
-											triggered = true;
-											highlighted.SummonCount--;
-										}
-									}
-
-									if (triggered) {
-										try { Main.PlaySound(12); }
-										catch { /*No idea why but this threw errors one time*/ }
-									}
-								}
-								//If simple, set selected and stop/spawn
 								else {
-									if (triggerSelect) {
-										HistoryBookUI.selected = HistoryBookUI.returned;
-										HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.modItem);
-										CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Selected: " + highlighted.Name);
-										HistoryBookUI.Stop();
-									}
+									//Clear history, and use fresh inventory data
+									HistoryBookUI.itemModels = HistoryBookUI.GetSummonWeapons();
+									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Reset history");
+									HistoryBookUI.aboutToDelete = false;
 								}
 							}
-							else if (HistoryBookUI.simple) {
-								if (triggerSelect) {
-									//If the selected item is saved in the history but it's not in the players inventory, just stop
+							else if (TriggerStop) {
+								if (HistoryBookUI.aboutToDelete) {
+									HistoryBookUI.aboutToDelete = false;
+								}
+								else if (HistoryBookUI.returned == HistoryBookUI.UPDATE) {
+									HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)player.HeldItem.modItem);
+
+									HistoryBookUI.Stop();
+									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Saved history");
+								}
+								else if (HistoryBookUI.returned == HistoryBookUI.NONE) {
+									//Nothing, just close
 									HistoryBookUI.Stop();
 								}
 							}
-							PlayerInput.ScrollWheelDelta = 0;
 						}
-						//Outside the UI
+						//If simple, just stop, since middle has no function there (saving is done when clicked on a weapon instead)
 						else {
-							/*if (triggerStop) {*/
 							if (mouseRightPressed || mouseLeftPressed) {
-								HistoryBookUI.Stop();
+								HistoryBookUI.Stop(false);
 							}
 						}
 					}
-					else {
-						//Cancel the UI when you switch items
-						HistoryBookUI.Stop(false);
-					}
+					//If in a segment
+					else if (HistoryBookUI.IsMouseWithinAnySegment) {
+						ItemModel highlighted = HistoryBookUI.itemModels[HistoryBookUI.returned];
+						if (highlighted.Active) {
+							if (!HistoryBookUI.simple) {
+								bool triggered = false;
 
-					if (justOpenedInventory) {
-						//Cancel UI when inventory is opened
-						HistoryBookUI.Stop(false);
+								if (TriggerInc) {
+									PlayerInput.ScrollWheelDelta = 0;
+									//Only allow to increase if total summon count differential is above or
+									//equal to the number of slots needed to summon
+									if (HistoryBookUI.summonCountDelta >= highlighted.SlotsNeeded) {
+										triggered = true;
+
+										highlighted.SummonCount++;
+									}
+									else {
+										//Indicate that incrementing isn't possible
+										HistoryBookUI.colorFadeIn = 1f;
+									}
+								}
+								else if (TriggerDec) {
+									PlayerInput.ScrollWheelDelta = 0;
+									//Only allow to decrease if current summon count is above zero
+									if (highlighted.SummonCount > 0) {
+										triggered = true;
+										highlighted.SummonCount--;
+									}
+								}
+
+								if (triggered) {
+									try { Main.PlaySound(12); }
+									catch { /*No idea why but this threw errors one time*/ }
+								}
+							}
+							//If simple, set selected and stop/spawn
+							else {
+								if (TriggerSelect) {
+									HistoryBookUI.selected = HistoryBookUI.returned;
+									HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.modItem);
+									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Selected: " + highlighted.Name);
+									HistoryBookUI.Stop();
+								}
+							}
+						}
+						else if (HistoryBookUI.simple) {
+							if (TriggerSelect) {
+								//If the selected item is saved in the history but it's not in the players inventory, just stop
+								HistoryBookUI.Stop();
+							}
+						}
+						PlayerInput.ScrollWheelDelta = 0;
 					}
+					//Outside the UI
+					else {
+						/*if (triggerStop) {*/
+						if (mouseRightPressed || mouseLeftPressed) {
+							HistoryBookUI.Stop();
+						}
+					}
+				}
+				else {
+					//Cancel the UI when you switch items
+					HistoryBookUI.Stop(false);
+				}
+
+				if (justOpenedInventory) {
+					//Cancel UI when inventory is opened
+					HistoryBookUI.Stop(false);
 				}
 			}
 		}
