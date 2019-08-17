@@ -3,6 +3,7 @@ using SummonersAssociation.Models;
 using SummonersAssociation.UI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ModLoader;
@@ -45,7 +46,17 @@ namespace SummonersAssociation
 
 		private bool TriggerDec => PlayerInput.ScrollWheelDelta < 0 || mouseRightPressed;
 
-		private void UseAutomaticHistoryBook() => QuickUseItemOfType(SummonersAssociation.BookTypes[2]);
+		private void UseAutomaticHistoryBook() {
+			int slot = -1;
+			for (int i = 0; i < Main.maxInventory; i++) {
+				Item item = player.inventory[i];
+				if (item.type == SummonersAssociation.BookTypes[2]) {
+					var book = (MinionHistoryBookSimple)item.modItem;
+					if (book.history.Sum(x => x.Active ? x.SummonCount : 0) > 0) slot = i;
+				}
+			}
+			if (slot != -1) QuickUseItemInSlot(slot);
+		}
 
 		private void UpdateHistoryBookUI() {
 			//Since this is UI related, make sure to only run on client
