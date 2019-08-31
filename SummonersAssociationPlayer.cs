@@ -1,10 +1,13 @@
-﻿using SummonersAssociation.Items;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using SummonersAssociation.Items;
 using SummonersAssociation.Models;
 using SummonersAssociation.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ModLoader;
 
@@ -17,6 +20,7 @@ namespace SummonersAssociation
 		internal bool autoRevertSelectedItem = false;
 
 		internal Queue<Tuple<int, int>> pendingCasts = new Queue<Tuple<int, int>>();
+		internal List<int> lastRightClicks = new List<int>();
 
 		/// <summary>
 		/// Checks if player can open HistoryBookUI
@@ -32,6 +36,7 @@ namespace SummonersAssociation
 		private bool mouseLeftPressed;
 
 		private bool mouseRightPressed;
+		private bool mouseRightHeld;
 
 		//Any of the four: mouse(Left/Right)(Pressed/Released)
 		private bool TriggerStart => mouseRightPressed;
@@ -58,6 +63,38 @@ namespace SummonersAssociation
 			if (slot != -1) QuickUseItemInSlot(slot);
 		}
 
+		public static readonly PlayerLayer Debug = new PlayerLayer("SummonersAssociation", "Debug", PlayerLayer.MiscEffectsBack, delegate (PlayerDrawInfo drawInfo) {
+			Player player = drawInfo.drawPlayer;
+			if (drawInfo.shadow != 0f || player.dead || Array.IndexOf(SummonersAssociation.BookTypes, player.HeldItem.type) < 0) {
+				return;
+			}
+			SummonersAssociationPlayer mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
+
+			float drawX = (int)drawInfo.position.X - Main.screenPosition.X;
+			float drawY = (int)drawInfo.position.Y - Main.screenPosition.Y;
+
+			var stupidOffset = new Vector2(player.width, player.height);
+			var ogpos = new Vector2(drawX, drawY) + player.bodyPosition + stupidOffset;
+			var pos = ogpos;
+
+			string text = "Pressed: ";
+			HistoryBookUI.DrawText(Main.spriteBatch, text, pos, Color.White);
+			pos.X += Main.fontMouseText.MeasureString(text).X;
+			foreach (int pressed in mPlayer.lastRightClicks) {
+				text = "" + (int)Math.Round(pressed / 20d);
+				Color color = Color.White;
+				HistoryBookUI.DrawText(Main.spriteBatch, text, pos, color);
+				pos.X += Main.fontMouseText.MeasureString(text).X + 8;
+			}
+			pos = ogpos;
+			pos.Y += 22;
+			text = "Held: " + (mPlayer.mouseRightHeld ? "Yes" : "No");
+			HistoryBookUI.DrawText(Main.spriteBatch, text, pos, Color.White);
+		});
+
+		//public override void ModifyDrawLayers(List<PlayerLayer> layers) => layers.Add(Debug);
+
+
 		private void UpdateHistoryBookUI() {
 			//Since this is UI related, make sure to only run on client
 			//Change the trigger type here
@@ -67,8 +104,10 @@ namespace SummonersAssociation
 			if (TriggerStart && holdingBook && AllowedToOpenHistoryBookUI) {
 				bool success = HistoryBookUI.Start();
 				if (!success) CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.DamagedFriendly, "No summon weapons found");
+				//if (success) Main.NewText("" + Main.time + ": just opened the UI");
 			}
 			else if (HistoryBookUI.visible) {
+				HistoryBookUI.visible = false;
 				if (HistoryBookUI.heldItemIndex == Main.LocalPlayer.selectedItem) {
 					//Keep it updated
 					HistoryBookUI.summonCountTotal = player.maxMinions;
@@ -95,6 +134,8 @@ namespace SummonersAssociation
 
 									HistoryBookUI.Stop();
 									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Saved history");
+									//Main.NewText("" + Main.time + ": just saved history");
+									//Main.NewText("######");
 								}
 								else if (HistoryBookUI.returned == HistoryBookUI.NONE) {
 									//Nothing, just close
@@ -230,6 +271,12 @@ namespace SummonersAssociation
 			mouseLeftPressed = Main.mouseLeft && Main.mouseLeftRelease;
 
 			mouseRightPressed = Main.mouseRight && Main.mouseRightRelease;
+			mouseRightHeld = Main.mouseRight;
+
+			if (mouseRightPressed) {
+				//Main.NewText("" + Main.time + ": just pressed right mouse");
+				lastRightClicks.Add(100);
+			}
 
 			justOpenedInventory = PlayerInput.Triggers.JustPressed.Inventory && !Main.playerInventory;
 		}
@@ -252,6 +299,10 @@ namespace SummonersAssociation
 
 				UpdateHistoryBookUI();
 			}
+			for (int i = 0; i < lastRightClicks.Count; i++) {
+				lastRightClicks[i] -= 2;
+			}
+			lastRightClicks.RemoveAll(x => x <= 0);
 		}
 
 		public override void PostUpdate() {

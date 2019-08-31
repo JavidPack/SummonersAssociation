@@ -13,7 +13,7 @@ namespace SummonersAssociation.UI
 {
 	/*
 	* How it works basically:
-	* In SAPlayer.ProcessTriggers, it sets two bools used to open/close the UI.
+	* In SummonersAssociationPlayer.ProcessTriggers, it sets two bools used to open/close the UI.
 	* SummonersAssociation.PreUpdate handles the opening/closing, and general handling of the UI.
 	* The other custom methods are all over the place right now (Some in this class, some in the SummonersAssociation class)
 	* Caveats:
@@ -41,6 +41,11 @@ namespace SummonersAssociation.UI
 		/// Circle radius
 		/// </summary>
 		internal const int mainRadius = mainDiameter / 2;
+
+		/// <summary>
+		/// Is the UI active?
+		/// </summary>
+		internal static bool active = false;
 
 		/// <summary>
 		/// Is the UI visible?
@@ -140,7 +145,7 @@ namespace SummonersAssociation.UI
 		public override void OnInitialize() => uiModels = new List<UIModel>();
 
 		public override void Update(GameTime gameTime) {
-			if (!visible) return;
+			if (!active) return;
 			base.Update(gameTime);
 			Main.LocalPlayer.mouseInterface = true;
 
@@ -267,8 +272,9 @@ namespace SummonersAssociation.UI
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch) {
-			if (!visible) return;
+			if (!active) return;
 			base.DrawSelf(spriteBatch);
+			visible = true;
 
 			int width;
 			int height;
@@ -540,7 +546,7 @@ namespace SummonersAssociation.UI
 
 			if (itemModels.Count < 1) return false;
 
-			visible = true;
+			active = true;
 			spawnPosition = SummonersAssociation.MousePositionUI;
 			heldItemIndex = Main.LocalPlayer.selectedItem;
 			heldItemType = Main.LocalPlayer.HeldItem.type;
@@ -569,7 +575,7 @@ namespace SummonersAssociation.UI
 			fadeIn = 0f;
 			colorFadeIn = 0f;
 			aboutToDelete = false;
-			visible = false;
+			active = false;
 
 			if (playSound) {
 				try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
