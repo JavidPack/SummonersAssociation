@@ -223,18 +223,32 @@ namespace SummonersAssociation
 					}
 				}
 
-				int num8 = 6;
-				int slot = num8;
-				int num9 = Main.screenWidth - 64 - 28;
+				int six = 6;
+				int slot = six;
+				int x = Main.screenWidth - 64 - 28;
 
 				float inventoryScale = 0.85f;
 
-				int num11 = mH + (int)(174 + 0 + slot * 56 * inventoryScale);
-				Vector2 vector2_1 = new Vector2(num9 - 10 - 47 - 47 - 14, num11 + Main.inventoryBackTexture.Height * 0.5f);
-				Main.spriteBatch.Draw(Main.buffTexture[150], vector2_1, new Microsoft.Xna.Framework.Rectangle?(), Color.White, 0.0f, Utils.Size(Main.buffTexture[150]) / 2f, inventoryScale, SpriteEffects.None, 0.0f);
-				Vector2 vector2_2 = Main.fontMouseText.MeasureString(player.maxMinions.ToString());
-				ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, player.maxMinions.ToString(), vector2_1 - vector2_2 * 0.5f * inventoryScale, Color.White, 0.0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
-				if (Utils.CenteredRectangle(vector2_1, Utils.Size(Main.buffTexture[150])).Contains(new Point(Main.mouseX, Main.mouseY))) {
+				int y = mH + (int)(174 + 0 + slot * 56 * inventoryScale);
+
+				Vector2 size = Utils.Size(Main.buffTexture[150]);
+
+				//Vector2 vector2_1 = new Vector2(num9 - 10 - 47 - 47 - 14, num11 + Main.inventoryBackTexture.Height * 0.5f);
+				//- 10 - 47 - 47 - 14: x offset from the right edge of the screen
+				//+ Main.inventoryBackTexture.Height * 0.5f: y offset so its aligned with an inv slot
+				Vector2 drawPos = new Vector2(x - 10 - 47 - 47 - 14, y + Main.inventoryBackTexture.Height * 0.5f);
+
+				Vector2 offset = Config.Instance.Offset;
+				offset = new Vector2((offset.X - Config.DefaultX) * Main.screenWidth, (offset.Y - Config.DefaultY) * Main.screenHeight);
+
+				drawPos += offset;
+				drawPos.X = Utils.Clamp(drawPos.X, size.X / 2, Main.screenWidth - size.X / 2);
+				drawPos.Y = Utils.Clamp(drawPos.Y, size.Y / 2, Main.screenHeight - size.Y / 2);
+
+				Main.spriteBatch.Draw(Main.buffTexture[150], drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
+				Vector2 stringLength = Main.fontMouseText.MeasureString(player.maxMinions.ToString());
+				ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, player.maxMinions.ToString(), drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
+				if (Utils.CenteredRectangle(drawPos, size).Contains(new Point(Main.mouseX, Main.mouseY))) {
 					player.mouseInterface = true;
 					string str = "" + player.maxMinions + " Max Minions";
 					if (!string.IsNullOrEmpty(str))
