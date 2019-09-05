@@ -102,7 +102,7 @@ namespace SummonersAssociation
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
 			int inventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Hotbar"));
 			if (inventoryIndex != -1) {
-				if (HistoryBookUI.visible) {
+				if (HistoryBookUI.active) {
 					//Remove the item icon when using the item while held outside the inventory (selectedItem == 58)
 					int mouseItemIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Item / NPC Head"));
 					if (mouseItemIndex != -1) layers.RemoveAt(mouseItemIndex);
@@ -140,9 +140,9 @@ namespace SummonersAssociation
 		/// </summary>
 		private void UpdateHistoryBookUI(GameTime gameTime) {
 
-			//This is updated to the "in UI" Mouse Position, because the UI itself is spawned in SAPlayer.PreUpdate()
+			//This is updated to the "in UI" Mouse Position, because the UI itself is spawned in SummonersAssociationPlayer.PreUpdate()
 			MousePositionUI = Main.MouseScreen;
-			if (HistoryBookUI.visible) HistoryBookUI.Update(gameTime);
+			if (HistoryBookUI.active) HistoryBookUI.Update(gameTime);
 		}
 
 		private void UpdateBuffText(Player player) {

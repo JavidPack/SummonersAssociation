@@ -115,11 +115,11 @@ namespace SummonersAssociation.Items
 					}
 				}
 
-				var SAPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
-				SAPlayer.pendingCasts.Clear();
+				var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
+				mPlayer.pendingCasts.Clear();
 				foreach (var item in history) {
 					for (int i = 0; i < item.SummonCount; i++) {
-						SAPlayer.pendingCasts.Enqueue(new Tuple<int, int>(item.ItemType, 1));
+						mPlayer.pendingCasts.Enqueue(new Tuple<int, int>(item.ItemType, 1));
 					}
 				}
 			}
