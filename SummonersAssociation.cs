@@ -4,6 +4,7 @@ using ReLogic.Graphics;
 using SummonersAssociation.Items;
 using SummonersAssociation.Models;
 using SummonersAssociation.UI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -17,21 +18,9 @@ namespace SummonersAssociation
 {
 	public class SummonersAssociation : Mod
 	{
-		private static readonly List<MinionModel> SupportedMinions = new List<MinionModel>() {
-			new MinionModel(ItemID.SlimeStaff, BuffID.BabySlime, new List<int>() { 266 }),
-			new MinionModel(ItemID.HornetStaff, BuffID.HornetMinion, new List<int>() { 373 }),
-			new MinionModel(ItemID.ImpStaff, BuffID.ImpMinion, new List<int>() { 375 }),
-			new MinionModel(ItemID.SpiderStaff, BuffID.SpiderMinion, new List<int>() { 390, 391, 392 }),
-			new MinionModel(ItemID.OpticStaff, BuffID.TwinEyesMinion, new List<int>() { 387, 388 }),
-			new MinionModel(ItemID.PirateStaff, BuffID.PirateMinion, new List<int>() { 393, 394, 395 }),
-			new MinionModel(ItemID.PygmyStaff, BuffID.Pygmies, new List<int>() { 191, 192, 193, 194 }),
-			new MinionModel(ItemID.XenoStaff, BuffID.UFOMinion, new List<int>() { 423 }),
-			new MinionModel(ItemID.RavenStaff, BuffID.Ravens, new List<int>() { 317 }),
-			new MinionModel(ItemID.TempestStaff, BuffID.SharknadoMinion, new List<int>() { 407 }),
-			new MinionModel(ItemID.DeadlySphereStaff, BuffID.DeadlySphere, new List<int>() { 533 }),
-			new MinionModel(ItemID.StardustDragonStaff, BuffID.StardustDragonMinion, new List<int>() { 626 }), // and 627?
-            new MinionModel(ItemID.StardustCellStaff, BuffID.StardustMinion, new List<int>() { 613 })
-		};
+		private static List<MinionModel> SupportedMinions;
+
+		private static List<int> ModdedSummonerWeaponsWithExistingBuff;
 
 		internal static UserInterface HistoryBookUIInterface;
 		internal static HistoryBookUI HistoryBookUI;
@@ -60,6 +49,24 @@ namespace SummonersAssociation
 				HistoryBookUIInterface.SetState(HistoryBookUI);
 				HistoryBookUI.redCrossTexture = GetTexture("UI/UIRedCross");
 			}
+
+			SupportedMinions = new List<MinionModel>() {
+				new MinionModel(ItemID.SlimeStaff, BuffID.BabySlime, ProjectileID.BabySlime),
+				new MinionModel(ItemID.HornetStaff, BuffID.HornetMinion, ProjectileID.Hornet),
+				new MinionModel(ItemID.ImpStaff, BuffID.ImpMinion, ProjectileID.FlyingImp),
+				new MinionModel(ItemID.SpiderStaff, BuffID.SpiderMinion, new List<int>() { ProjectileID.VenomSpider, ProjectileID.JumperSpider, ProjectileID.DangerousSpider }),
+				new MinionModel(ItemID.OpticStaff, BuffID.TwinEyesMinion, new List<int>() { ProjectileID.Retanimini, ProjectileID.Spazmamini }),
+				new MinionModel(ItemID.PirateStaff, BuffID.PirateMinion, new List<int>() { ProjectileID.OneEyedPirate, ProjectileID.SoulscourgePirate, ProjectileID.PirateCaptain }),
+				new MinionModel(ItemID.PygmyStaff, BuffID.Pygmies, new List<int>() { ProjectileID.Pygmy, ProjectileID.Pygmy2, ProjectileID.Pygmy3, ProjectileID.Pygmy4 }),
+				new MinionModel(ItemID.XenoStaff, BuffID.UFOMinion, new List<int>() { ProjectileID.UFOMinion }),
+				new MinionModel(ItemID.RavenStaff, BuffID.Ravens, new List<int>() { ProjectileID.Raven }),
+				new MinionModel(ItemID.TempestStaff, BuffID.SharknadoMinion, new List<int>() { ProjectileID.Tempest }),
+				new MinionModel(ItemID.DeadlySphereStaff, BuffID.DeadlySphere, new List<int>() { ProjectileID.DeadlySphere }),
+				new MinionModel(ItemID.StardustDragonStaff, BuffID.StardustDragonMinion, ProjectileID.StardustDragon2, 1f),
+				new MinionModel(ItemID.StardustCellStaff, BuffID.StardustMinion, new List<int>() { ProjectileID.StardustCellMinion })
+			};
+
+			ModdedSummonerWeaponsWithExistingBuff = new List<int>();
 		}
 
 		public override void PostSetupContent()
@@ -81,18 +88,23 @@ namespace SummonersAssociation
 		}
 
 		public override void AddRecipeGroups() {
-			List<int> itemList = new List<int>();
+			var itemList = new List<int>();
 			foreach (MinionModel minion in SupportedMinions) {
 				itemList.Add(minion.ItemID);
 			}
 
-			RecipeGroup group = new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " Minion Staff", itemList.ToArray());
+			foreach (int type in ModdedSummonerWeaponsWithExistingBuff) {
+				itemList.Add(type);
+			}
+			ModdedSummonerWeaponsWithExistingBuff = null;
+
+			var group = new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " Minion Staff", itemList.ToArray());
 			RecipeGroup.RegisterGroup("SummonersAssociation:MinionStaffs", group);
 
 			group = new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " Magic Mirror", new int[]
 			{
-				ItemID.IceMirror,
-				ItemID.MagicMirror
+				ItemID.MagicMirror,
+				ItemID.IceMirror
 			});
 			RecipeGroup.RegisterGroup("SummonersAssociation:MagicMirrors", group);
 		}
@@ -122,7 +134,7 @@ namespace SummonersAssociation
 		public override void PostDrawInterface(SpriteBatch spriteBatch) {
 			// Give this to everyone because why not
 			if (Main.playerInventory) {
-				DisplayMaxMinionIcon(Main.LocalPlayer);
+				DisplayMaxMinionIcon(spriteBatch, Main.LocalPlayer);
 			}
 
 			if (!Main.LocalPlayer.GetModPlayer<SummonersAssociationPlayer>().SummonersAssociationCardInInventory) {
@@ -131,7 +143,7 @@ namespace SummonersAssociation
 
 			// But only give them the buff info if they carry the card!
 			if (!Main.ingameOptionsWindow && !Main.playerInventory/* && !Main.achievementsWindow*/) {
-				UpdateBuffText(Main.LocalPlayer);
+				UpdateBuffText(spriteBatch, Main.LocalPlayer);
 			}
 		}
 
@@ -145,73 +157,78 @@ namespace SummonersAssociation
 			if (HistoryBookUI.active) HistoryBookUI.Update(gameTime);
 		}
 
-		private void UpdateBuffText(Player player) {
-			float vanillaMinionSlots = 0;
+		private void UpdateBuffText(SpriteBatch spriteBatch, Player player) {
+			double workingMinions = 0;
 			int xPosition;
 			int yPosition;
 			Color color;
 			int buffsPerLine = 11;
-			bool TwoLines = false;
-			for (int b = 0; b < 22; ++b) {
+			int lineOffset = 0;
+			for (int b = 0; b < player.buffType.Length; ++b) {
 				if (player.buffType[b] > 0) {
-					if (b == 11) {
-						TwoLines = true;
+					if (b % 11 == 0) {
+						lineOffset = b / 11;
 					}
 					int buffID = player.buffType[b];
 					xPosition = 32 + b * 38;
 					yPosition = 76;
 					if (b >= buffsPerLine) {
 						xPosition = 32 + (b - buffsPerLine) * 38;
-						yPosition += 50;
+						yPosition += lineOffset * 50;
 					}
-					color = new Color(Main.buffAlpha[b], Main.buffAlpha[b], Main.buffAlpha[b], Main.buffAlpha[b]);
+					color = new Color(new Vector4(Main.buffAlpha[b]));
 
 					int number = 0;
+					double slots = 0;
 
 					// Check to see if this buff represents a minion or not
 					MinionModel minion = SupportedMinions.SingleOrDefault(minionEntry => minionEntry.BuffID == buffID);
 					if (minion != null) {
 						List<int> projectileList = minion.ProjectileIDs;
+						List<double> slotList = minion.Slots;
 
-						foreach (int projectile in projectileList) {
-							number += player.ownedProjectileCounts[projectile];
+						for (int i = 0; i < minion.ProjectileIDs.Count; i++) {
+							int num = player.ownedProjectileCounts[minion.ProjectileIDs[i]];
+							if (num > 0) {
+								number += num;
+								slots += num * minion.Slots[i];
+							}
 						}
 
-						string text2 = number + " / " + player.maxMinions;
-						if (buffID == BuffID.TwinEyesMinion) {
-							text2 = number + " / " + 2 * player.maxMinions;
-							vanillaMinionSlots += number / 2f;
-						}
-						else {
-							vanillaMinionSlots += number;
-						}
-						Main.spriteBatch.DrawString(Main.fontItemStack, text2, new Vector2(xPosition, yPosition + Main.buffTexture[buffID].Height), color, 0.0f, new Vector2(), 0.8f, SpriteEffects.None, 0.0f);
+						//Use lowestSlots so the highest possible minion count is shown for this buff
+						//edge case 0, if for whatever reason a mod manually assigns 0 as the slot, it will turn it to 1
+						double lowestSlots = minion.Slots.Min(x => x == 0? 1 : x);
+						int newMaxMinions = (int)Math.Floor(player.maxMinions / lowestSlots);
+						string ratio = number + " / " + newMaxMinions;
+						workingMinions += slots;
+						spriteBatch.DrawString(Main.fontItemStack, ratio, new Vector2(xPosition, yPosition + Main.buffTexture[buffID].Height), color, 0.0f, new Vector2(), 0.8f, SpriteEffects.None, 0.0f);
 					}
 				}
 			}
 			// Count mod minions.
 			//color = new Color(Main.buffAlpha[1], Main.buffAlpha[1], Main.buffAlpha[1], Main.buffAlpha[1]);
-			color = new Color(.4f, .4f, .4f, .4f);
+			color = new Color(new Vector4(0.4f));
 			xPosition = 32;
 			yPosition = 76 + 20;
-			if (TwoLines) {
-				yPosition += 50;
-			}
-			float otherMinions = 0;
+			yPosition += lineOffset * 50;
+			double otherMinions = 0;
 
 			for (int j = 0; j < 1000; j++) {
 				if (Main.projectile[j].active && Main.projectile[j].owner == player.whoAmI && Main.projectile[j].minion) {
 					otherMinions += Main.projectile[j].minionSlots;
 				}
 			}
-			otherMinions -= vanillaMinionSlots;
-			if (otherMinions > 0) {
-				string modMinionText = "Uncountable mod minions: " + otherMinions + " / " + player.maxMinions;
+			otherMinions -= workingMinions;
+			//buff gets applied one tick after the projectile is spawned, causing "one tick delay" for otherMinion ?? Hotfix through ModPlayer
+			var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
+			if (otherMinions > 0 && mPlayer.lastOtherMinions > 0) {
+				string modMinionText = "Uncountable mod minion slots: " + otherMinions + " / " + player.maxMinions;
 				Main.spriteBatch.DrawString(Main.fontItemStack, modMinionText, new Vector2(xPosition, yPosition + Main.buffTexture[1].Height), color, 0.0f, new Vector2(), 0.8f, SpriteEffects.None, 0.0f);
 			}
+			mPlayer.lastOtherMinions = otherMinions;
 		}
 
-		private void DisplayMaxMinionIcon(Player player) {
+		private void DisplayMaxMinionIcon(SpriteBatch spriteBatch, Player player) {
 			if (Main.EquipPage == 0) {
 				int mH = 0;
 				if (Main.mapEnabled) {
@@ -245,22 +262,93 @@ namespace SummonersAssociation
 				drawPos.X = Utils.Clamp(drawPos.X, size.X / 2, Main.screenWidth - size.X / 2);
 				drawPos.Y = Utils.Clamp(drawPos.Y, size.Y / 2, Main.screenHeight - size.Y / 2);
 
-				Main.spriteBatch.Draw(Main.buffTexture[150], drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
+				spriteBatch.Draw(Main.buffTexture[150], drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
 				Vector2 stringLength = Main.fontMouseText.MeasureString(player.maxMinions.ToString());
-				ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, player.maxMinions.ToString(), drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
+				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, player.maxMinions.ToString(), drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
 				if (Utils.CenteredRectangle(drawPos, size).Contains(new Point(Main.mouseX, Main.mouseY))) {
 					player.mouseInterface = true;
-					string str = "" + player.maxMinions + " Max Minions";
+					string str = "" + Math.Round(player.slotsMinions, 2) + " / " + player.maxMinions + " Minion Slots";
 					if (!string.IsNullOrEmpty(str))
 						Main.hoverItemName = str;
 				}
 			}
 		}
 
-		// TODO: summonersAssociation.Call("Buff->Projectile", BuffType("CoolMinionBuff"), ProjectileType("CoolMinionProjectile")); style call.
-		//public override object Call(params object[] args)
-		//{
-		//	return base.Call(args);
-		//}
+		public override object Call(params object[] args) {
+			/*
+			 * int, int, List<int>, List<float>
+			 * or
+			 * int, int, List<int>
+			 * or
+			 * int, int, int, float
+			 * or
+			 * int, int, int
+			 */
+			try {
+				int itemID = Convert.ToInt32(args[0]);
+				int buffID = Convert.ToInt32(args[1]);
+
+				if (itemID >= ItemLoader.ItemCount) throw new Exception("Invalid item registered");
+
+				string itemMsg = " ### Minion from item '" + ItemID.GetUniqueKey(itemID) + "' not added";
+
+				if (buffID >= BuffLoader.BuffCount) throw new Exception("Invalid buff registered" + itemMsg);
+
+				if (args[2] is List<int>) {
+					var projIDs = args[2] as List<int>;
+					if (projIDs.Count == 0) throw new Exception("Projectile list empty" + itemMsg);
+					foreach (int type in projIDs) {
+						if (type >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile registered" + itemMsg);
+					}
+					if (args.Length == 4) {
+						var slots = args[3] as List<float>;
+						if (projIDs.Count != slots.Count)
+							throw new Exception("Length of the projectile list does not match up with the length of the slot list" + itemMsg);
+						AddMinion(new MinionModel(itemID, buffID, projIDs, slots));
+					}
+					else {
+						AddMinion(new MinionModel(itemID, buffID, projIDs));
+					}
+				}
+				else {
+					int projID = Convert.ToInt32(args[2]);
+					if (projID >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile registered" + itemMsg);
+					if (args.Length == 4) {
+						float slot = Convert.ToSingle(args[3]);
+						AddMinion(new MinionModel(itemID, buffID, projID, slot));
+					}
+					else {
+						AddMinion(new MinionModel(itemID, buffID, projID));
+					}
+				}
+
+				return "Success";
+			}
+			catch (Exception e) {
+				Logger.Error(Name + " Call Error: " + e.StackTrace + e.Message);
+			}
+			return "Failure";
+		}
+
+		/// <summary>
+		/// Almost the same as Add, but merges projectile lists on the same buff and registers its item without creating a new model
+		/// </summary>
+		private void AddMinion(MinionModel model) {
+			MinionModel existing = SupportedMinions.SingleOrDefault(m => m.BuffID == model.BuffID);
+			if (existing != null) {
+				if (!SupportedMinions.Exists(m => m.ItemID == model.ItemID)) {
+					ModdedSummonerWeaponsWithExistingBuff.Add(model.ItemID);
+				}
+				for (int i = 0; i < model.ProjectileIDs.Count; i++) {
+					if (!existing.ProjectileIDs.Contains(model.ProjectileIDs[i])) {
+						existing.ProjectileIDs.Add(model.ProjectileIDs[i]);
+						existing.Slots.Add(model.Slots[i]);
+					}
+				}
+			}
+			else {
+				SupportedMinions.Add(model);
+			}
+		}
 	}
 }
