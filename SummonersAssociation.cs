@@ -171,12 +171,8 @@ namespace SummonersAssociation
 						lineOffset = b / 11;
 					}
 					int buffID = player.buffType[b];
-					xPosition = 32 + b * 38;
-					yPosition = 76;
-					if (b >= buffsPerLine) {
-						xPosition = 32 + (b - buffsPerLine) * 38;
-						yPosition += lineOffset * 50;
-					}
+					xPosition = 32 + (b - lineOffset * buffsPerLine) * 38;
+					yPosition = 76 + lineOffset * 50;
 					color = new Color(new Vector4(Main.buffAlpha[b]));
 
 					int number = 0;
@@ -202,16 +198,14 @@ namespace SummonersAssociation
 						int newMaxMinions = (int)Math.Floor(player.maxMinions / lowestSlots);
 						string ratio = number + " / " + newMaxMinions;
 						workingMinions += slots;
-						spriteBatch.DrawString(Main.fontItemStack, ratio, new Vector2(xPosition, yPosition + Main.buffTexture[buffID].Height), color, 0.0f, new Vector2(), 0.8f, SpriteEffects.None, 0.0f);
+						spriteBatch.DrawString(Main.fontItemStack, ratio, new Vector2(xPosition, yPosition + Main.buffTexture[buffID].Height), color, 0f, new Vector2(), 0.8f, SpriteEffects.None, 0f);
 					}
 				}
 			}
-			// Count mod minions.
-			//color = new Color(Main.buffAlpha[1], Main.buffAlpha[1], Main.buffAlpha[1], Main.buffAlpha[1]);
+			//Count non-registered mod minions
 			color = new Color(new Vector4(0.4f));
 			xPosition = 32;
-			yPosition = 76 + 20;
-			yPosition += lineOffset * 50;
+			yPosition = 76 + 20 + lineOffset * 50;
 			double otherMinions = 0;
 
 			for (int j = 0; j < 1000; j++) {
@@ -220,11 +214,11 @@ namespace SummonersAssociation
 				}
 			}
 			otherMinions -= workingMinions;
-			//buff gets applied one tick after the projectile is spawned, causing "one tick delay" for otherMinion ?? Hotfix through ModPlayer
+			//Buff gets applied one tick after the projectile is spawned, causing "one tick delay" for otherMinion ?? Hotfix through ModPlayer
 			var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
 			if (otherMinions > 0 && mPlayer.lastOtherMinions > 0) {
 				string modMinionText = "Uncountable mod minion slots: " + otherMinions + " / " + player.maxMinions;
-				Main.spriteBatch.DrawString(Main.fontItemStack, modMinionText, new Vector2(xPosition, yPosition + Main.buffTexture[1].Height), color, 0.0f, new Vector2(), 0.8f, SpriteEffects.None, 0.0f);
+				Main.spriteBatch.DrawString(Main.fontItemStack, modMinionText, new Vector2(xPosition, yPosition + Main.buffTexture[1].Height), color, 0f, new Vector2(), 0.8f, SpriteEffects.None, 0f);
 			}
 			mPlayer.lastOtherMinions = otherMinions;
 		}
@@ -281,7 +275,7 @@ namespace SummonersAssociation
 		//Mod summonersAssociation = ModLoader.GetMod("SummonersAssociation");
 		//
 		//	Regular call for a regular summon weapon
-		//	summonersAssociation.Call(
+		//	summonersAssociation?.Call(
 		//		"AddMinionInfo",
 		//		ItemType<MinionItem>(),
 		//		BuffType<MinionBuff>(),
@@ -289,7 +283,7 @@ namespace SummonersAssociation
 		//	);
 		//
 		//  If the weapon summons two minions
-		//	summonersAssociation.Call(
+		//	summonersAssociation?.Call(
 		//		"AddMinionInfo",
 		//		ItemType<MinionItem>(),
 		//		BuffType<MinionBuff>(),
@@ -301,7 +295,7 @@ namespace SummonersAssociation
 		//
 		//  If you want to override the minionSlots of the projectile
 		//  (for example useful if you have a Stardust Dragon-like minion and you only want it to count one segment towards the number of summoned minions)
-		//	summonersAssociation.Call(
+		//	summonersAssociation?.Call(
 		//		"AddMinionInfo",
 		//		ItemType<MinionItem>(),
 		//		BuffType<MinionBuff>(),
@@ -311,7 +305,7 @@ namespace SummonersAssociation
 		//
 		//  If you want to override the minionSlots of the projectiles you specify (same order)
 		//  (for example useful if you have some complex minion that consists of multiple parts)
-		//	summonersAssociation.Call(
+		//	summonersAssociation?.Call(
 		//		"AddMinionInfo",
 		//		ItemType<MinionItem>(),
 		//		BuffType<MinionBuff>(),
