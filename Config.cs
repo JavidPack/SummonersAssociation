@@ -15,7 +15,7 @@ namespace SummonersAssociation
 		public const float DefaultY = 0.87f;
 
 		[DefaultValue(typeof(Vector2), "0.89, 0.87")]
-		[Label("Max Minion UI Offset")]
+		[Label("Max Minion Icon Offset")]
 		public Vector2 Offset;
     }
 }
