@@ -86,36 +86,6 @@ namespace SummonersAssociation
 			BookTypes = null;
 
 			Instance = null;
-
-			Mod summonersAssociation = ModLoader.GetMod("SummonersAssociation");
-			summonersAssociation.Call(
-				"AddMinionInfo",
-				ItemType<MinionItem>(),
-				BuffType<MinionBuff>(),
-				ProjectileType<MinionProjectile>()
-			);
-			summonersAssociation.Call(
-				"AddMinionInfo",
-				ItemType<MinionItem>(),
-				BuffType<MinionBuff>(),
-				new List<int> {
-				ProjectileType<MinionProjectile1>(),
-				ProjectileType<MinionProjectile2>()
-				}
-			);
-			summonersAssociation.Call(
-				"AddMinionInfo",
-				ItemType<MinionItem>(),
-				BuffType<MinionBuff>(),
-				new List<int> {
-				ProjectileType<MinionProjectile1>(),
-				ProjectileType<MinionProjectile2>()
-				},
-				new List<float> {
-				0.25f,
-				0.5f
-				}
-			);
 		}
 
 		public override void AddRecipeGroups() {
