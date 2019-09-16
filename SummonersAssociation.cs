@@ -357,7 +357,7 @@ namespace SummonersAssociation
 						foreach (int type in projIDs) {
 							if (type == 0 || type >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile '" + type + "' registered" + itemMsg);
 						}
-						if (args.Length == 4) {
+						if (args.Length == 5) {
 							var slots = args[4] as List<float>;
 							if (projIDs.Count != slots.Count)
 								throw new Exception("Length of the projectile list does not match up with the length of the slot list" + itemMsg);
@@ -370,7 +370,7 @@ namespace SummonersAssociation
 					else {
 						int projID = Convert.ToInt32(args[3]);
 						if (projID == 0 || projID >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile '" + projID + "' registered" + itemMsg);
-						if (args.Length == 4) {
+						if (args.Length == 5) {
 							float slot = Convert.ToSingle(args[4]);
 							AddMinion(new MinionModel(itemID, buffID, projID, slot));
 						}
