@@ -82,6 +82,7 @@ namespace SummonersAssociation
 			HistoryBookUI = null;
 			HistoryBookUI.redCrossTexture = null;
 
+			SupportedMinions = null;
 			BookTypes = null;
 
 			Instance = null;
