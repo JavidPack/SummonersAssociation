@@ -86,6 +86,36 @@ namespace SummonersAssociation
 			BookTypes = null;
 
 			Instance = null;
+
+			Mod summonersAssociation = ModLoader.GetMod("SummonersAssociation");
+			summonersAssociation.Call(
+				"AddMinionInfo",
+				ItemType<MinionItem>(),
+				BuffType<MinionBuff>(),
+				ProjectileType<MinionProjectile>()
+			);
+			summonersAssociation.Call(
+				"AddMinionInfo",
+				ItemType<MinionItem>(),
+				BuffType<MinionBuff>(),
+				new List<int> {
+				ProjectileType<MinionProjectile1>(),
+				ProjectileType<MinionProjectile2>()
+				}
+			);
+			summonersAssociation.Call(
+				"AddMinionInfo",
+				ItemType<MinionItem>(),
+				BuffType<MinionBuff>(),
+				new List<int> {
+				ProjectileType<MinionProjectile1>(),
+				ProjectileType<MinionProjectile2>()
+				},
+				new List<float> {
+				0.25f,
+				0.5f
+				}
+			);
 		}
 
 		public override void AddRecipeGroups() {
@@ -198,7 +228,7 @@ namespace SummonersAssociation
 
 						//Use lowestSlots so the highest possible minion count is shown for this buff
 						//edge case 0, if for whatever reason a mod manually assigns 0 as the slot, it will turn it to 1
-						double lowestSlots = minion.Slots.Min(x => x == 0? 1 : x);
+						double lowestSlots = minion.Slots.Min(x => x == 0 ? 1 : x);
 						int newMaxMinions = (int)Math.Floor(player.maxMinions / lowestSlots);
 						string ratio = number + " / " + newMaxMinions;
 						workingMinions += slots;
@@ -275,8 +305,59 @@ namespace SummonersAssociation
 			}
 		}
 
+
+		//Examples:
+		//############
+		//Mod summonersAssociation = ModLoader.GetMod("SummonersAssociation");
+		//
+		//	Regular call for a regular summon weapon
+		//	summonersAssociation.Call(
+		//		"AddMinionInfo",
+		//		ItemType<MinionItem>(),
+		//		BuffType<MinionBuff>(),
+		//		ProjectileType<MinionProjectile>()
+		//	);
+		//
+		//  If the weapon summons two minions
+		//	summonersAssociation.Call(
+		//		"AddMinionInfo",
+		//		ItemType<MinionItem>(),
+		//		BuffType<MinionBuff>(),
+		//		new List<int> {
+		//		ProjectileType<MinionProjectile1>(),
+		//		ProjectileType<MinionProjectile2>()
+		//		}
+		//	);
+		//
+		//  If you want to override the minionSlots of the projectile
+		//  (for example useful if you have a Stardust Dragon-like minion and you only want it to count one segment towards the number of summoned minions)
+		//	summonersAssociation.Call(
+		//		"AddMinionInfo",
+		//		ItemType<MinionItem>(),
+		//		BuffType<MinionBuff>(),
+		//		ProjectileType<MinionProjectile>(),
+		//		1f
+		//	);
+		//
+		//  If you want to override the minionSlots of the projectiles you specify (same order)
+		//  (for example useful if you have some complex minion that consists of multiple parts)
+		//	summonersAssociation.Call(
+		//		"AddMinionInfo",
+		//		ItemType<MinionItem>(),
+		//		BuffType<MinionBuff>(),
+		//		new List<int> {
+		//		ProjectileType<MinionProjectile1>(),
+		//		ProjectileType<MinionProjectile2>()
+		//		},
+		//		new List<float> {
+		//		0.25f,
+		//		0.5f
+		//		}
+		//	);
+
 		public override object Call(params object[] args) {
-			/*
+			/* message string, then 
+			 * if "AddMinionInfo":
 			 * int, int, List<int>, List<float>
 			 * or
 			 * int, int, List<int>
@@ -284,46 +365,51 @@ namespace SummonersAssociation
 			 * int, int, int, float
 			 * or
 			 * int, int, int
+			 * 
+			 * else if "SomeOther":
+			 * ...
 			 */
 			try {
-				int itemID = Convert.ToInt32(args[0]);
-				int buffID = Convert.ToInt32(args[1]);
+				string message = args[0] as string;
+				if (message == "AddMinionInfo") {
+					int itemID = Convert.ToInt32(args[1]);
+					int buffID = Convert.ToInt32(args[2]);
 
-				if (itemID >= ItemLoader.ItemCount) throw new Exception("Invalid item registered");
+					if (itemID == 0 || itemID >= ItemLoader.ItemCount) throw new Exception("Invalid item '" + itemID + "' registered");
 
-				string itemMsg = " ### Minion from item '" + ItemID.GetUniqueKey(itemID) + "' not added";
+					string itemMsg = " ### Minion from item '" + ItemID.GetUniqueKey(itemID) + "' not added";
 
-				if (buffID >= BuffLoader.BuffCount) throw new Exception("Invalid buff registered" + itemMsg);
+					if (buffID == 0 || buffID >= BuffLoader.BuffCount) throw new Exception("Invalid buff '" + buffID + "' registered" + itemMsg);
 
-				if (args[2] is List<int>) {
-					var projIDs = args[2] as List<int>;
-					if (projIDs.Count == 0) throw new Exception("Projectile list empty" + itemMsg);
-					foreach (int type in projIDs) {
-						if (type >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile registered" + itemMsg);
-					}
-					if (args.Length == 4) {
-						var slots = args[3] as List<float>;
-						if (projIDs.Count != slots.Count)
-							throw new Exception("Length of the projectile list does not match up with the length of the slot list" + itemMsg);
-						AddMinion(new MinionModel(itemID, buffID, projIDs, slots));
-					}
-					else {
-						AddMinion(new MinionModel(itemID, buffID, projIDs));
-					}
-				}
-				else {
-					int projID = Convert.ToInt32(args[2]);
-					if (projID >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile registered" + itemMsg);
-					if (args.Length == 4) {
-						float slot = Convert.ToSingle(args[3]);
-						AddMinion(new MinionModel(itemID, buffID, projID, slot));
+					if (args[3] is List<int>) {
+						var projIDs = args[3] as List<int>;
+						if (projIDs.Count == 0) throw new Exception("Projectile list empty" + itemMsg);
+						foreach (int type in projIDs) {
+							if (type == 0 || type >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile '" + type + "' registered" + itemMsg);
+						}
+						if (args.Length == 4) {
+							var slots = args[4] as List<float>;
+							if (projIDs.Count != slots.Count)
+								throw new Exception("Length of the projectile list does not match up with the length of the slot list" + itemMsg);
+							AddMinion(new MinionModel(itemID, buffID, projIDs, slots));
+						}
+						else {
+							AddMinion(new MinionModel(itemID, buffID, projIDs));
+						}
 					}
 					else {
-						AddMinion(new MinionModel(itemID, buffID, projID));
+						int projID = Convert.ToInt32(args[3]);
+						if (projID == 0 || projID >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile '" + projID + "' registered" + itemMsg);
+						if (args.Length == 4) {
+							float slot = Convert.ToSingle(args[4]);
+							AddMinion(new MinionModel(itemID, buffID, projID, slot));
+						}
+						else {
+							AddMinion(new MinionModel(itemID, buffID, projID));
+						}
 					}
+					return "Success";
 				}
-
-				return "Success";
 			}
 			catch (Exception e) {
 				Logger.Error(Name + " Call Error: " + e.StackTrace + e.Message);
