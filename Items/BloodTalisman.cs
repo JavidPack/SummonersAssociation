@@ -10,7 +10,7 @@ namespace SummonersAssociation.Items
 	{
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Blood Talisman");
-			Tooltip.SetDefault("Sacrifice your lifeforce to greatly strengthen minions."
+			Tooltip.SetDefault("Sacrifice your lifeforce to greatly strengthen minions"
 				+ "\nTry not to fall into madness");
 		}
 

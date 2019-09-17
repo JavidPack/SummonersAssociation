@@ -167,7 +167,7 @@ namespace SummonersAssociation
 			int lineOffset = 0;
 			for (int b = 0; b < player.buffType.Length; ++b) {
 				if (player.buffType[b] > 0) {
-					lineOffset = b / 11;
+					lineOffset = b / buffsPerLine;
 					int buffID = player.buffType[b];
 					xPosition = 32 + (b - lineOffset * buffsPerLine) * 38;
 					yPosition = 76 + lineOffset * 50 + Main.buffTexture[buffID].Height;
