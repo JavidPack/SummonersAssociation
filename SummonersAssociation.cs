@@ -167,12 +167,10 @@ namespace SummonersAssociation
 			int lineOffset = 0;
 			for (int b = 0; b < player.buffType.Length; ++b) {
 				if (player.buffType[b] > 0) {
-					if (b % 11 == 0) {
-						lineOffset = b / 11;
-					}
+					lineOffset = b / 11;
 					int buffID = player.buffType[b];
 					xPosition = 32 + (b - lineOffset * buffsPerLine) * 38;
-					yPosition = 76 + lineOffset * 50;
+					yPosition = 76 + lineOffset * 50 + Main.buffTexture[buffID].Height;
 					color = new Color(new Vector4(Main.buffAlpha[b]));
 
 					int number = 0;
@@ -191,6 +189,8 @@ namespace SummonersAssociation
 								slots += num * minion.Slots[i];
 							}
 						}
+						//Projectiles spawn one tick after the buff is applied, showing 0 for a single tick if the buff is fresh
+						if (number == 0) continue;
 
 						//Use lowestSlots so the highest possible minion count is shown for this buff
 						//edge case 0, if for whatever reason a mod manually assigns 0 as the slot, it will turn it to 1
@@ -198,14 +198,14 @@ namespace SummonersAssociation
 						int newMaxMinions = (int)Math.Floor(player.maxMinions / lowestSlots);
 						string ratio = number + " / " + newMaxMinions;
 						workingMinions += slots;
-						spriteBatch.DrawString(Main.fontItemStack, ratio, new Vector2(xPosition, yPosition + Main.buffTexture[buffID].Height), color, 0f, new Vector2(), 0.8f, SpriteEffects.None, 0f);
+						spriteBatch.DrawString(Main.fontItemStack, ratio, new Vector2(xPosition, yPosition), color, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
 					}
 				}
 			}
 			//Count non-registered mod minions
 			color = new Color(new Vector4(0.4f));
 			xPosition = 32;
-			yPosition = 76 + 20 + lineOffset * 50;
+			yPosition = 76 + 20 + lineOffset * 50 + Main.buffTexture[1].Height;
 			double otherMinions = 0;
 
 			for (int j = 0; j < 1000; j++) {
@@ -214,11 +214,11 @@ namespace SummonersAssociation
 				}
 			}
 			otherMinions -= workingMinions;
-			//Buff gets applied one tick after the projectile is spawned, causing "one tick delay" for otherMinion ?? Hotfix through ModPlayer
+			//Projectiles spawn one tick after the buff is applied, causing "one tick delay" for otherMinion ?? Fix through ModPlayer
 			var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
 			if (otherMinions > 0 && mPlayer.lastOtherMinions > 0) {
 				string modMinionText = "Uncountable mod minion slots: " + otherMinions + " / " + player.maxMinions;
-				Main.spriteBatch.DrawString(Main.fontItemStack, modMinionText, new Vector2(xPosition, yPosition + Main.buffTexture[1].Height), color, 0f, new Vector2(), 0.8f, SpriteEffects.None, 0f);
+				Main.spriteBatch.DrawString(Main.fontItemStack, modMinionText, new Vector2(xPosition, yPosition), color, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
 			}
 			mPlayer.lastOtherMinions = otherMinions;
 		}
