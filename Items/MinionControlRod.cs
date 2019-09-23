@@ -9,7 +9,7 @@ namespace SummonersAssociation.Items
 	{
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Minion Control Rod");
-			Tooltip.SetDefault("Dominate and direct your minions.");
+			Tooltip.SetDefault("Dominate and direct your minions");
 		}
 
 		public override void SetDefaults() {

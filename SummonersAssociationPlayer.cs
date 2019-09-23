@@ -16,6 +16,8 @@ namespace SummonersAssociation
 		internal int originalSelectedItem;
 		internal bool autoRevertSelectedItem = false;
 
+		internal double lastOtherMinions = 0;
+
 		internal Queue<Tuple<int, int>> pendingCasts = new Queue<Tuple<int, int>>();
 
 		/// <summary>
@@ -60,7 +62,6 @@ namespace SummonersAssociation
 
 		private void UpdateHistoryBookUI() {
 			//Since this is UI related, make sure to only run on client
-			//Change the trigger type here
 
 			bool holdingBook = Array.IndexOf(SummonersAssociation.BookTypes, player.HeldItem.type) > -1;
 
