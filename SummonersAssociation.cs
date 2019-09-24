@@ -19,6 +19,7 @@ namespace SummonersAssociation
 	public class SummonersAssociation : Mod
 	{
 		private static List<MinionModel> SupportedMinions;
+		private bool SupportedMinionsFinalized = false;
 
 		private static List<int> ModdedSummonerWeaponsWithExistingBuff;
 
@@ -89,6 +90,23 @@ namespace SummonersAssociation
 		}
 
 		public override void AddRecipeGroups() {
+			// Automatically register MinionModels
+			var item = new Item();
+			var projectile = new Projectile();
+			for (int i = ItemID.Count; i < ItemLoader.ItemCount; i++) {
+				item = ItemLoader.GetItem(i).item;
+				if(item.buffType > 0 && item.shoot >= ProjectileID.Count) {
+					projectile = ProjectileLoader.GetProjectile(item.shoot).projectile;
+					if (projectile.minionSlots > 0) {
+						// Avoid automatic support for manually supported
+						if (!SupportedMinions.Any(x => x.ItemID == i || x.ProjectileIDs.Contains(projectile.type) || x.BuffID == item.buffType)) {
+							AddMinion(new MinionModel(item.type, item.buffType, projectile.type));
+						}
+					}
+				}
+			}
+			SupportedMinionsFinalized = true;
+
 			var itemList = new List<int>();
 			foreach (MinionModel minion in SupportedMinions) {
 				itemList.Add(minion.ItemID);
@@ -180,7 +198,6 @@ namespace SummonersAssociation
 					MinionModel minion = SupportedMinions.SingleOrDefault(minionEntry => minionEntry.BuffID == buffID);
 					if (minion != null) {
 						List<int> projectileList = minion.ProjectileIDs;
-						List<double> slotList = minion.Slots;
 
 						for (int i = 0; i < minion.ProjectileIDs.Count; i++) {
 							int num = player.ownedProjectileCounts[minion.ProjectileIDs[i]];
@@ -194,9 +211,10 @@ namespace SummonersAssociation
 
 						//Use lowestSlots so the highest possible minion count is shown for this buff
 						//edge case 0, if for whatever reason a mod manually assigns 0 as the slot, it will turn it to 1
-						double lowestSlots = minion.Slots.Min(x => x == 0 ? 1 : x);
+						float lowestSlots = minion.Slots.Min(x => x == 0 ? 1 : x);
 						int newMaxMinions = (int)Math.Floor(player.maxMinions / lowestSlots);
 						string ratio = number + " / " + newMaxMinions;
+						// TODO: 7/8 shown for spider minions with stardust armor. Technically there is .75 slots left, but StaffMinionSlotsRequired defaults to 1 and is an int. Might need to do the math and show 1 less if available minion slots is less than 1.
 						workingMinions += slots;
 						spriteBatch.DrawString(Main.fontItemStack, ratio, new Vector2(xPosition, yPosition), color, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
 					}
@@ -336,6 +354,9 @@ namespace SummonersAssociation
 			try {
 				string message = args[0] as string;
 				if (message == "AddMinionInfo") {
+					if (SupportedMinionsFinalized)
+						throw new Exception($"{Name} Call Error: The attempted message, \"{message}\", was sent too late. {Name} expects Call messages to happen during Mod.PostSetupContent.");
+
 					int itemID = Convert.ToInt32(args[1]);
 					int buffID = Convert.ToInt32(args[2]);
 

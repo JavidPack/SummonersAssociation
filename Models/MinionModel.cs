@@ -9,7 +9,7 @@ namespace SummonersAssociation.Models
 		public int BuffID { get; set; }
 		public List<int> ProjectileIDs { get; set; }
 		//Double because it's needed in Math.Floor and I cba to cast float to double every tick
-		public List<double> Slots { get; set; }
+		public List<float> Slots { get; set; }
 
 		public override string ToString() => Terraria.ID.ItemID.GetUniqueKey(ItemID);
 
@@ -24,7 +24,7 @@ namespace SummonersAssociation.Models
 			ItemID = itemID;
 			BuffID = buffID;
 			ProjectileIDs = new List<int> { projectileID };
-			Slots = new List<double> { slot };
+			Slots = new List<float> { slot };
 		}
 
 		public MinionModel(int itemID, int buffID, List<int> projectileIDs) {
@@ -38,11 +38,11 @@ namespace SummonersAssociation.Models
 			ItemID = itemID;
 			BuffID = buffID;
 			ProjectileIDs = projectileIDs;
-			Slots = slots.ConvertAll(s => (double)s);
+			Slots = slots;
 		}
 
-		private List<double> GetSlotsPerProjectile() {
-			var slots = new List<double>();
+		private List<float> GetSlotsPerProjectile() {
+			var slots = new List<float>();
 			foreach (int type in ProjectileIDs) {
 				try {
 					var proj = new Projectile();
@@ -51,7 +51,7 @@ namespace SummonersAssociation.Models
 				}
 				catch {
 					// In case it gets called before PostSetupContent for whatever reason, default to 1
-					slots.Add(1d);
+					slots.Add(1f);
 				}
 			}
 			return slots;
