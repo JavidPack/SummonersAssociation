@@ -5,6 +5,6 @@ Includes 6 items:
 Summoners Association Card
 Minion Control Rod
 Blood Talisman
-Minion Selection Book - Allows summoning any summon in inventory
-Minion History Book - Allows summoning a set of summons in invenory with one click
-Automatic Minion History Book - Upgraded Minion History Book that summons minion set automatically after respawn
+Minion Selection Book - Allows summoning any minion from the inventory
+Minion History Book - Allows summoning a set of minions from the inventory with one click
+Automatic Minion History Book - Upgraded Minion History Book that summons a minion set automatically after respawn
