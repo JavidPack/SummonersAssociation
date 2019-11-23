@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace SummonersAssociation.Items
 {
@@ -21,7 +22,7 @@ namespace SummonersAssociation.Items
 
 		public override void AddRecipes() {
 			var recipe = new ModRecipe(mod);
-			recipe.AddIngredient(mod.ItemType<MinionHistoryBook>());
+			recipe.AddIngredient(ItemType<MinionHistoryBook>());
 			recipe.AddIngredient(ItemID.LihzahrdPowerCell, 2);
 			recipe.AddTile(TileID.LihzahrdAltar);
 			recipe.SetResult(this);

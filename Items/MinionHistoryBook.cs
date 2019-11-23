@@ -4,6 +4,7 @@ using SummonersAssociation.UI;
 using System.Collections.Generic;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace SummonersAssociation.Items
 {
@@ -24,7 +25,7 @@ namespace SummonersAssociation.Items
 
 		public override void AddRecipes() {
 			ModRecipe recipe = new ModRecipe(mod);
-			recipe.AddIngredient(mod.ItemType<MinionHistoryBookSimple>());
+			recipe.AddIngredient(ItemType<MinionHistoryBookSimple>());
 			recipe.AddIngredient(ItemID.PixieDust, 10);
 			recipe.AddIngredient(ItemID.Moonglow, 5);
 			recipe.AddIngredient(ItemID.VariegatedLardfish, 3);

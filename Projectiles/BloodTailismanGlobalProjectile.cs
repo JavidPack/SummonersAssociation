@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace SummonersAssociation.Projectiles
 {
@@ -45,7 +46,7 @@ namespace SummonersAssociation.Projectiles
 				//if pro owner is channel and 
 				for (int j = 0; j < 1000; j++) {
 					if (Main.projectile[j].active && Main.projectile[j].owner == projectile.owner) {
-						if (Main.projectile[j].type == mod.ProjectileType<Projectiles.BloodTalismanTargetProjectile>()) {
+						if (Main.projectile[j].type == ProjectileType<BloodTalismanTargetProjectile>()) {
 							p = Main.projectile[j];
 							break;
 						}

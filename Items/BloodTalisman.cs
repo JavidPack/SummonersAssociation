@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
+using SummonersAssociation.Projectiles;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ID.ItemID;
+using static Terraria.ModLoader.ModContent;
 
 namespace SummonersAssociation.Items
 {
@@ -24,7 +26,7 @@ namespace SummonersAssociation.Items
 			//item.useTime = 45;
 			//	item.useStyle = 4;
 			//item.channel = true;
-			item.shoot = mod.ProjectileType<Projectiles.BloodTalismanProjectile>();
+			item.shoot = ProjectileType<BloodTalismanProjectile>();
 			//item.noUseGraphic = true;
 
 			item.useStyle = 5;
@@ -57,7 +59,7 @@ namespace SummonersAssociation.Items
 			recipe.AddRecipe();
 		}
 		public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
-			Projectile.NewProjectile(Main.mouseX + Main.screenPosition.X, Main.mouseY + Main.screenPosition.Y, 0, 0, mod.ProjectileType<Projectiles.BloodTalismanTargetProjectile>(), 0, 0, player.whoAmI);
+			Projectile.NewProjectile(Main.mouseX + Main.screenPosition.X, Main.mouseY + Main.screenPosition.Y, 0, 0, ProjectileType<BloodTalismanTargetProjectile>(), 0, 0, player.whoAmI);
 			//return false;
 			return true;
 		}
