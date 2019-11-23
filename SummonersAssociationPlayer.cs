@@ -16,6 +16,8 @@ namespace SummonersAssociation
 		internal int originalSelectedItem;
 		internal bool autoRevertSelectedItem = false;
 
+		internal bool enteredWorld = false;
+
 		internal double lastOtherMinions = 0;
 
 		internal Queue<Tuple<int, int>> pendingCasts = new Queue<Tuple<int, int>>();
@@ -260,6 +262,10 @@ namespace SummonersAssociation
 		}
 
 		public override void PostUpdate() {
+			if (!enteredWorld) {
+				enteredWorld = true;
+				UseAutomaticHistoryBook();
+			}
 			//This has to be set in PostUpdate cause crucial fields in PreUpdate are not set correctly
 			//(representative of the fields)
 			AllowedToOpenHistoryBookUI =
@@ -281,8 +287,5 @@ namespace SummonersAssociation
 		}
 
 		public override void OnRespawn(Player player) => UseAutomaticHistoryBook();
-
-		// Not working in MP for some reason. Too early?
-		public override void OnEnterWorld(Player player) => UseAutomaticHistoryBook();
 	}
 }
