@@ -5,6 +5,7 @@ using SummonersAssociation.Models;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.UI;
 using Terraria.UI.Chat;
@@ -173,7 +174,8 @@ namespace SummonersAssociation.UI
 			List<string> tooltip;
 			string number = "";
 			Rectangle bgRect;
-			Rectangle itemRect;
+			Rectangle destRect;
+			Rectangle sourceRect;
 			Color bgColor;
 			Color itemColor;
 			Color numberColor = default;
@@ -232,7 +234,16 @@ namespace SummonersAssociation.UI
 					if (itemModel.Active) itemColor = Color.White;
 					else itemColor = Color.Gray;
 				}
-				itemRect = new Rectangle((int)(spawnPosition.X + x) - (width / 2), (int)(spawnPosition.Y + y) - (height / 2), width, height);
+
+				DrawAnimation drawAnim = Main.itemAnimations[itemModel.ItemType];
+				if (drawAnim != null) {
+					height /= drawAnim.FrameCount;
+					sourceRect = drawAnim.GetFrame(texture);
+				}
+				else {
+					sourceRect = texture.Bounds;
+				}
+				destRect = new Rectangle((int)(spawnPosition.X + x) - (width / 2), (int)(spawnPosition.Y + y) - (height / 2), width, height);
 				#endregion
 
 				#region Setup SummonCount
@@ -255,7 +266,8 @@ namespace SummonersAssociation.UI
 					itemModel.ItemType,
 					bgRect,
 					bgColor,
-					itemRect,
+					destRect,
+					sourceRect,
 					itemColor,
 					tooltip,
 					numberColor,
@@ -292,7 +304,7 @@ namespace SummonersAssociation.UI
 
 				//Draw weapon sprite
 				texture = Main.itemTexture[model.ItemType];
-				spriteBatch.Draw(texture, model.ItemRect, texture.Bounds, model.ItemColor);
+				spriteBatch.Draw(texture, model.DestRect, model.SourceRect, model.ItemColor);
 
 				//Draw SummonCount
 				if (!simple) {
