@@ -237,8 +237,9 @@ namespace SummonersAssociation.UI
 
 				DrawAnimation drawAnim = Main.itemAnimations[itemModel.ItemType];
 				if (drawAnim != null) {
-					height /= drawAnim.FrameCount;
 					sourceRect = drawAnim.GetFrame(texture);
+					height = sourceRect.Height;
+					width = sourceRect.Width;
 				}
 				else {
 					sourceRect = texture.Bounds;
