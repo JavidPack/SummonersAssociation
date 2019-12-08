@@ -11,7 +11,6 @@ namespace SummonersAssociation.Items
 	public class BloodTalisman : ModItem
 	{
 		public override void SetStaticDefaults() {
-			DisplayName.SetDefault("Blood Talisman");
 			Tooltip.SetDefault("Sacrifice your lifeforce to greatly strengthen minions"
 				+ "\nTry not to fall into madness");
 		}

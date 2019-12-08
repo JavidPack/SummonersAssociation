@@ -14,7 +14,7 @@ namespace SummonersAssociation.Items
 			DisplayName.SetDefault("Minion History Book");
 			Tooltip.SetDefault("Left click to summon minions based on history"
 				+ "\nRight click to open an UI"
-				+ "\nScroll whell over the item icons to adjust the summon count");
+				+ "\nScroll wheel over the item icons to adjust the summon count");
 		}
 
 		public override void SetDefaults() {
