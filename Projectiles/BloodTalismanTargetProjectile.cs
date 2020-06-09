@@ -15,18 +15,13 @@ namespace SummonersAssociation.Projectiles
 			projectile.alpha = 255;// 55;
 			projectile.timeLeft = 2;
 			projectile.penetrate = -1;
-
-			//	projectile.aiStyle = 20;
+			//projectile.aiStyle = 20;
 			projectile.friendly = true;
 			projectile.penetrate = -1;
 			projectile.tileCollide = false;
-			//projectile.hide = true;
 			projectile.ownerHitCheck = true;
 			projectile.ignoreWater = true;
 			projectile.damage = 0;
-			//projectile.melee = true;
-			//projectile.scale = 1.2f;
-			//projectile.
 		}
 
 		public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough) {
@@ -47,29 +42,30 @@ namespace SummonersAssociation.Projectiles
 			//ErrorLogger.Log("d" + projectile.damage);
 
 			if (Main.myPlayer == projectile.owner) {
-				if (Main.player[projectile.owner].channel) {
+				Player player = Main.player[projectile.owner];
+				if (player.channel) {
 					if (projectile.alpha <= 255)
-						Main.player[projectile.owner].AddBuff(BuffID.Chilled, 300);
+						player.AddBuff(BuffID.Chilled, 300);
 					if (projectile.alpha <= 245)
-						Main.player[projectile.owner].AddBuff(BuffID.Darkness, 60);
+						player.AddBuff(BuffID.Darkness, 60);
 					if (projectile.alpha <= 235)
-						Main.player[projectile.owner].AddBuff(BuffID.Poisoned, 60);
+						player.AddBuff(BuffID.Poisoned, 60);
 					if (projectile.alpha <= 225)
-						Main.player[projectile.owner].AddBuff(BuffID.Venom, 60);
+						player.AddBuff(BuffID.Venom, 60);
 					if (projectile.alpha <= 215)
-						Main.player[projectile.owner].AddBuff(BuffID.Weak, 60);
+						player.AddBuff(BuffID.Weak, 60);
 					if (projectile.alpha <= 205)
-						Main.player[projectile.owner].AddBuff(BuffID.Cursed, 100);
+						player.AddBuff(BuffID.Cursed, 100);
 					if (projectile.alpha <= 195)
-						Main.player[projectile.owner].AddBuff(BuffID.Slow, 60);
+						player.AddBuff(BuffID.Slow, 60);
 					if (projectile.alpha <= 185)
-						Main.player[projectile.owner].AddBuff(BuffID.Confused, 60);
+						player.AddBuff(BuffID.Confused, 60);
 					if (projectile.alpha <= 175)
-						Main.player[projectile.owner].AddBuff(BuffID.Blackout, 60);
+						player.AddBuff(BuffID.Blackout, 60);
 					//if (projectile.alpha <= 165)
 					//	Main.player[projectile.owner].AddBuff(BuffID.Obstructed, 60);
 					if (projectile.alpha <= 155)
-						Main.player[projectile.owner].AddBuff(BuffID.Electrified, 200);
+						player.AddBuff(BuffID.Electrified, 200);
 
 					projectile.ai[0] += .01f;
 					projectile.alpha -= 1;
@@ -79,19 +75,17 @@ namespace SummonersAssociation.Projectiles
 					}
 
 					projectile.timeLeft = 2;
-					//projectile.position.X = Main.mouseX + Main.screenPosition.X;
-					//projectile.position.Y = Main.mouseY + Main.screenPosition.Y;
-					projectile.Center = new Vector2(Main.mouseX + Main.screenPosition.X, Main.mouseY + Main.screenPosition.Y);
+					projectile.Center = Main.MouseWorld;
 
 					if (Main.rand.Next(100) > projectile.alpha - 155) {
-						int num14 = Dust.NewDust(new Vector2(projectile.position.X - 4f, projectile.position.Y - 4f), projectile.width + 8, projectile.height + 8, 202, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 0, default(Color), 1f);
+						int index = Dust.NewDust(new Vector2(projectile.position.X - 4f, projectile.position.Y - 4f), projectile.width + 8, projectile.height + 8, 202, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 0, default(Color), 1f);
+						Dust dust = Main.dust[index];
 						if (Main.rand.Next(2) == 0) {
-							Main.dust[num14].scale = 1.5f;
+							dust.scale = 1.5f;
 						}
-						Main.dust[num14].noGravity = true;
-						Dust dustI = Main.dust[num14];
-						dustI.velocity.X *= 2f;
-						dustI.velocity.Y *= 2f;
+						dust.noGravity = true;
+						dust.velocity.X *= 2f;
+						dust.velocity.Y *= 2f;
 					}
 				}
 				else {
