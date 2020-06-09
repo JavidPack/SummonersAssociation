@@ -16,10 +16,10 @@ namespace SummonersAssociation.Items
 			item.height = 20;
 			item.maxStack = 1;
 			item.value = 500;
-			item.rare = 2;
+			item.rare = ItemRarityID.Green;
 			item.useAnimation = 45;
 			item.useTime = 45;
-			item.useStyle = 4;
+			item.useStyle = ItemUseStyleID.HoldingUp;
 		}
 
 		public override void AddRecipes() {

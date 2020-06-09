@@ -43,7 +43,7 @@ namespace SummonersAssociation
 		public override void Load() {
 			Instance = this;
 
-			if (!Main.dedServ && Main.netMode != 2) {
+			if (!Main.dedServ && Main.netMode != NetmodeID.Server) {
 				HistoryBookUI = new HistoryBookUI();
 				HistoryBookUI.Activate();
 				HistoryBookUIInterface = new UserInterface();

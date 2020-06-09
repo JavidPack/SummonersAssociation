@@ -31,11 +31,11 @@ namespace SummonersAssociation.Items
 			item.width = 28;
 			item.height = 30;
 			item.maxStack = 1;
-			item.rare = 3;
+			item.rare = ItemRarityID.Orange;
 			item.mana = 2;
 			item.useAnimation = 16;
 			item.useTime = 16;
-			item.useStyle = 4;
+			item.useStyle = ItemUseStyleID.HoldingUp;
 			item.UseSound = SoundID.Item46;
 			item.value = Item.sellPrice(silver: 10);
 		}

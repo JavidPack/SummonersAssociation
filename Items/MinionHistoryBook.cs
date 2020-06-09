@@ -19,7 +19,7 @@ namespace SummonersAssociation.Items
 
 		public override void SetDefaults() {
 			base.SetDefaults();
-			item.rare = 4;
+			item.rare = ItemRarityID.LightRed;
 			item.mana = 4;
 		}
 

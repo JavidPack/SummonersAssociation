@@ -28,7 +28,7 @@ namespace SummonersAssociation.Items
 			item.shoot = ProjectileType<BloodTalismanProjectile>();
 			//item.noUseGraphic = true;
 
-			item.useStyle = 5;
+			item.useStyle = ItemUseStyleID.HoldingOut;
 			item.useAnimation = 25;
 			item.useTime = 6;
 			item.shootSpeed = 15f;
@@ -39,7 +39,7 @@ namespace SummonersAssociation.Items
 			//	item.axe = 20;
 			//	item.useSound = 23;
 			//item.shoot = 61;
-			item.rare = 4;
+			item.rare = ItemRarityID.LightRed;
 			item.value = 108000;
 			item.noMelee = true;
 			item.noUseGraphic = true;

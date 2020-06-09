@@ -7,6 +7,7 @@ using System.Linq;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ModLoader;
+using Terraria.ID;
 
 namespace SummonersAssociation
 {
@@ -147,7 +148,7 @@ namespace SummonersAssociation
 								}
 
 								if (triggered) {
-									try { Main.PlaySound(12); }
+									try { Main.PlaySound(SoundID.MenuTick); }
 									catch { /*No idea why but this threw errors one time*/ }
 								}
 							}
@@ -193,7 +194,7 @@ namespace SummonersAssociation
 		/// Uses the item in the specified index from the players inventory
 		/// </summary>
 		public void QuickUseItemInSlot(int index) {
-			if (index > -1 && index < Main.maxInventory && player.inventory[index].type != 0) {
+			if (index > -1 && index < Main.maxInventory && player.inventory[index].type != ItemID.None) {
 				if (player.CheckMana(player.inventory[index], -1, false, false)) {
 					originalSelectedItem = player.selectedItem;
 					autoRevertSelectedItem = true;
@@ -205,7 +206,7 @@ namespace SummonersAssociation
 					player.ItemCheck(player.whoAmI);
 				}
 				else
-					Main.PlaySound(39, (int)player.Center.X, (int)player.Center.Y, Main.rand.Next(3));
+					Main.PlaySound(SoundID.Drip, (int)player.Center.X, (int)player.Center.Y, Main.rand.Next(3));
 			}
 		}
 
