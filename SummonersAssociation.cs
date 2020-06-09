@@ -226,9 +226,10 @@ namespace SummonersAssociation
 			yPosition = 76 + 20 + lineOffset * 50 + Main.buffTexture[1].Height;
 			double otherMinions = 0;
 
-			for (int j = 0; j < 1000; j++) {
-				if (Main.projectile[j].active && Main.projectile[j].owner == player.whoAmI && Main.projectile[j].minion) {
-					otherMinions += Main.projectile[j].minionSlots;
+			for (int j = 0; j < Main.maxProjectiles; j++) {
+				Projectile p = Main.projectile[j];
+				if (p.active && p.owner == player.whoAmI && p.minion) {
+					otherMinions += p.minionSlots;
 				}
 			}
 			otherMinions -= workingMinions;
@@ -412,8 +413,9 @@ namespace SummonersAssociation
 					ModdedSummonerWeaponsWithExistingBuff.Add(model.ItemID);
 				}
 				for (int i = 0; i < model.ProjectileIDs.Count; i++) {
-					if (!existing.ProjectileIDs.Contains(model.ProjectileIDs[i])) {
-						existing.ProjectileIDs.Add(model.ProjectileIDs[i]);
+					int id = model.ProjectileIDs[i];
+					if (!existing.ProjectileIDs.Contains(id)) {
+						existing.ProjectileIDs.Add(id);
 						existing.Slots.Add(model.Slots[i]);
 					}
 				}
