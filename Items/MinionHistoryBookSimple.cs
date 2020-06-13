@@ -105,7 +105,7 @@ namespace SummonersAssociation.Items
 
 		public void EnqueueSpawns(Player player) {
 			if (player.whoAmI == Main.myPlayer) {
-				int count = history.Sum(x => x.Active ? x.SummonCount: 0);
+				int count = history.Sum(x => x.Active ? x.SummonCount : 0);
 				if (count > 1) {
 					for (int i = 0; i < Main.maxProjectiles; i++) {
 						Projectile p = Main.projectile[i];

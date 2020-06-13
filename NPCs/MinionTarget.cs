@@ -6,7 +6,8 @@ using Terraria.ModLoader;
 namespace SummonersAssociation.NPCs
 {
 	//TODO Change reticle color in multiplayer based on team maybe?
-	public class MinionTarget : ModNPC {
+	public class MinionTarget : ModNPC
+	{
 		//So the NewNPC call centers it
 		public const int size = 34;
 
@@ -85,7 +86,7 @@ namespace SummonersAssociation.NPCs
 		}
 
 		public override void SetStaticDefaults() => DisplayName.SetDefault("Minion Target");
-		
+
 		public override void SetDefaults() {
 			npc.width = size;
 			npc.height = size;

@@ -98,7 +98,7 @@ namespace SummonersAssociation
 			var projectile = new Projectile();
 			for (int i = ItemID.Count; i < ItemLoader.ItemCount; i++) {
 				item = ItemLoader.GetItem(i).item;
-				if(item.buffType > 0 && item.shoot >= ProjectileID.Count) {
+				if (item.buffType > 0 && item.shoot >= ProjectileID.Count) {
 					projectile = ProjectileLoader.GetProjectile(item.shoot).projectile;
 					if (projectile.minionSlots > 0) {
 						// Avoid automatic support for manually supported
