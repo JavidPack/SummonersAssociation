@@ -51,6 +51,14 @@ namespace SummonersAssociation
 
 		private bool TriggerDec => PlayerInput.ScrollWheelDelta < 0 || mouseRightPressed;
 
+		public NPC Target => HasValidTarget ? Main.npc[TargetWhoAmI] : null;
+
+		public int TargetWhoAmI { get; set; } = -1; //Only relevant for server, and the client "owning" it
+
+		public bool HasValidTarget => TargetWhoAmI > -1 && TargetWhoAmI < Main.maxNPCs;
+
+		public int PendingTargetAssignment { get; set; } = -1;
+
 		private void UseAutomaticHistoryBook() {
 			int slot = -1;
 			for (int i = 0; i < Main.maxInventory; i++) {
@@ -267,6 +275,10 @@ namespace SummonersAssociation
 				enteredWorld = true;
 				UseAutomaticHistoryBook();
 			}
+
+			MinionControlRod.PendingTargetAssignment(this);
+			MinionControlRod.TargetVerification(this);
+
 			//This has to be set in PostUpdate cause crucial fields in PreUpdate are not set correctly
 			//(representative of the fields)
 			AllowedToOpenHistoryBookUI =

@@ -6,6 +6,7 @@ using SummonersAssociation.Models;
 using SummonersAssociation.UI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
@@ -38,8 +39,6 @@ namespace SummonersAssociation
 		/// </summary>
 		public static int[] BookTypes;
 
-		public SummonersAssociation() { }
-
 		public override void Load() {
 			Instance = this;
 
@@ -68,6 +67,8 @@ namespace SummonersAssociation
 			};
 
 			ModdedSummonerWeaponsWithExistingBuff = new List<int>();
+
+			MinionControlRod.LoadHooks();
 		}
 
 		public override void PostSetupContent()
@@ -85,6 +86,8 @@ namespace SummonersAssociation
 
 			SupportedMinions = null;
 			BookTypes = null;
+
+			MinionControlRod.UnloadHooks();
 
 			Instance = null;
 		}
@@ -170,7 +173,6 @@ namespace SummonersAssociation
 		/// Called in UpdateUI
 		/// </summary>
 		private void UpdateHistoryBookUI(GameTime gameTime) {
-
 			//This is updated to the "in UI" Mouse Position, because the UI itself is spawned in SummonersAssociationPlayer.PreUpdate()
 			MousePositionUI = Main.MouseScreen;
 			if (HistoryBookUI.active) HistoryBookUI.Update(gameTime);
@@ -422,6 +424,28 @@ namespace SummonersAssociation
 			}
 			else {
 				SupportedMinions.Add(model);
+			}
+		}
+
+		public override void HandlePacket(BinaryReader reader, int whoAmI) {
+			byte type = reader.ReadByte();
+
+			if (Enum.IsDefined(typeof(PacketType), type)) {
+				var packetType = (PacketType)type;
+				switch (packetType) {
+					case PacketType.SpawnTarget:
+						MinionControlRod.HandleSpawnTarget(reader);
+						break;
+					case PacketType.ConfirmTargetToClient:
+						MinionControlRod.HandleConfirmTargetToClient(reader);
+						break;
+					default:
+						Logger.Warn("'None' packet type received");
+						break;
+				}
+			}
+			else {
+				Logger.Warn("Undefined packet type received: " + type);
 			}
 		}
 	}
