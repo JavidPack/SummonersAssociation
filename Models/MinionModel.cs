@@ -8,7 +8,6 @@ namespace SummonersAssociation.Models
 		public int ItemID { get; set; }
 		public int BuffID { get; set; }
 		public List<int> ProjectileIDs { get; set; }
-		//Double because it's needed in Math.Floor and I cba to cast float to double every tick
 		public List<float> Slots { get; set; }
 
 		public override string ToString() => Terraria.ID.ItemID.GetUniqueKey(ItemID);
