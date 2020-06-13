@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace SummonersAssociation.Projectiles
 {
+	//Spawns the "aura" in AI
 	public class BloodTalismanProjectile : ModProjectile
 	{
 		public override void SetStaticDefaults() => DisplayName.SetDefault("Blood Talisman Projectile");
@@ -12,64 +12,64 @@ namespace SummonersAssociation.Projectiles
 		public override void SetDefaults() {
 			projectile.width = 30;
 			projectile.height = 30;
-			projectile.timeLeft = 2;
+			projectile.timeLeft = 18000;
 			projectile.penetrate = -1;
-			//projectile.aiStyle = 20;
 			projectile.friendly = true;
 			projectile.penetrate = -1;
+			projectile.ignoreWater = true;
 			projectile.tileCollide = false;
-			projectile.hide = true;
-			projectile.ownerHitCheck = true;
+		}
+
+		public override bool? CanCutTiles() => false;
+
+		private void Show(Player player, Vector2 center) {
+			projectile.Center = center;
+			projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+			projectile.spriteDirection = projectile.direction;
+			player.ChangeDir(projectile.direction);
+			player.heldProj = projectile.whoAmI;
+			player.itemTime = 2;
+			player.itemAnimation = 2;
+			player.itemRotation = (projectile.velocity * projectile.direction).ToRotation();
+		}
+
+		private void Aim(Player player, Vector2 center) {
+			var aim = Vector2.Normalize(Main.MouseWorld - center);
+			if (aim.HasNaNs()) {
+				aim = -Vector2.UnitY;
+			}
+
+			aim *= player.HeldItem.shootSpeed;
+
+			if (aim != projectile.velocity) {
+				projectile.netUpdate = true;
+			}
+			projectile.velocity = aim;
+		}
+
+		private void SpawnAura(Player player) {
+			int aura = ModContent.ProjectileType<BloodTalismanTargetProjectile>();
+			if (player.ownedProjectileCounts[aura] <= 0) {
+				Projectile.NewProjectile(Main.MouseWorld, projectile.velocity, aura, 0, 0, player.whoAmI);
+			}
 		}
 
 		public override void AI() {
 			Player player = Main.player[projectile.owner];
 			Vector2 center = player.RotatedRelativePoint(player.MountedCenter, true);
+
+			Show(player, center);
+
 			if (Main.myPlayer == projectile.owner) {
 				if (player.channel) {
-					projectile.timeLeft = 2;
+					Aim(player, center);
 
-					float speed = player.HeldItem.shootSpeed * projectile.scale;
-					Vector2 velo = Main.MouseWorld - center;
-					velo.Normalize();
-					velo *= speed;
-
-					if (velo != projectile.velocity) {
-						projectile.netUpdate = true;
-					}
-					projectile.velocity = velo;
-
-					//Vector2 dir = Main.MouseWorld - Main.player[projectile.owner].Center;
-					//dir *= (1f + (float)Main.rand.Next(-3, 4) * 0.01f);
-					//int num14 = Dust.NewDust(Main.player[projectile.owner].Center, 0, 0, 218, dir.X * .05f, dir.Y * .05f, 0, default(Color), 1f);
-
+					SpawnAura(player);
 				}
 				else {
 					projectile.Kill();
 				}
 			}
-			if (projectile.velocity.X > 0f && player.direction != 1) {
-				player.ChangeDir(1);
-			}
-			else if (projectile.velocity.X < 0f && player.direction != -1) {
-				player.ChangeDir(-1);
-			}
-			projectile.spriteDirection = projectile.direction;
-			//player.ChangeDir(projectile.direction);
-			player.heldProj = projectile.whoAmI;
-			player.itemTime = 2;
-			player.itemAnimation = 2;
-			projectile.position.X = center.X - projectile.width / 2;
-			projectile.position.Y = center.Y - projectile.height / 2;
-			projectile.rotation = (float)(Math.Atan2(projectile.velocity.Y, projectile.velocity.X) + 1.5700000524520874);
-			//projectile.rotation = 0;
-			if (player.direction == 1) {
-				player.itemRotation = (float)Math.Atan2(projectile.velocity.Y * projectile.direction, projectile.velocity.X * projectile.direction);
-			}
-			else {
-				player.itemRotation = (float)Math.Atan2(projectile.velocity.Y * projectile.direction, projectile.velocity.X * projectile.direction);
-			}
-			projectile.velocity.X = projectile.velocity.X * (1f + (float)Main.rand.Next(-3, 4) * 0.01f);
 		}
 	}
 }

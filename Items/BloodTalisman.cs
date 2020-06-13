@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using SummonersAssociation.Projectiles;
-using Terraria;
+﻿using SummonersAssociation.Projectiles;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ID.ItemID;
@@ -8,14 +6,16 @@ using static Terraria.ModLoader.ModContent;
 
 namespace SummonersAssociation.Items
 {
+	//Spawns the "hold-out" projectile, which in turn spawns the "aura"
 	public class BloodTalisman : ModItem
 	{
 		public override void SetStaticDefaults() {
 			Tooltip.SetDefault("Sacrifice your lifeforce to greatly strengthen minions"
-				+ "\nTry not to fall into madness");
+				+ "\n'Try not to fall into madness'");
 		}
 
 		public override void SetDefaults() {
+			item.damage = 0;
 			item.shoot = ProjectileType<BloodTalismanProjectile>();
 			item.useStyle = ItemUseStyleID.HoldingOut;
 			item.useAnimation = 25;
@@ -41,21 +41,5 @@ namespace SummonersAssociation.Items
 			recipe.SetResult(this);
 			recipe.AddRecipe();
 		}
-
-		public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
-			Projectile.NewProjectile(Main.MouseWorld, Vector2.Zero, ProjectileType<BloodTalismanTargetProjectile>(), 0, 0, player.whoAmI);
-			//return false;
-			return true;
-		}
-
-		//public override bool UseItem(Player player)
-		//{
-		//	if (player.channel)
-		//	{
-		//		player.AddBuff(BuffID.Cursed, 2);
-		//		player.AddBuff(BuffID.Darkness, 2);
-		//	}
-		//          return true;
-		//}
 	}
 }
