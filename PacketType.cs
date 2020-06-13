@@ -4,7 +4,7 @@
 	{
 		None = 0,
 		/// <summary>
-		/// Sent from a client to the server when he wants to spawn a targeting dummy. Server then spawns it and sends SpawnTarget back
+		/// Sent from a client to the server when he wants to spawn a target. Server then spawns it and sends SpawnTarget back
 		/// </summary>
 		SpawnTarget = 1,
 		/// <summary>

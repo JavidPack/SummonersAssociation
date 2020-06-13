@@ -51,11 +51,11 @@ namespace SummonersAssociation
 
 		private bool TriggerDec => PlayerInput.ScrollWheelDelta < 0 || mouseRightPressed;
 
-		public NPC Target => HasValidTarget ? Main.npc[TargetWhoAmI] : null;
-
 		public int TargetWhoAmI { get; set; } = -1; //Only relevant for server, and the client "owning" it
 
 		public bool HasValidTarget => TargetWhoAmI > -1 && TargetWhoAmI < Main.maxNPCs;
+
+		public NPC Target => HasValidTarget ? Main.npc[TargetWhoAmI] : null;
 
 		public int PendingTargetAssignment { get; set; } = -1;
 
