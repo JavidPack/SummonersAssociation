@@ -34,7 +34,10 @@ namespace SummonersAssociation.Items
 
 				if (!ServerConfig.Instance.DisableAdvancedTargetingFeature) {
 					tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick2", "or right click somewhere else to spawn a reticle your minions will attack"));
-					tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick3", "Right click another players' reticle so he has control over your minions' target"));
+
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick3", "Right click another players' reticle so he has control over your minions' target"));
+					}
 				}
 			}
 		}
@@ -54,11 +57,9 @@ namespace SummonersAssociation.Items
 
 		public override void AddRecipes() {
 			var recipe = new ModRecipe(mod);
-			//TODO change recipe to not include MinionStaffs (material flag bloat), something accessible in earlygame
-			recipe.AddRecipeGroup("SummonersAssociation:MinionStaffs");
+			recipe.AddIngredient(ItemID.FallenStar, 10);
 			recipe.AddRecipeGroup("SummonersAssociation:MagicMirrors");
-			recipe.AddTile(TileID.Chairs);
-			recipe.AddTile(TileID.Tables);
+			recipe.AddTile(TileID.Anvils);
 			recipe.SetResult(this);
 			recipe.AddRecipe();
 		}

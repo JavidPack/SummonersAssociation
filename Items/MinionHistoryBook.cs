@@ -24,12 +24,12 @@ namespace SummonersAssociation.Items
 		}
 
 		public override void AddRecipes() {
-			ModRecipe recipe = new ModRecipe(mod);
+			var recipe = new ModRecipe(mod);
 			recipe.AddIngredient(ItemType<MinionHistoryBookSimple>());
-			recipe.AddIngredient(ItemID.PixieDust, 10);
-			recipe.AddIngredient(ItemID.Moonglow, 5);
-			recipe.AddIngredient(ItemID.VariegatedLardfish, 3);
-			recipe.AddTile(TileID.CrystalBall);
+			recipe.AddIngredient(ItemID.Bone, 10);
+			recipe.AddIngredient(ItemID.JungleSpores, 5);
+			recipe.AddIngredient(ItemID.SummoningPotion, 5);
+			recipe.AddTile(TileID.Bookcases);
 			recipe.SetResult(this);
 			recipe.AddRecipe();
 		}

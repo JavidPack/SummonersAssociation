@@ -76,10 +76,8 @@ namespace SummonersAssociation.Items
 		public override void AddRecipes() {
 			var recipe = new ModRecipe(mod);
 			recipe.AddIngredient(ItemID.Book);
-			recipe.AddIngredient(ItemID.BlackInk);
 			recipe.AddIngredient(ItemID.FallenStar, 6);
-			recipe.AddTile(TileID.Chairs);
-			recipe.AddTile(TileID.Tables);
+			recipe.AddTile(TileID.Bookcases);
 			recipe.SetResult(this);
 			recipe.AddRecipe();
 		}
