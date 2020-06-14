@@ -97,6 +97,7 @@ namespace SummonersAssociation.NPCs
 			npc.lavaImmune = true;
 			npc.noTileCollide = true;
 			npc.netAlways = true;
+			npc.dontTakeDamageFromHostiles = true;
 			for (int i = 0; i < BuffLoader.BuffCount; i++) {
 				npc.buffImmune[i] = true;
 			}
