@@ -77,7 +77,7 @@ namespace SummonersAssociation.NPCs
 
 				int whoAmI = target.whoAmI;
 				if (whoAmI != npc.whoAmI || whoAmI != Owner.MinionAttackTargetNPC) {
-					//Console.WriteLine("die cause player target whoami doesn't match this dtargetummy");
+					//Console.WriteLine("die cause player target whoami doesn't match this target");
 					//Main.NewText("die cause player target whoami doesn't match this target");
 					return false;
 				}

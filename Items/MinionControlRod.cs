@@ -396,7 +396,7 @@ namespace SummonersAssociation.Items
 
 			if (whoAmI > -1 && whoAmI < Main.maxNPCs) {
 				NPC npc = Main.npc[whoAmI];
-				if (npc.active && npc.type == NPCType<MinionTarget>()) {
+				if (npc != null && npc.active && npc.type == NPCType<MinionTarget>()) {
 					bad = false;
 				}
 			}
@@ -421,6 +421,9 @@ namespace SummonersAssociation.Items
 				int type = NPCType<MinionTarget>();
 				for (int i = 0; i < Main.maxNPCs; i++) {
 					NPC npc = Main.npc[i];
+					if (npc == null) {
+						continue;
+					}
 					if (npc.active && npc.type == type && !npc.dontTakeDamage) {
 						resetFlag.Add(i);
 						//Vanilla code for drawing mouseover for health: if (Main.npc[num2].lifeMax > 1 && !Main.npc[num2].dontTakeDamage)
@@ -434,6 +437,9 @@ namespace SummonersAssociation.Items
 			finally {
 				foreach (int index in resetFlag) {
 					NPC npc = Main.npc[index];
+					if (npc == null) {
+						continue;
+					}
 					npc.dontTakeDamage = false;
 				}
 			}
@@ -448,10 +454,11 @@ namespace SummonersAssociation.Items
 			int prevTarget = self.MinionAttackTargetNPC;
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				//In multiplayer, the player can use his minion control rod to select another player's target
-				if (prevTarget > -1 && Main.npc[prevTarget].type == NPCType<MinionTarget>()) {
+				if (prevTarget > -1 && Main.npc[prevTarget]?.type == NPCType<MinionTarget>()) {
 					oldTarget = prevTarget;
 				}
 			}
+
 			bool restore = false;
 			if (oldTarget > -1 && prevTarget == oldTarget) {
 				restore = true;
@@ -489,22 +496,24 @@ namespace SummonersAssociation.Items
 				if (self.minion || ProjectileID.Sets.MinionShot[self.type]) {
 
 					Player player = Main.player[self.owner];
-					int type = NPCType<MinionTarget>();
+					if (player != null) {
+						int type = NPCType<MinionTarget>();
 
-					for (int j = 0; j < Main.maxNPCs; j++) {
-						NPC npc = Main.npc[j];
-						if (npc.active && npc.type == type) {
-							npc.friendly = false;
-							resetFriendly.Add(j);
+						for (int j = 0; j < Main.maxNPCs; j++) {
+							NPC npc = Main.npc[j];
+							if (npc != null && npc.active && npc.type == type) {
+								npc.friendly = false;
+								resetFriendly.Add(j);
 
-							//Setting chaseable doesn't matter in singleplayer because only 1 target exists
-							if (Main.netMode == NetmodeID.SinglePlayer) continue;
+								//Setting chaseable doesn't matter in singleplayer because only 1 target exists
+								if (Main.netMode == NetmodeID.SinglePlayer) continue;
 
-							//Block minions from treating all non-targeted targets as chaseable
-							//Only block chasing if the target isn't targeted (in multiplayer a player can target someone elses target)
-							if (npc.chaseable && npc.whoAmI != player.MinionAttackTargetNPC/* || !mPlayer.HasTarget*/) {
-								npc.chaseable = false;
-								resetChaseable.Add(j);
+								//Block minions from treating all non-targeted targets as chaseable
+								//Only block chasing if the target isn't targeted (in multiplayer a player can target someone elses target)
+								if (npc.chaseable && npc.whoAmI != player.MinionAttackTargetNPC/* || !mPlayer.HasTarget*/) {
+									npc.chaseable = false;
+									resetChaseable.Add(j);
+								}
 							}
 						}
 					}
@@ -515,11 +524,17 @@ namespace SummonersAssociation.Items
 			finally {
 				foreach (int index in resetChaseable) {
 					NPC npc = Main.npc[index];
+					if (npc == null) {
+						continue;
+					}
 					npc.chaseable = true;
 				}
 
 				foreach (int index in resetFriendly) {
 					NPC npc = Main.npc[index];
+					if (npc == null) {
+						continue;
+					}
 					npc.friendly = true;
 				}
 			}
@@ -555,10 +570,6 @@ namespace SummonersAssociation.Items
 					SummonersAssociation.Instance.Logger.Error("ResetFriendlyAndChaseable failed to hook OnProjectileAI, Minion Control Rod targeting will not work");
 				}
 			}
-
-			//On.Terraria.Projectile.AI += IgnoreTargetIfNotExplicitelyTargeted;
-
-			//On.Terraria.Projectile.Update += Projectile_Update;
 		}
 
 		internal static void UnloadHooks() => OnProjectileAI -= ResetFriendlyAndChaseable;
