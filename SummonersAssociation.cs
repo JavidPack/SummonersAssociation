@@ -6,6 +6,7 @@ using SummonersAssociation.Models;
 using SummonersAssociation.UI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
@@ -38,8 +39,6 @@ namespace SummonersAssociation
 		/// </summary>
 		public static int[] BookTypes;
 
-		public SummonersAssociation() { }
-
 		public override void Load() {
 			Instance = this;
 
@@ -68,6 +67,8 @@ namespace SummonersAssociation
 			};
 
 			ModdedSummonerWeaponsWithExistingBuff = new List<int>();
+
+			MinionControlRod.LoadHooks();
 		}
 
 		public override void PostSetupContent()
@@ -82,9 +83,13 @@ namespace SummonersAssociation
 			HistoryBookUIInterface = null;
 			HistoryBookUI = null;
 			HistoryBookUI.redCrossTexture = null;
+			HistoryBookUI.uiModels.Clear();
+			HistoryBookUI.itemModels.Clear();
 
 			SupportedMinions = null;
 			BookTypes = null;
+
+			MinionControlRod.UnloadHooks();
 
 			Instance = null;
 		}
@@ -95,7 +100,7 @@ namespace SummonersAssociation
 			var projectile = new Projectile();
 			for (int i = ItemID.Count; i < ItemLoader.ItemCount; i++) {
 				item = ItemLoader.GetItem(i).item;
-				if(item.buffType > 0 && item.shoot >= ProjectileID.Count) {
+				if (item.buffType > 0 && item.shoot >= ProjectileID.Count) {
 					projectile = ProjectileLoader.GetProjectile(item.shoot).projectile;
 					if (projectile.minionSlots > 0) {
 						// Avoid automatic support for manually supported
@@ -170,7 +175,6 @@ namespace SummonersAssociation
 		/// Called in UpdateUI
 		/// </summary>
 		private void UpdateHistoryBookUI(GameTime gameTime) {
-
 			//This is updated to the "in UI" Mouse Position, because the UI itself is spawned in SummonersAssociationPlayer.PreUpdate()
 			MousePositionUI = Main.MouseScreen;
 			if (HistoryBookUI.active) HistoryBookUI.Update(gameTime);
@@ -226,9 +230,10 @@ namespace SummonersAssociation
 			yPosition = 76 + 20 + lineOffset * 50 + Main.buffTexture[1].Height;
 			double otherMinions = 0;
 
-			for (int j = 0; j < 1000; j++) {
-				if (Main.projectile[j].active && Main.projectile[j].owner == player.whoAmI && Main.projectile[j].minion) {
-					otherMinions += Main.projectile[j].minionSlots;
+			for (int j = 0; j < Main.maxProjectiles; j++) {
+				Projectile p = Main.projectile[j];
+				if (p.active && p.owner == player.whoAmI && p.minion) {
+					otherMinions += p.minionSlots;
 				}
 			}
 			otherMinions -= workingMinions;
@@ -412,14 +417,37 @@ namespace SummonersAssociation
 					ModdedSummonerWeaponsWithExistingBuff.Add(model.ItemID);
 				}
 				for (int i = 0; i < model.ProjectileIDs.Count; i++) {
-					if (!existing.ProjectileIDs.Contains(model.ProjectileIDs[i])) {
-						existing.ProjectileIDs.Add(model.ProjectileIDs[i]);
+					int id = model.ProjectileIDs[i];
+					if (!existing.ProjectileIDs.Contains(id)) {
+						existing.ProjectileIDs.Add(id);
 						existing.Slots.Add(model.Slots[i]);
 					}
 				}
 			}
 			else {
 				SupportedMinions.Add(model);
+			}
+		}
+
+		public override void HandlePacket(BinaryReader reader, int whoAmI) {
+			byte type = reader.ReadByte();
+
+			if (Enum.IsDefined(typeof(PacketType), type)) {
+				var packetType = (PacketType)type;
+				switch (packetType) {
+					case PacketType.SpawnTarget:
+						MinionControlRod.HandleSpawnTarget(reader);
+						break;
+					case PacketType.ConfirmTargetToClient:
+						MinionControlRod.HandleConfirmTargetToClient(reader);
+						break;
+					default:
+						Logger.Warn("'None' packet type received");
+						break;
+				}
+			}
+			else {
+				Logger.Warn("Undefined packet type received: " + type);
 			}
 		}
 	}

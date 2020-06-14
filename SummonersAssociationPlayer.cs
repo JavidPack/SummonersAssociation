@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.GameInput;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace SummonersAssociation
 {
@@ -50,6 +50,14 @@ namespace SummonersAssociation
 		private bool TriggerInc => PlayerInput.ScrollWheelDelta > 0 || mouseLeftPressed;
 
 		private bool TriggerDec => PlayerInput.ScrollWheelDelta < 0 || mouseRightPressed;
+
+		public int TargetWhoAmI { get; set; } = -1; //Only relevant for server, and the client "owning" it
+
+		public bool HasValidTarget => TargetWhoAmI > -1 && TargetWhoAmI < Main.maxNPCs;
+
+		public NPC Target => HasValidTarget ? Main.npc[TargetWhoAmI] : null;
+
+		public int PendingTargetAssignment { get; set; } = -1;
 
 		private void UseAutomaticHistoryBook() {
 			int slot = -1;
@@ -267,6 +275,10 @@ namespace SummonersAssociation
 				enteredWorld = true;
 				UseAutomaticHistoryBook();
 			}
+
+			MinionControlRod.PendingTargetAssignment(this);
+			MinionControlRod.TargetVerification(this);
+
 			//This has to be set in PostUpdate cause crucial fields in PreUpdate are not set correctly
 			//(representative of the fields)
 			AllowedToOpenHistoryBookUI =

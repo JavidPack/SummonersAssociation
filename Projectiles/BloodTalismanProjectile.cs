@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace SummonersAssociation.Projectiles
 {
+	//Spawns the "aura" in AI
 	public class BloodTalismanProjectile : ModProjectile
 	{
 		public override void SetStaticDefaults() => DisplayName.SetDefault("Blood Talisman Projectile");
@@ -12,73 +12,64 @@ namespace SummonersAssociation.Projectiles
 		public override void SetDefaults() {
 			projectile.width = 30;
 			projectile.height = 30;
-			//projectile.alpha = 255;
-			projectile.timeLeft = 2;
+			projectile.timeLeft = 18000;
 			projectile.penetrate = -1;
-
-			//	projectile.aiStyle = 20;
 			projectile.friendly = true;
 			projectile.penetrate = -1;
+			projectile.ignoreWater = true;
 			projectile.tileCollide = false;
-			projectile.hide = true;
-			projectile.ownerHitCheck = true;
-			//	projectile.melee = true;
-			//projectile.scale = 1.2f;
 		}
+
+		public override bool? CanCutTiles() => false;
+
+		private void Show(Player player, Vector2 center) {
+			projectile.Center = center;
+			projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+			projectile.spriteDirection = projectile.direction;
+			player.ChangeDir(projectile.direction);
+			player.heldProj = projectile.whoAmI;
+			player.itemTime = 2;
+			player.itemAnimation = 2;
+			player.itemRotation = (projectile.velocity * projectile.direction).ToRotation();
+		}
+
+		private void Aim(Player player, Vector2 center) {
+			var aim = Vector2.Normalize(Main.MouseWorld - center);
+			if (aim.HasNaNs()) {
+				aim = -Vector2.UnitY;
+			}
+
+			aim *= player.HeldItem.shootSpeed;
+
+			if (aim != projectile.velocity) {
+				projectile.netUpdate = true;
+			}
+			projectile.velocity = aim;
+		}
+
+		private void SpawnAura(Player player) {
+			int aura = ModContent.ProjectileType<BloodTalismanTargetProjectile>();
+			if (player.ownedProjectileCounts[aura] <= 0) {
+				Projectile.NewProjectile(Main.MouseWorld, projectile.velocity, aura, 0, 0, player.whoAmI);
+			}
+		}
+
 		public override void AI() {
+			Player player = Main.player[projectile.owner];
+			Vector2 center = player.RotatedRelativePoint(player.MountedCenter, true);
 
-			Vector2 vector22 = Main.player[projectile.owner].RotatedRelativePoint(Main.player[projectile.owner].MountedCenter, true);
+			Show(player, center);
+
 			if (Main.myPlayer == projectile.owner) {
-				if (Main.player[projectile.owner].channel) {
-					projectile.timeLeft = 2;
-					float num263 = Main.player[projectile.owner].inventory[Main.player[projectile.owner].selectedItem].shootSpeed * projectile.scale;
-					Vector2 vector23 = vector22;
-					float num264 = Main.mouseX + Main.screenPosition.X - vector23.X;
-					float num265 = Main.mouseY + Main.screenPosition.Y - vector23.Y;
-					if (Main.player[projectile.owner].gravDir == -1f) {
-						num265 = Main.screenHeight - Main.mouseY + Main.screenPosition.Y - vector23.Y;
-					}
-					float num266 = (float)Math.Sqrt(num264 * num264 + num265 * num265);
-					//num266 = (float)Math.Sqrt((double)(num264 * num264 + num265 * num265));
-					num266 = num263 / num266;
-					num264 *= num266;
-					num265 *= num266;
-					if (num264 != projectile.velocity.X || num265 != projectile.velocity.Y) {
-						projectile.netUpdate = true;
-					}
-					projectile.velocity.X = num264;
-					projectile.velocity.Y = num265;
-					//Vector2 dir = Main.MouseWorld - Main.player[projectile.owner].Center;
-					//dir *= (1f + (float)Main.rand.Next(-3, 4) * 0.01f);
-					//int num14 = Dust.NewDust(Main.player[projectile.owner].Center, 0, 0, 218, dir.X * .05f, dir.Y * .05f, 0, default(Color), 1f);
+				if (player.channel) {
+					Aim(player, center);
 
+					SpawnAura(player);
 				}
 				else {
 					projectile.Kill();
 				}
 			}
-			if (projectile.velocity.X > 0f) {
-				Main.player[projectile.owner].ChangeDir(1);
-			}
-			else if (projectile.velocity.X < 0f) {
-				Main.player[projectile.owner].ChangeDir(-1);
-			}
-			projectile.spriteDirection = projectile.direction;
-			Main.player[projectile.owner].ChangeDir(projectile.direction);
-			Main.player[projectile.owner].heldProj = projectile.whoAmI;
-			Main.player[projectile.owner].itemTime = 2;
-			Main.player[projectile.owner].itemAnimation = 2;
-			projectile.position.X = vector22.X - projectile.width / 2;
-			projectile.position.Y = vector22.Y - projectile.height / 2;
-			projectile.rotation = (float)(Math.Atan2(projectile.velocity.Y, projectile.velocity.X) + 1.5700000524520874);
-			//projectile.rotation = 0;
-			if (Main.player[projectile.owner].direction == 1) {
-				Main.player[projectile.owner].itemRotation = (float)Math.Atan2(projectile.velocity.Y * projectile.direction, projectile.velocity.X * projectile.direction);
-			}
-			else {
-				Main.player[projectile.owner].itemRotation = (float)Math.Atan2(projectile.velocity.Y * projectile.direction, projectile.velocity.X * projectile.direction);
-			}
-			projectile.velocity.X = projectile.velocity.X * (1f + (float)Main.rand.Next(-3, 4) * 0.01f);
 		}
 	}
 }

@@ -143,7 +143,10 @@ namespace SummonersAssociation.UI
 		/// </summary>
 		internal static Vector2 TopLeftCorner => spawnPosition - new Vector2(mainRadius, mainRadius);
 
-		public override void OnInitialize() => uiModels = new List<UIModel>();
+		public override void OnInitialize() {
+			itemModels = new List<ItemModel>();
+			uiModels = new List<UIModel>();
+		}
 
 		public override void Update(GameTime gameTime) {
 			if (!active) return;

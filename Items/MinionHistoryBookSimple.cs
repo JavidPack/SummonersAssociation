@@ -24,7 +24,7 @@ namespace SummonersAssociation.Items
 			DisplayName.SetDefault("Minion Selection Book");
 			Tooltip.SetDefault("Right click to open the UI"
 				+ "\nLeft/Right click on the item icon to select it"
-				+ "\nLeft click to summon the selected item");
+				+ "\nLeft click to use the selected item");
 		}
 
 		public override void SetDefaults() {
@@ -105,9 +105,9 @@ namespace SummonersAssociation.Items
 
 		public void EnqueueSpawns(Player player) {
 			if (player.whoAmI == Main.myPlayer) {
-				int count = history.Sum(x => x.Active ? x.SummonCount: 0);
+				int count = history.Sum(x => x.Active ? x.SummonCount : 0);
 				if (count > 1) {
-					for (int i = 0; i < 1000; i++) {
+					for (int i = 0; i < Main.maxProjectiles; i++) {
 						Projectile p = Main.projectile[i];
 						if (p.active && p.owner == Main.myPlayer && p.minion) {
 							p.Kill();
