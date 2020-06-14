@@ -113,6 +113,11 @@ namespace SummonersAssociation.NPCs
 		}
 
 		public override void AI() {
+			if (ServerConfig.Instance.DisableAdvancedTargetingFeature) {
+				npc.active = false;
+				return;
+			}
+
 			if (!Initialized) {
 				Initialized = true;
 				//Console.WriteLine("init");

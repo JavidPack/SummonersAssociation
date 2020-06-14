@@ -17,23 +17,25 @@ namespace SummonersAssociation.Items
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Minion Control Rod");
 			Tooltip.SetDefault("'Dominate and direct your minions'" +
-				"\nLeft click to teleport all your minions to the cursor" +
-				"\nRight click on an enemy to target it," +
-				"\nor right click somewhere else to spawn a reticle your minions will attack");
+				"\nLeft click to teleport all your minions to the cursor");
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
-			if (Main.netMode != NetmodeID.MultiplayerClient) return;
 			int insertIndex = -1;
 			for (int i = tooltips.Count - 1; i >= 0; i--) {
 				if (tooltips[i].Name.StartsWith("Tooltip")) {
-					insertIndex = i + 1;
+					insertIndex = i;
 					break;
 				}
 			}
 
 			if (insertIndex != -1) {
-				tooltips.Insert(insertIndex, new TooltipLine(mod, "Multi target", "Right click another players' reticle so he has control over your minions' target"));
+				tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick1", "Right click on an enemy to target it"));
+
+				if (!ServerConfig.Instance.DisableAdvancedTargetingFeature) {
+					tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick2", "or right click somewhere else to spawn a reticle your minions will attack"));
+					tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick3", "Right click another players' reticle so he has control over your minions' target"));
+				}
 			}
 		}
 
@@ -124,6 +126,12 @@ namespace SummonersAssociation.Items
 
 		private void DoRightClick(Player player) {
 			if (Main.myPlayer == player.whoAmI) { //Technically redundant check
+				if (ServerConfig.Instance.DisableAdvancedTargetingFeature) {
+					//If this feature is disabled, simply treat it as a regular summon weapon right click
+					player.MinionNPCTargetAim();
+					return;
+				}
+
 				var location = Main.MouseWorld.ToPoint();
 				bool mouseover = false;
 				bool mouseoverOwnTarget = false;
@@ -365,6 +373,8 @@ namespace SummonersAssociation.Items
 		/// </summary>
 		internal static void PendingTargetAssignment(SummonersAssociationPlayer mPlayer) {
 			if (Main.netMode == NetmodeID.MultiplayerClient && Main.myPlayer != mPlayer.player.whoAmI) return;
+			if (ServerConfig.Instance.DisableAdvancedTargetingFeature) return;
+			//Only the server and the client owning it will run the code here
 
 			int whoAmI = mPlayer.PendingTargetAssignment;
 			if (whoAmI > -1 && whoAmI < Main.maxNPCs) {
@@ -389,6 +399,7 @@ namespace SummonersAssociation.Items
 		/// </summary>
 		internal static void TargetVerification(SummonersAssociationPlayer mPlayer) {
 			if (Main.netMode == NetmodeID.MultiplayerClient && Main.myPlayer != mPlayer.player.whoAmI) return;
+			if (ServerConfig.Instance.DisableAdvancedTargetingFeature) return;
 			//Only the server and the client owning it will run the code here
 
 			int whoAmI = mPlayer.TargetWhoAmI;
@@ -414,6 +425,7 @@ namespace SummonersAssociation.Items
 		}
 		#endregion
 
+		//All hooks won't be loaded if disabled in the config
 		#region Hooks
 		internal static void IgnoreTargetHealthMouseover(On.Terraria.Main.orig_DrawInterface_39_MouseOver orig, Main self) {
 			var resetFlag = new List<int>();
@@ -558,6 +570,8 @@ namespace SummonersAssociation.Items
 		}
 
 		internal static void LoadHooks() {
+			if (ServerConfig.Instance.DisableAdvancedTargetingFeature) return;
+
 			On.Terraria.Main.DrawInterface_39_MouseOver += IgnoreTargetHealthMouseover;
 
 			On.Terraria.Player.UpdateMinionTarget += AdjustMinionTarget;
@@ -575,10 +589,12 @@ namespace SummonersAssociation.Items
 		internal static void UnloadHooks() {
 			if (m_ProjectileAI != null) {
 				try {
-					OnProjectileAI -= ResetFriendlyAndChaseable;
+					if (!ServerConfig.Instance.DisableAdvancedTargetingFeature) {
+						OnProjectileAI -= ResetFriendlyAndChaseable;
+					}
 				}
 				catch {
-					
+
 				}
 			}
 		}
