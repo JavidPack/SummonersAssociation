@@ -572,7 +572,16 @@ namespace SummonersAssociation.Items
 			}
 		}
 
-		internal static void UnloadHooks() => OnProjectileAI -= ResetFriendlyAndChaseable;
+		internal static void UnloadHooks() {
+			if (m_ProjectileAI != null) {
+				try {
+					OnProjectileAI -= ResetFriendlyAndChaseable;
+				}
+				catch {
+					
+				}
+			}
+		}
 		#endregion
 	}
 }
