@@ -462,27 +462,34 @@ namespace SummonersAssociation.Items
 			//Because this vanilla method uses CanBeChasedBy, which checks for !npc.friendly, the target gets reset,
 			//here we need to revert it so the reticle is kept onto our target
 
-			int oldTarget = self.GetModPlayer<SummonersAssociationPlayer>().TargetWhoAmI;
+			int target = self.GetModPlayer<SummonersAssociationPlayer>().TargetWhoAmI;
 			int prevTarget = self.MinionAttackTargetNPC;
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
 				//In multiplayer, the player can use his minion control rod to select another player's target
-				if (prevTarget > -1 && Main.npc[prevTarget]?.type == NPCType<MinionTarget>()) {
-					oldTarget = prevTarget;
+				if (prevTarget > -1) {
+					NPC npc = Main.npc[prevTarget];
+					if (npc != null && npc.active && npc.type == NPCType<MinionTarget>()) {
+						target = prevTarget;
+					}
 				}
 			}
 
 			bool restore = false;
-			if (oldTarget > -1 && prevTarget == oldTarget) {
+			if (target > -1 && target == prevTarget) {
 				restore = true;
 			}
 
 			orig(self);
 
 			if (restore) {
-				self.MinionAttackTargetNPC = oldTarget;
+				self.MinionAttackTargetNPC = target;
+				NPC npc = Main.npc[self.MinionAttackTargetNPC];
+				if (!npc.active) {
+					return;
+				}
 
 				//Visual restore
-				Vector2 center = Main.npc[self.MinionAttackTargetNPC].Center;
+				Vector2 center = npc.Center;
 				float counter = self.miscCounter / -60f; //original has no -
 				float full = (float)Math.PI * 2f;
 				float third = full / 3f;
