@@ -1,7 +1,6 @@
 ﻿using SummonersAssociation.Projectiles;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static Terraria.ID.ItemID;
 using static Terraria.ModLoader.ModContent;
 
 namespace SummonersAssociation.Items
@@ -33,8 +32,7 @@ namespace SummonersAssociation.Items
 
 		public override void AddRecipes() {
 			var recipe = new ModRecipe(mod);
-			//recipe.AddIngredient(ItemID.Wood);
-			recipe.AddIngredient(CrossNecklace);
+			recipe.AddIngredient(ItemID.CrossNecklace);
 			recipe.AddIngredient(ItemID.PhilosophersStone);
 			recipe.AddTile(TileID.Chairs);
 			recipe.AddTile(TileID.Tables);
