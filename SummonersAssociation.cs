@@ -22,8 +22,6 @@ namespace SummonersAssociation
 		private static List<MinionModel> SupportedMinions;
 		private bool SupportedMinionsFinalized = false;
 
-		private static List<int> ModdedSummonerWeaponsWithExistingBuff;
-
 		internal static UserInterface HistoryBookUIInterface;
 		internal static HistoryBookUI HistoryBookUI;
 
@@ -65,8 +63,6 @@ namespace SummonersAssociation
 				new MinionModel(ItemID.StardustDragonStaff, BuffID.StardustDragonMinion, ProjectileID.StardustDragon2, 1f),
 				new MinionModel(ItemID.StardustCellStaff, BuffID.StardustMinion, new List<int>() { ProjectileID.StardustCellMinion })
 			};
-
-			ModdedSummonerWeaponsWithExistingBuff = new List<int>();
 
 			MinionControlRod.LoadHooks();
 		}
@@ -112,20 +108,7 @@ namespace SummonersAssociation
 			}
 			SupportedMinionsFinalized = true;
 
-			var itemList = new List<int>();
-			foreach (MinionModel minion in SupportedMinions) {
-				itemList.Add(minion.ItemID);
-			}
-
-			foreach (int type in ModdedSummonerWeaponsWithExistingBuff) {
-				itemList.Add(type);
-			}
-			ModdedSummonerWeaponsWithExistingBuff = null;
-
-			var group = new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " Minion Staff", itemList.ToArray());
-			RecipeGroup.RegisterGroup("SummonersAssociation:MinionStaffs", group);
-
-			group = new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " Magic Mirror", new int[]
+			var group = new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " Magic Mirror", new int[]
 			{
 				ItemID.MagicMirror,
 				ItemID.IceMirror
@@ -413,9 +396,6 @@ namespace SummonersAssociation
 		private void AddMinion(MinionModel model) {
 			MinionModel existing = SupportedMinions.SingleOrDefault(m => m.BuffID == model.BuffID);
 			if (existing != null) {
-				if (!SupportedMinions.Exists(m => m.ItemID == model.ItemID)) {
-					ModdedSummonerWeaponsWithExistingBuff.Add(model.ItemID);
-				}
 				for (int i = 0; i < model.ProjectileIDs.Count; i++) {
 					int id = model.ProjectileIDs[i];
 					if (!existing.ProjectileIDs.Contains(id)) {
