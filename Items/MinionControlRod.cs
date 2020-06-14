@@ -512,8 +512,7 @@ namespace SummonersAssociation.Items
 			var resetChaseable = new List<int>();
 			var resetFriendly = new List<int>();
 			try {
-				if (self.minion || ProjectileID.Sets.MinionShot[self.type]) {
-
+				if (self.minion || ProjectileID.Sets.MinionShot[self.type] || self.sentry || ProjectileID.Sets.SentryShot[self.type]) {
 					Player player = Main.player[self.owner];
 					if (player != null) {
 						int type = NPCType<MinionTarget>();
