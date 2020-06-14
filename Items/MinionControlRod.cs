@@ -547,7 +547,14 @@ namespace SummonersAssociation.Items
 
 			On.Terraria.Player.UpdateMinionTarget += AdjustMinionTarget;
 
-			OnProjectileAI += ResetFriendlyAndChaseable;
+			if (m_ProjectileAI != null) {
+				try {
+					OnProjectileAI += ResetFriendlyAndChaseable;
+				}
+				catch {
+					SummonersAssociation.Instance.Logger.Error("ResetFriendlyAndChaseable failed to hook OnProjectileAI, Minion Control Rod targeting will not work");
+				}
+			}
 
 			//On.Terraria.Projectile.AI += IgnoreTargetIfNotExplicitelyTargeted;
 
