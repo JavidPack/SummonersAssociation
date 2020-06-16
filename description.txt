@@ -9,4 +9,18 @@ Minion Selection Book - Allows summoning any minion from the inventory
 Minion History Book - Allows summoning a set of minions from the inventory with one click
 Automatic Minion History Book - Upgraded Minion History Book that summons a minion set automatically after respawn
 
+Contains two configs: 'Server Config' contains settings related to the reticle from Minion Control Rod, while 'Client Config' contains settings related to the UI
+
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
+
+Changelog:
+v0.4.4.1:
+* 'Persistency' in the 'Server Config', making it so the reticle, once spawned, never despawns
+
+v0.4.4:
+* Fixed blood talisman in multiplayer
+* Added new functions for Minion Control Rod:
+    * Right click on an enemy to target it,
+    * or right click somewhere else to spawn a reticle your minions will attack
+* New Minion Control Rod sprite
+* Tweaked recipes to make things accessible earlier in the game
