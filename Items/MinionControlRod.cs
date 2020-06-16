@@ -165,7 +165,7 @@ namespace SummonersAssociation.Items
 
 		#region Static methods
 		internal static void DeleteTarget(Player player) {
-			//Clear all player owned targeting dummies
+			//Clear all player owned targets
 			for (int i = 0; i < Main.maxNPCs; i++) {
 				NPC npc = Main.npc[i];
 				if (npc.active && npc.modNPC is MinionTarget target && target?.Owner == player) {
@@ -193,7 +193,7 @@ namespace SummonersAssociation.Items
 
 		internal static void MinionNPCTargetAim(Player player) {
 			//Could use player.MinionNPCTargetAim() instead but that doesn't have a check for ignoring some npc
-			//ignore is needed because the targeting clientside happens independently of having received data about dummies existing yet or not
+			//ignore is needed because the targeting clientside happens independently of having received data about targets existing yet or not
 			Vector2 mouseWorld = Main.MouseWorld;
 			int type = NPCType<MinionTarget>();
 			int found = -1;
@@ -268,7 +268,7 @@ namespace SummonersAssociation.Items
 							if (Main.netMode == NetmodeID.Server) {
 								//Console.WriteLine($"Send relevant npc data: ai0:{npc.ai[0]}, ai3:{npc.ai[3]}, style:{npc.aiStyle}");
 								NetMessage.SendData(MessageID.SyncNPC, number: index);
-								ConfirmTargetingDummyToClient(player, index);
+								ConfirmTargetToClient(player, index);
 							}
 						}
 					}
@@ -340,7 +340,7 @@ namespace SummonersAssociation.Items
 		/// <summary>
 		/// Server to client
 		/// </summary>
-		internal static void ConfirmTargetingDummyToClient(Player player, int npcWhoAmI) {
+		internal static void ConfirmTargetToClient(Player player, int npcWhoAmI) {
 			ModPacket packet = SummonersAssociation.Instance.GetPacket();
 			packet.Write((byte)PacketType.ConfirmTargetToClient);
 			packet.Write((byte)npcWhoAmI);
@@ -355,7 +355,7 @@ namespace SummonersAssociation.Items
 		}
 
 		/// <summary>
-		/// Only the local player needs to have pendingTargetingDummyAssignment assigned
+		/// Only the local player needs to have PendingTargetAssignment assigned
 		/// </summary>
 		internal static void HandleConfirmTargetToClient(BinaryReader reader) {
 			byte npcWhoAmI = reader.ReadByte();
