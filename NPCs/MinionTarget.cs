@@ -98,6 +98,7 @@ namespace SummonersAssociation.NPCs
 			npc.noTileCollide = true;
 			npc.netAlways = true;
 			npc.dontTakeDamageFromHostiles = true;
+			npc.npcSlots = 0f;
 			for (int i = 0; i < BuffLoader.BuffCount; i++) {
 				npc.buffImmune[i] = true;
 			}
@@ -111,6 +112,8 @@ namespace SummonersAssociation.NPCs
 
 			drawOffsetY = -4;
 		}
+
+		public override bool CheckActive() => !ServerConfig.Instance.PersistentReticle;
 
 		public override void AI() {
 			if (ServerConfig.Instance.DisableAdvancedTargetingFeature) {
@@ -134,7 +137,7 @@ namespace SummonersAssociation.NPCs
 
 			npc.Center = Location;
 			npc.visualOffset = Vector2.Zero;
-			npc.timeLeft = 10;
+			npc.timeLeft = 120;
 
 			//Change name
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
