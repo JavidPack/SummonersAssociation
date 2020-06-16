@@ -33,7 +33,14 @@ namespace SummonersAssociation.Items
 				tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick1", "Right click on an enemy to target it"));
 
 				if (!ServerConfig.Instance.DisableAdvancedTargetingFeature) {
-					tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick2", "or right click somewhere else to spawn a reticle your minions will attack"));
+					string text;
+					if (Main.LocalPlayer.GetModPlayer<SummonersAssociationPlayer>().TargetWhoAmI > -1) {
+						text = "or right click on the reticle to remove it again";
+					}
+					else {
+						text = "or right click somewhere else to spawn a reticle your minions will attack";
+					}
+					tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick2", text));
 
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
 						tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick3", "Right click another players' reticle so he has control over your minions' target"));
