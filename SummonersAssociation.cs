@@ -210,7 +210,7 @@ namespace SummonersAssociation
 			//Count non-registered mod minions
 			color = new Color(new Vector4(0.4f));
 			xPosition = 32;
-			yPosition = 76 + 20 + lineOffset * 50 + Main.buffTexture[1].Height;
+			yPosition = 76 + 20 + lineOffset * 50 + Main.buffTexture[BuffID.ObsidianSkin].Height;
 			double otherMinions = 0;
 
 			for (int j = 0; j < Main.maxProjectiles; j++) {
@@ -224,7 +224,7 @@ namespace SummonersAssociation
 			var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
 			if (otherMinions > 0 && mPlayer.lastOtherMinions > 0) {
 				string modMinionText = "Uncountable mod minion slots: " + otherMinions + " / " + player.maxMinions;
-				Main.spriteBatch.DrawString(Main.fontItemStack, modMinionText, new Vector2(xPosition, yPosition), color, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
+				spriteBatch.DrawString(Main.fontItemStack, modMinionText, new Vector2(xPosition, yPosition), color, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
 			}
 			mPlayer.lastOtherMinions = otherMinions;
 		}
@@ -249,7 +249,8 @@ namespace SummonersAssociation
 
 				int y = mH + (int)(174 + 0 + slot * 56 * inventoryScale);
 
-				Vector2 size = Utils.Size(Main.buffTexture[150]);
+				Texture2D tex = Main.buffTexture[BuffID.Bewitched];
+				Vector2 size = Utils.Size(tex);
 
 				//Vector2 vector2_1 = new Vector2(num9 - 10 - 47 - 47 - 14, num11 + Main.inventoryBackTexture.Height * 0.5f);
 				//- 10 - 47 - 47 - 14: x offset from the right edge of the screen
@@ -263,12 +264,53 @@ namespace SummonersAssociation
 				drawPos.X = Utils.Clamp(drawPos.X, size.X / 2, Main.screenWidth - size.X / 2);
 				drawPos.Y = Utils.Clamp(drawPos.Y, size.Y / 2, Main.screenHeight - size.Y / 2);
 
-				spriteBatch.Draw(Main.buffTexture[150], drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
-				Vector2 stringLength = Main.fontMouseText.MeasureString(player.maxMinions.ToString());
-				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, player.maxMinions.ToString(), drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
-				if (Utils.CenteredRectangle(drawPos, size).Contains(new Point(Main.mouseX, Main.mouseY))) {
+				spriteBatch.Draw(tex, drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
+				string text = player.maxMinions.ToString();
+				Vector2 stringLength = Main.fontMouseText.MeasureString(text);
+				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, text, drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
+				var mouse = new Point(Main.mouseX, Main.mouseY);
+				if (Utils.CenteredRectangle(drawPos, size).Contains(mouse)) {
 					player.mouseInterface = true;
 					string str = "" + Math.Round(player.slotsMinions, 2) + " / " + player.maxMinions + " Minion Slots";
+					if (!string.IsNullOrEmpty(str))
+						Main.hoverItemName = str;
+				}
+
+				int sentryCount = 0;
+				var sentryNameToCount = new Dictionary<string, int>();
+				for (int i = 0; i < Main.maxProjectiles; i++) {
+					Projectile p = Main.projectile[i];
+					if (p.active && p.sentry) {
+						sentryCount++;
+						string name = Lang.GetProjectileName(p.type).Value;
+						if (string.IsNullOrEmpty(name)) {
+							name = "Uncountable";
+						}
+						if (sentryNameToCount.ContainsKey(name)) {
+							sentryNameToCount[name]++;
+						}
+						else {
+							sentryNameToCount.Add(name, 1);
+						}
+					}
+				}
+
+				drawPos.Y -= size.Y * 1.5f;
+
+				tex = Main.buffTexture[BuffID.Summoning];
+
+				spriteBatch.Draw(tex, drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
+				text = sentryCount.ToString();
+				stringLength = Main.fontMouseText.MeasureString(text);
+				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, Main.fontMouseText, text, drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
+				if (Utils.CenteredRectangle(drawPos, size).Contains(mouse)) {
+					player.mouseInterface = true;
+					string str = "" + sentryCount + " / " + player.maxTurrets + " Sentry Slots";
+					if (sentryCount > 0) {
+						foreach (var item in sentryNameToCount) {
+							str += $"\n{item.Value}: {item.Key}";
+						}
+					}
 					if (!string.IsNullOrEmpty(str))
 						Main.hoverItemName = str;
 				}
