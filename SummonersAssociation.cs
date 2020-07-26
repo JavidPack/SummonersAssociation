@@ -290,7 +290,7 @@ namespace SummonersAssociation
 				var sentryNameToCount = new Dictionary<string, int>();
 				for (int i = 0; i < Main.maxProjectiles; i++) {
 					Projectile p = Main.projectile[i];
-					if (p.active && p.sentry) {
+					if (p.active && p.sentry && p.owner == Main.myPlayer) {
 						sentryCount++;
 						string name = Lang.GetProjectileName(p.type).Value;
 						if (string.IsNullOrEmpty(name)) {

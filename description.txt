@@ -14,17 +14,9 @@ Contains two configs: 'Server Config' contains settings related to the reticle f
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 Changelog:
-v0.4.5:
+v0.4.5 + v0.4.5.1:
 * Added used sentry slots icon above the used minion slots icon
 * Spider Staff minions now count towards the Minion History Books correctly
 
 v0.4.4.1:
 * 'Persistency' in the 'Server Config', making it so the reticle, once spawned, never despawns
-
-v0.4.4:
-* Fixed blood talisman in multiplayer
-* Added new functions for Minion Control Rod:
-    * Right click on an enemy to target it,
-    * or right click somewhere else to spawn a reticle your minions will attack
-* New Minion Control Rod sprite
-* Tweaked recipes to make things accessible earlier in the game
