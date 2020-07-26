@@ -59,14 +59,14 @@ namespace SummonersAssociation.UI
 		internal static Vector2 spawnPosition = default(Vector2);
 
 		/// <summary>
-		/// Number of casts in total (player.numMinions)
+		/// Number of casts in total (player.maxMinions)
 		/// </summary>
 		internal static int summonCountTotal = -1;
 
 		/// <summary>
-		/// Difference of summonCountTotal - SumSummonCounts()
+		/// Difference of summonCountTotal - sum of SlotsFilledPerUse
 		/// </summary>
-		internal static int summonCountDelta = 0;
+		internal static float summonCountDelta = 0;
 
 		/// <summary>
 		/// Held item index
@@ -204,8 +204,8 @@ namespace SummonersAssociation.UI
 					#region Setup weapon tooltip
 					tooltip.Add(itemModel.Name);
 
-					if (itemModel.SlotsNeeded > 1) {
-						tooltip.Add("Slots required: " + itemModel.SlotsNeeded);
+					if (itemModel.SlotsFilledPerUse > 1) {
+						tooltip.Add("Slots required: " + itemModel.SlotsFilledPerUse);
 					}
 
 					if (simple && selected == done) {
@@ -343,7 +343,7 @@ namespace SummonersAssociation.UI
 				drawPos = new Vector2((int)TopLeftCorner.X, (int)TopLeftCorner.Y + height) + new Vector2(-4, mainRadius - 20);
 
 				if (summonCountDelta < 0) fontColor = Color.Red;
-				middleTip = summonCountDelta.ToString() + "/" + summonCountTotal.ToString();
+				middleTip = Math.Round(summonCountDelta, 2).ToString() + "/" + summonCountTotal.ToString();
 
 				DrawText(spriteBatch, middleTip, drawPos, fontColor);
 			}
@@ -539,15 +539,16 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// summonCountTotal minus all the summon counts weighted with the slots needed
 		/// </summary>
-		public static int GetSummonCountDelta() {
-			int sum = summonCountTotal;
+		public static float GetSummonCountDelta() {
+			float sum = summonCountTotal;
+			float newSum = 0;
 			for (int i = 0; i < itemModels.Count; i++) {
 				ItemModel itemModel = itemModels[i];
 				if (itemModel.Active) {
-					sum -= itemModel.SummonCount * itemModel.SlotsNeeded;
+					newSum += itemModel.SummonCount * itemModel.SlotsFilledPerUse;
 				}
 			}
-			return sum;
+			return sum - newSum;
 		}
 
 		/// <summary>

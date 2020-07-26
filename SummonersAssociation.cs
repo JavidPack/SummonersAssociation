@@ -20,6 +20,10 @@ namespace SummonersAssociation
 	public class SummonersAssociation : Mod
 	{
 		private static List<MinionModel> SupportedMinions;
+		/// <summary>
+		/// Hardcoded special vanilla minions that summon a non-1f amount of minions on use
+		/// </summary>
+		internal static Dictionary<int, float> SlotsFilledPerUse;
 		private bool SupportedMinionsFinalized = false;
 
 		internal static UserInterface HistoryBookUIInterface;
@@ -64,6 +68,11 @@ namespace SummonersAssociation
 				new MinionModel(ItemID.StardustCellStaff, BuffID.StardustMinion, new List<int>() { ProjectileID.StardustCellMinion })
 			};
 
+			//For SlotsFilledPerUse we can't use MinionModel.GetSlotsPerProjectile because thats just a list of projectiles, and not those that are summoned once on use
+			SlotsFilledPerUse = new Dictionary<int, float> {
+				[ItemID.SpiderStaff] = 0.75f
+			};
+
 			MinionControlRod.LoadHooks();
 		}
 
@@ -83,6 +92,7 @@ namespace SummonersAssociation
 			HistoryBookUI.itemModels.Clear();
 
 			SupportedMinions = null;
+			SlotsFilledPerUse = null;
 			BookTypes = null;
 
 			MinionControlRod.UnloadHooks();
