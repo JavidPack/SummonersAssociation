@@ -18,7 +18,7 @@ namespace SummonersAssociation
 		public const float DefaultY = 0.87f;
 
 		[DefaultValue(typeof(Vector2), "0.89, 0.87")]
-		[Label("Max Minion Icon Offset")]
+		[Label("Max Minion/Sentry Icon Offset")]
 		public Vector2 Offset;
 
 		[Header("Hint: To go to the server config containing feature toggles, press the '>' arrow in the bottom right")]
