@@ -88,8 +88,8 @@ namespace SummonersAssociation
 			HistoryBookUIInterface = null;
 			HistoryBookUI = null;
 			HistoryBookUI.redCrossTexture = null;
-			HistoryBookUI.uiModels.Clear();
-			HistoryBookUI.itemModels.Clear();
+			HistoryBookUI.uiModels?.Clear();
+			HistoryBookUI.itemModels?.Clear();
 
 			SupportedMinions = null;
 			SlotsFilledPerUse = null;
