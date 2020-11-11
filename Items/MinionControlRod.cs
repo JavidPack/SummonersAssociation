@@ -603,7 +603,7 @@ namespace SummonersAssociation.Items
 		internal static void UnloadHooks() {
 			if (m_ProjectileAI != null) {
 				try {
-					if (!ServerConfig.Instance.DisableAdvancedTargetingFeature) {
+					if (ServerConfig.Instance?.DisableAdvancedTargetingFeature == false) {
 						OnProjectileAI -= ResetFriendlyAndChaseable;
 					}
 				}
