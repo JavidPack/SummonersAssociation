@@ -464,7 +464,7 @@ namespace SummonersAssociation.UI
 			var list = new List<ItemModel>();
 			for (int i = 0; i < Main.maxInventory; i++) {
 				Item item = Main.LocalPlayer.inventory[i];
-				if (item.type != ItemID.Count && item.summon && !item.sentry && list.FindIndex(itemModel => itemModel.ItemType == item.type) < 0) {
+				if (!item.IsAir && item.summon && !item.sentry && list.FindIndex(itemModel => itemModel.ItemType == item.type) < 0) {
 					//Exclude sentry weapons, maybe separate item later
 					//ItemModels added here have SummonCount set to 0, will be checked later in Start() and adjusted
 					list.Add(new ItemModel(item, i));

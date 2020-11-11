@@ -12,32 +12,19 @@ namespace SummonersAssociation.Models
 
 		public override string ToString() => Terraria.ID.ItemID.GetUniqueKey(ItemID);
 
-		public MinionModel(int itemID, int buffID, int projectileID) {
-			ItemID = itemID;
-			BuffID = buffID;
-			ProjectileIDs = new List<int> { projectileID };
-			Slots = GetSlotsPerProjectile();
+		public MinionModel(int itemID, int buffID, int projectileID) : this(itemID, buffID, new List<int> { projectileID }, null) {
+
 		}
 
-		public MinionModel(int itemID, int buffID, int projectileID, float slot) {
-			ItemID = itemID;
-			BuffID = buffID;
-			ProjectileIDs = new List<int> { projectileID };
-			Slots = new List<float> { slot };
+		public MinionModel(int itemID, int buffID, int projectileID, float slot) : this(itemID, buffID, new List<int> { projectileID }, new List<float> { slot }) {
+
 		}
 
-		public MinionModel(int itemID, int buffID, List<int> projectileIDs) {
+		public MinionModel(int itemID, int buffID, List<int> projectileIDs, List<float> slots = null) {
 			ItemID = itemID;
 			BuffID = buffID;
 			ProjectileIDs = projectileIDs;
-			Slots = GetSlotsPerProjectile();
-		}
-
-		public MinionModel(int itemID, int buffID, List<int> projectileIDs, List<float> slots) {
-			ItemID = itemID;
-			BuffID = buffID;
-			ProjectileIDs = projectileIDs;
-			Slots = slots;
+			Slots = slots ?? GetSlotsPerProjectile();
 		}
 
 		private List<float> GetSlotsPerProjectile() {

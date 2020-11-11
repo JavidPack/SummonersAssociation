@@ -60,12 +60,12 @@ namespace SummonersAssociation
 				new MinionModel(ItemID.OpticStaff, BuffID.TwinEyesMinion, new List<int>() { ProjectileID.Retanimini, ProjectileID.Spazmamini }),
 				new MinionModel(ItemID.PirateStaff, BuffID.PirateMinion, new List<int>() { ProjectileID.OneEyedPirate, ProjectileID.SoulscourgePirate, ProjectileID.PirateCaptain }),
 				new MinionModel(ItemID.PygmyStaff, BuffID.Pygmies, new List<int>() { ProjectileID.Pygmy, ProjectileID.Pygmy2, ProjectileID.Pygmy3, ProjectileID.Pygmy4 }),
-				new MinionModel(ItemID.XenoStaff, BuffID.UFOMinion, new List<int>() { ProjectileID.UFOMinion }),
-				new MinionModel(ItemID.RavenStaff, BuffID.Ravens, new List<int>() { ProjectileID.Raven }),
-				new MinionModel(ItemID.TempestStaff, BuffID.SharknadoMinion, new List<int>() { ProjectileID.Tempest }),
-				new MinionModel(ItemID.DeadlySphereStaff, BuffID.DeadlySphere, new List<int>() { ProjectileID.DeadlySphere }),
+				new MinionModel(ItemID.XenoStaff, BuffID.UFOMinion, ProjectileID.UFOMinion),
+				new MinionModel(ItemID.RavenStaff, BuffID.Ravens, ProjectileID.Raven),
+				new MinionModel(ItemID.TempestStaff, BuffID.SharknadoMinion, ProjectileID.Tempest),
+				new MinionModel(ItemID.DeadlySphereStaff, BuffID.DeadlySphere, ProjectileID.DeadlySphere),
 				new MinionModel(ItemID.StardustDragonStaff, BuffID.StardustDragonMinion, ProjectileID.StardustDragon2, 1f),
-				new MinionModel(ItemID.StardustCellStaff, BuffID.StardustMinion, new List<int>() { ProjectileID.StardustCellMinion })
+				new MinionModel(ItemID.StardustCellStaff, BuffID.StardustMinion, ProjectileID.StardustCellMinion)
 			};
 
 			//For SlotsFilledPerUse we can't use MinionModel.GetSlotsPerProjectile because thats just a list of projectiles, and not those that are summoned once on use
