@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using ReLogic.Graphics;
 using SummonersAssociation.Models;
 using SummonersAssociation.UI;
@@ -31,7 +32,7 @@ namespace SummonersAssociation
 				HistoryBookUI.Activate();
 				HistoryBookUIInterface = new UserInterface();
 				HistoryBookUIInterface.SetState(HistoryBookUI);
-				HistoryBookUI.redCrossTexture = SummonersAssociation.Instance.Assets.Request<Texture2D>("UI/UIRedCross");
+				HistoryBookUI.redCrossTexture = SummonersAssociation.Instance.Assets.Request<Texture2D>("UI/UIRedCross", AssetRequestMode.ImmediateLoad);
 			}
 		}
 
@@ -41,7 +42,6 @@ namespace SummonersAssociation
 			HistoryBookUI.redCrossTexture = null;
 			HistoryBookUI.uiModels?.Clear();
 			HistoryBookUI.itemModels?.Clear();
-
 		}
 
 		public override void UpdateUI(GameTime gameTime) => UpdateHistoryBookUI(gameTime);
@@ -194,8 +194,9 @@ namespace SummonersAssociation
 
 				spriteBatch.Draw(tex, drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
 				string text = player.maxMinions.ToString();
-				Vector2 stringLength = FontAssets.MouseText.Value.MeasureString(text);
-				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, text, drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
+				DynamicSpriteFont font = FontAssets.MouseText.Value;
+				Vector2 stringLength = font.MeasureString(text);
+				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, font, text, drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
 				var mouse = new Point(Main.mouseX, Main.mouseY);
 				if (Utils.CenteredRectangle(drawPos, size).Contains(mouse)) {
 					player.mouseInterface = true;
@@ -229,8 +230,8 @@ namespace SummonersAssociation
 
 				spriteBatch.Draw(tex, drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
 				text = sentryCount.ToString();
-				stringLength = FontAssets.MouseText.Value.MeasureString(text);
-				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, text, drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
+				stringLength = font.MeasureString(text);
+				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, font, text, drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
 				if (Utils.CenteredRectangle(drawPos, size).Contains(mouse)) {
 					player.mouseInterface = true;
 					string str = "" + sentryCount + " / " + player.maxTurrets + " Sentry Slots";
@@ -244,6 +245,5 @@ namespace SummonersAssociation
 				}
 			}
 		}
-
 	}
 }
