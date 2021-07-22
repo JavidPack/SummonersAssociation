@@ -21,7 +21,7 @@ namespace SummonersAssociation.Projectiles
 				}
 
 				if (talismanProj != null) {
-					var talisman = talismanProj.modProjectile as BloodTalismanTargetProjectile;
+					var talisman = talismanProj.ModProjectile as BloodTalismanTargetProjectile;
 					int alpha = talisman.alphaTimer;
 					if (talismanProj.DistanceSQ(target.Center) < 50 * 50) {
 						// 155 max

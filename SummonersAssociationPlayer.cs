@@ -8,6 +8,7 @@ using Terraria;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace SummonersAssociation
 {
@@ -61,10 +62,10 @@ namespace SummonersAssociation
 
 		private void UseAutomaticHistoryBook() {
 			int slot = -1;
-			for (int i = 0; i < Main.maxInventory; i++) {
-				Item item = player.inventory[i];
+			for (int i = 0; i < Main.InventorySlotsTotal; i++) {
+				Item item = Player.inventory[i];
 				if (item.type == SummonersAssociation.BookTypes[2]) {
-					var book = (MinionHistoryBookSimple)item.modItem;
+					var book = (MinionHistoryBookSimple)item.ModItem;
 					if (book.history.Sum(x => x.Active ? x.SummonCount : 0) > 0) slot = i;
 				}
 			}
@@ -74,7 +75,7 @@ namespace SummonersAssociation
 		private void UpdateHistoryBookUI() {
 			//Since this is UI related, make sure to only run on client
 
-			bool holdingBook = Array.IndexOf(SummonersAssociation.BookTypes, player.HeldItem.type) > -1;
+			bool holdingBook = Array.IndexOf(SummonersAssociation.BookTypes, Player.HeldItem.type) > -1;
 
 			if (TriggerStart && holdingBook && AllowedToOpenHistoryBookUI) {
 				bool success = HistoryBookUI.Start();
@@ -85,7 +86,7 @@ namespace SummonersAssociation
 				HistoryBookUI.visible = false;
 				if (HistoryBookUI.heldItemIndex == Main.LocalPlayer.selectedItem) {
 					//Keep it updated
-					HistoryBookUI.summonCountTotal = player.maxMinions;
+					HistoryBookUI.summonCountTotal = Player.maxMinions;
 
 					if (HistoryBookUI.middle) {
 						if (!HistoryBookUI.simple) {
@@ -105,7 +106,7 @@ namespace SummonersAssociation
 									HistoryBookUI.aboutToDelete = false;
 								}
 								else if (HistoryBookUI.returned == HistoryBookUI.UPDATE) {
-									HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)player.HeldItem.modItem);
+									HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)Player.HeldItem.ModItem);
 
 									HistoryBookUI.Stop();
 									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Saved history");
@@ -156,7 +157,7 @@ namespace SummonersAssociation
 								}
 
 								if (triggered) {
-									try { Main.PlaySound(SoundID.MenuTick); }
+									try { SoundEngine.PlaySound(SoundID.MenuTick); }
 									catch { /*No idea why but this threw errors one time*/ }
 								}
 							}
@@ -164,7 +165,7 @@ namespace SummonersAssociation
 							else {
 								if (TriggerSelect) {
 									HistoryBookUI.selected = HistoryBookUI.returned;
-									HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.modItem);
+									HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.ModItem);
 									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Selected: " + highlighted.Name);
 									HistoryBookUI.Stop();
 								}
@@ -202,19 +203,19 @@ namespace SummonersAssociation
 		/// Uses the item in the specified index from the players inventory
 		/// </summary>
 		public void QuickUseItemInSlot(int index) {
-			if (index > -1 && index < Main.maxInventory && player.inventory[index].type != ItemID.None) {
-				if (player.CheckMana(player.inventory[index], -1, false, false)) {
-					originalSelectedItem = player.selectedItem;
+			if (index > -1 && index < Main.InventorySlotsTotal && Player.inventory[index].type != ItemID.None) {
+				if (Player.CheckMana(Player.inventory[index], -1, false, false)) {
+					originalSelectedItem = Player.selectedItem;
 					autoRevertSelectedItem = true;
-					player.selectedItem = index;
-					player.controlUseItem = true;
+					Player.selectedItem = index;
+					Player.controlUseItem = true;
 					//if(Main.netMode == 1)
 					//	NetMessage.SendData(13, -1, -1, null, Main.myPlayer, 0f, 0f, 0f, 0, 0, 0);
 					// TODO: Swings not shown on other clients.
-					player.ItemCheck(player.whoAmI);
+					Player.ItemCheck(Player.whoAmI);
 				}
 				else
-					Main.PlaySound(SoundID.Drip, (int)player.Center.X, (int)player.Center.Y, Main.rand.Next(3));
+					SoundEngine.PlaySound(SoundID.Drip, (int)Player.Center.X, (int)Player.Center.Y, Main.rand.Next(3));
 			}
 		}
 
@@ -224,8 +225,8 @@ namespace SummonersAssociation
 		public void QuickUseItemOfType(int type) {
 			//Prefer to use this when spawning from an ItemModel because InventoryIndex won't be accurate after the UI is closed and the inventory is modified
 			if (type > 0) {
-				for (int i = 0; i < Main.maxInventory; i++) {
-					Item item = player.inventory[i];
+				for (int i = 0; i < Main.InventorySlotsTotal; i++) {
+					Item item = Player.inventory[i];
 					if (item.type == type) {
 						QuickUseItemInSlot(i);
 						return;
@@ -251,15 +252,15 @@ namespace SummonersAssociation
 		}
 
 		public override void PreUpdate() {
-			if (player.whoAmI == Main.myPlayer) {
+			if (Player.whoAmI == Main.myPlayer) {
 				if (autoRevertSelectedItem) {
-					if (player.itemTime == 0 && player.itemAnimation == 0) {
-						player.selectedItem = originalSelectedItem;
+					if (Player.itemTime == 0 && Player.itemAnimation == 0) {
+						Player.selectedItem = originalSelectedItem;
 						autoRevertSelectedItem = false;
 					}
 				}
 
-				if (player.itemTime == 0 && player.itemAnimation == 0) {
+				if (Player.itemTime == 0 && Player.itemAnimation == 0) {
 					if (pendingCasts.Count > 0) {
 						var cast = pendingCasts.Dequeue();
 						QuickUseItemOfType(cast.Item1);
@@ -285,18 +286,18 @@ namespace SummonersAssociation
 				!HistoryBookUI.visible &&
 				Main.hasFocus &&
 				!Main.gamePaused &&
-				!player.dead &&
-				!player.mouseInterface &&
+				!Player.dead &&
+				!Player.mouseInterface &&
 				!Main.drawingPlayerChat &&
 				!Main.editSign &&
 				!Main.editChest &&
 				!Main.blockInput &&
 				!Main.mapFullscreen &&
 				!Main.HoveringOverAnNPC &&
-				!player.showItemIcon &&
-				player.talkNPC == -1 &&
-				player.itemTime == 0 && player.itemAnimation == 0 &&
-				!(player.frozen || player.webbed || player.stoned);
+				!Player.cursorItemIconEnabled &&
+				Player.talkNPC == -1 &&
+				Player.itemTime == 0 && Player.itemAnimation == 0 &&
+				!(Player.frozen || Player.webbed || Player.stoned);
 		}
 
 		public override void OnRespawn(Player player) => UseAutomaticHistoryBook();

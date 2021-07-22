@@ -9,6 +9,10 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.UI;
 using Terraria.UI.Chat;
+using Terraria.Audio;
+using Terraria.GameContent;
+using ReLogic.Content;
+using Terraria.ModLoader;
 
 namespace SummonersAssociation.UI
 {
@@ -121,7 +125,7 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// Red cross for when to reset
 		/// </summary>
-		internal static Texture2D redCrossTexture;
+		internal static Asset<Texture2D> redCrossTexture;
 
 		/// <summary>
 		/// Holds data about each ItemModel
@@ -229,7 +233,7 @@ namespace SummonersAssociation.UI
 				#endregion
 
 				#region Setup weapon sprite
-				texture = Main.itemTexture[itemModel.ItemType];
+				texture = TextureAssets.Item[itemModel.ItemType].Value;
 				width = texture.Width;
 				height = texture.Height;
 				itemColor = Color.White;
@@ -304,10 +308,10 @@ namespace SummonersAssociation.UI
 			#region Draw each UIModel
 			foreach (UIModel model in uiModels) {
 				//Draw weapon background circle
-				spriteBatch.Draw(Main.wireUITexture[model.Mouseover ? 1 : 0], model.BackgroundRect, model.BackgroundColor);
+				spriteBatch.Draw(TextureAssets.WireUi[model.Mouseover ? 1 : 0].Value, model.BackgroundRect, model.BackgroundColor);
 
 				//Draw weapon sprite
-				texture = Main.itemTexture[model.ItemType];
+				texture = TextureAssets.Item[model.ItemType].Value;
 				spriteBatch.Draw(texture, model.DestRect, model.SourceRect, model.ItemColor);
 
 				//Draw SummonCount
@@ -320,11 +324,11 @@ namespace SummonersAssociation.UI
 
 			#region Draw book background circle
 			outputRect = new Rectangle((int)TopLeftCorner.X, (int)TopLeftCorner.Y, mainDiameter, mainDiameter);
-			spriteBatch.Draw(Main.wireUITexture[middle ? 1 : 0], outputRect, Color.White);
+			spriteBatch.Draw(TextureAssets.WireUi[middle ? 1 : 0].Value, outputRect, Color.White);
 			#endregion
 
 			#region Draw book sprite
-			texture = Main.itemTexture[heldItemType];
+			texture = TextureAssets.Item[heldItemType].Value;
 			width = texture.Width;
 			height = texture.Height;
 			outputRect = new Rectangle((int)spawnPosition.X - (width / 2), (int)spawnPosition.Y - (height / 2), width, height);
@@ -366,10 +370,10 @@ namespace SummonersAssociation.UI
 
 				if (aboutToDelete) {
 					#region Draw red cross
-					width = redCrossTexture.Width;
-					height = redCrossTexture.Height;
+					width = redCrossTexture.Width();
+					height = redCrossTexture.Height();
 					outputRect = new Rectangle((int)spawnPosition.X - (width / 2), (int)spawnPosition.Y - (height / 2), width, height);
-					spriteBatch.Draw(redCrossTexture, outputRect, Color.White);
+					spriteBatch.Draw(redCrossTexture.Value, outputRect, Color.White);
 					#endregion
 
 					#region Draw tooltip for what happens on click
@@ -455,16 +459,16 @@ namespace SummonersAssociation.UI
 		/// Shorter version of DrawColorCodedStringWithShadow()
 		/// </summary>
 		internal static void DrawText(SpriteBatch sb, string tt, Vector2 pos, Color color)
-			=> ChatManager.DrawColorCodedStringWithShadow(sb, Main.fontMouseText, tt, pos, color, 0, Vector2.Zero, Vector2.One);
+			=> ChatManager.DrawColorCodedStringWithShadow(sb, FontAssets.MouseText.Value, tt, pos, color, 0, Vector2.Zero, Vector2.One);
 
 		/// <summary>
 		/// Creates a list of summon weapons from the players inventory, ignoring duplicates
 		/// </summary>
 		public static List<ItemModel> GetSummonWeapons() {
 			var list = new List<ItemModel>();
-			for (int i = 0; i < Main.maxInventory; i++) {
+			for (int i = 0; i < Main.InventorySlotsTotal; i++) {
 				Item item = Main.LocalPlayer.inventory[i];
-				if (!item.IsAir && item.summon && !item.sentry && list.FindIndex(itemModel => itemModel.ItemType == item.type) < 0) {
+				if (!item.IsAir && item.CountsAsClass(DamageClass.Summon) && !item.sentry && list.FindIndex(itemModel => itemModel.ItemType == item.type) < 0) {
 					//Exclude sentry weapons, maybe separate item later
 					//ItemModels added here have SummonCount set to 0, will be checked later in Start() and adjusted
 					list.Add(new ItemModel(item, i));
@@ -555,7 +559,7 @@ namespace SummonersAssociation.UI
 		/// Called when the UI is about to appear
 		/// </summary>
 		public static bool Start() {
-			List<ItemModel> history = ((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.modItem).history;
+			List<ItemModel> history = ((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.ModItem).history;
 			List<ItemModel> historyCopy = history.ConvertAll(model => new ItemModel(model));
 			List<ItemModel> passedModels = MergeHistoryIntoInventory(historyCopy);
 
@@ -564,7 +568,7 @@ namespace SummonersAssociation.UI
 			if (itemModels.Count < 1) return false;
 
 			active = true;
-			spawnPosition = SummonersAssociation.MousePositionUI;
+			spawnPosition = UISystem.MousePositionUI;
 			heldItemIndex = Main.LocalPlayer.selectedItem;
 			heldItemType = Main.LocalPlayer.HeldItem.type;
 
@@ -577,7 +581,7 @@ namespace SummonersAssociation.UI
 				selected = itemModels.FindIndex(model => model.ItemType == history[0].ItemType);
 			}
 
-			try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
+			try { SoundEngine.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
 			catch { /*No idea why but this threw errors one time*/ }
 
 			return true;
@@ -595,7 +599,7 @@ namespace SummonersAssociation.UI
 			active = false;
 
 			if (playSound) {
-				try { Main.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
+				try { SoundEngine.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }
 				catch { /*No idea why but this threw errors one time*/ }
 			}
 		}

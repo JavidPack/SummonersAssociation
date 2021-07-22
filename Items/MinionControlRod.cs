@@ -9,6 +9,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
+using Terraria.Audio;
 
 namespace SummonersAssociation.Items
 {
@@ -30,7 +31,7 @@ namespace SummonersAssociation.Items
 			}
 
 			if (insertIndex != -1) {
-				tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick1", "Right click on an enemy to target it"));
+				tooltips.Insert(++insertIndex, new TooltipLine(Mod, "Rightclick1", "Right click on an enemy to target it"));
 
 				if (!ServerConfig.Instance.DisableAdvancedTargetingFeature) {
 					string text;
@@ -40,48 +41,43 @@ namespace SummonersAssociation.Items
 					else {
 						text = "or right click somewhere else to spawn a reticle your minions will attack";
 					}
-					tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick2", text));
+					tooltips.Insert(++insertIndex, new TooltipLine(Mod, "Rightclick2", text));
 
 					if (Main.netMode == NetmodeID.MultiplayerClient) {
-						tooltips.Insert(++insertIndex, new TooltipLine(mod, "Rightclick3", "Right click another players' reticle so he has control over your minions' target"));
+						tooltips.Insert(++insertIndex, new TooltipLine(Mod, "Rightclick3", "Right click another players' reticle so he has control over your minions' target"));
 					}
 				}
 			}
 		}
 
 		public override void SetDefaults() {
-			item.width = 42;
-			item.height = 42;
-			item.maxStack = 1;
-			item.value = Item.sellPrice(gold: 1);
-			item.rare = ItemRarityID.Green;
-			item.useAnimation = 45;
-			item.useTime = 45;
-			item.useStyle = ItemUseStyleID.HoldingUp;
-			item.useTurn = true;
-			//item.UseSound = SoundID.Item6?.WithVolume(0.6f);
+			Item.width = 42;
+			Item.height = 42;
+			Item.maxStack = 1;
+			Item.value = Item.sellPrice(gold: 1);
+			Item.rare = ItemRarityID.Green;
+			Item.useAnimation = 45;
+			Item.useTime = 45;
+			Item.useStyle = ItemUseStyleID.HoldUp;
+			Item.useTurn = true;
+			//Item.UseSound = SoundID.Item6?.WithVolume(0.6f);
 		}
 
 		public override void AddRecipes() {
-			var recipe = new ModRecipe(mod);
-			recipe.AddIngredient(ItemID.FallenStar, 10);
-			recipe.AddRecipeGroup("SummonersAssociation:MagicMirrors");
-			recipe.AddTile(TileID.Anvils);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			CreateRecipe(1).AddIngredient(ItemID.FallenStar, 10).AddRecipeGroup("SummonersAssociation:MagicMirrors").AddTile(TileID.Anvils).Register();
 		}
 
 		public override bool AltFunctionUse(Player player) => true;
 
-		public override void UseStyle(Player player) {
+		public override void UseStyle(Player player, Rectangle heldItemFrame) {
 			player.itemLocation.X += player.direction * (-16 + 2);
 			player.itemLocation.Y += -2;
-			int totalTime = PlayerHooks.TotalUseTime(item.useTime, player, item);
+			int totalTime = CombinedHooks.TotalUseTime(Item.useTime, player, Item);
 
 			if (player.altFunctionUse != 2) {
 				//This runs for all clients, not the server
 				if (player.itemTime == 0) {
-					Main.PlaySound(SoundID.Item6?.WithVolume(0.6f), player.Center); //Magic mirror sound
+					SoundEngine.PlaySound(SoundID.Item6?.WithVolume(0.6f), player.Center); //Magic mirror sound
 					player.itemTime = totalTime;
 				}
 				if (player.itemTime == totalTime / 2) {
@@ -92,7 +88,7 @@ namespace SummonersAssociation.Items
 				//This runs for just the client using it
 				if (player.itemTime == 0) {
 					player.itemTime = totalTime;
-					Main.PlaySound(SoundID.Item66?.WithVolume(0.6f), player.Center); //Common minion staff sound
+					SoundEngine.PlaySound(SoundID.Item66?.WithVolume(0.6f), player.Center); //Common minion staff sound
 
 					DoRightClick(player);
 				}
@@ -136,7 +132,7 @@ namespace SummonersAssociation.Items
 			if (Main.myPlayer == player.whoAmI) { //Technically redundant check
 				if (ServerConfig.Instance.DisableAdvancedTargetingFeature) {
 					//If this feature is disabled, simply treat it as a regular summon weapon right click
-					player.MinionNPCTargetAim();
+					player.MinionNPCTargetAim(false);
 					return;
 				}
 
@@ -157,7 +153,7 @@ namespace SummonersAssociation.Items
 
 							//If in addition, mouseovered a self-owned target, delete it
 							if (npc.type == type) {
-								var target = npc.modNPC as MinionTarget;
+								var target = npc.ModNPC as MinionTarget;
 								if (target.PlayerIndex == player.whoAmI) {
 									mouseoverOwnTarget = true;
 								}
@@ -175,7 +171,7 @@ namespace SummonersAssociation.Items
 			//Clear all player owned targets
 			for (int i = 0; i < Main.maxNPCs; i++) {
 				NPC npc = Main.npc[i];
-				if (npc.active && npc.modNPC is MinionTarget target && target?.Owner == player) {
+				if (npc.active && npc.ModNPC is MinionTarget target && target?.Owner == player) {
 					//Console.WriteLine($"[{Main.time}] killed target due to clear");
 					//Main.NewText($"[{Main.time}] killed target due to clear");
 					target.Die();
@@ -208,7 +204,7 @@ namespace SummonersAssociation.Items
 				NPC npc = Main.npc[i];
 				if (CanBeChasedBy(npc, type) && (found == -1 || npc.Hitbox.Distance(mouseWorld) < Main.npc[found].Hitbox.Distance(mouseWorld))) {
 					if (npc.type == type) {
-						var target = npc.modNPC as MinionTarget;
+						var target = npc.ModNPC as MinionTarget;
 						if (target.PlayerIndex == player.whoAmI) {
 							continue; //Continue if own target
 						}
@@ -249,7 +245,7 @@ namespace SummonersAssociation.Items
 					//1) Didn't mouseover, has a target: Reposition
 					if (Main.netMode != NetmodeID.MultiplayerClient) {
 						NPC npc = mPlayer.Target;
-						var target = npc.modNPC as MinionTarget;
+						var target = npc.ModNPC as MinionTarget;
 						target.SetLocation(location);
 						if (Main.netMode == NetmodeID.Server) {
 							NetMessage.SendData(MessageID.SyncNPC, number: npc.whoAmI);
@@ -264,7 +260,7 @@ namespace SummonersAssociation.Items
 						if (index < Main.maxNPCs) {
 							NPC npc = Main.npc[index];
 
-							var target = npc.modNPC as MinionTarget;
+							var target = npc.ModNPC as MinionTarget;
 							target.Setup(player, location);
 
 							mPlayer.PendingTargetAssignment = index;
@@ -380,7 +376,7 @@ namespace SummonersAssociation.Items
 		/// Called in SummonersAssociationPlayer.PostUpdate. Assigns the target to the pending one
 		/// </summary>
 		internal static void PendingTargetAssignment(SummonersAssociationPlayer mPlayer) {
-			if (Main.netMode == NetmodeID.MultiplayerClient && Main.myPlayer != mPlayer.player.whoAmI) return;
+			if (Main.netMode == NetmodeID.MultiplayerClient && Main.myPlayer != mPlayer.Player.whoAmI) return;
 			if (ServerConfig.Instance.DisableAdvancedTargetingFeature) return;
 			//Only the server and the client owning it will run the code here
 
@@ -390,7 +386,7 @@ namespace SummonersAssociation.Items
 				//Main.NewText($"Assign relevant npc data: ai0:{npc.ai[0]}, ai3:{npc.ai[3]}, style:{npc.aiStyle}");
 				//Console.WriteLine($"Assign relevant npc data: ai0:{npc.ai[0]}, ai3:{npc.ai[3]}, style:{npc.aiStyle}");
 				mPlayer.TargetWhoAmI = whoAmI;
-				mPlayer.player.MinionAttackTargetNPC = whoAmI;
+				mPlayer.Player.MinionAttackTargetNPC = whoAmI;
 				mPlayer.PendingTargetAssignment = -1;
 
 				if (Main.netMode == NetmodeID.Server) {
@@ -406,7 +402,7 @@ namespace SummonersAssociation.Items
 		/// Called in SummonersAssociationPlayer.PostUpdate. Checks if the stored target whoAmI is still valid, and resets if not
 		/// </summary>
 		internal static void TargetVerification(SummonersAssociationPlayer mPlayer) {
-			if (Main.netMode == NetmodeID.MultiplayerClient && Main.myPlayer != mPlayer.player.whoAmI) return;
+			if (Main.netMode == NetmodeID.MultiplayerClient && Main.myPlayer != mPlayer.Player.whoAmI) return;
 			if (ServerConfig.Instance.DisableAdvancedTargetingFeature) return;
 			//Only the server and the client owning it will run the code here
 

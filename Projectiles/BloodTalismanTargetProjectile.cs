@@ -10,19 +10,19 @@ namespace SummonersAssociation.Projectiles
 		public override void SetStaticDefaults() => DisplayName.SetDefault("Blood Talisman Target Projectile");
 
 		public override void SetDefaults() {
-			projectile.width = 100;
-			projectile.height = 100;
-			projectile.alpha = 255;
-			projectile.timeLeft = 18000;
-			projectile.penetrate = -1;
-			projectile.friendly = true;
-			projectile.penetrate = -1;
-			projectile.tileCollide = false;
-			projectile.ownerHitCheck = true;
-			projectile.ignoreWater = true;
+			Projectile.width = 100;
+			Projectile.height = 100;
+			Projectile.alpha = 255;
+			Projectile.timeLeft = 18000;
+			Projectile.penetrate = -1;
+			Projectile.friendly = true;
+			Projectile.penetrate = -1;
+			Projectile.tileCollide = false;
+			Projectile.ownerHitCheck = true;
+			Projectile.ignoreWater = true;
 		}
 
-		public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
+		public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
 		public override bool? CanCutTiles() => false;
 
@@ -38,7 +38,7 @@ namespace SummonersAssociation.Projectiles
 
 		private void Visuals() {
 			if (Main.rand.Next(100) > alphaTimer - 155) {
-				int index = Dust.NewDust(new Vector2(projectile.position.X - 4f, projectile.position.Y - 4f), projectile.width + 8, projectile.height + 8, 202, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 0, default(Color), 1f);
+				int index = Dust.NewDust(new Vector2(Projectile.position.X - 4f, Projectile.position.Y - 4f), Projectile.width + 8, Projectile.height + 8, 202, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 0, default(Color), 1f);
 				Dust dust = Main.dust[index];
 				if (Main.rand.NextBool(2)) {
 					dust.scale = 1.5f;
@@ -53,7 +53,7 @@ namespace SummonersAssociation.Projectiles
 			if (alphaTimer < alphaFinal) {
 				alphaTimer = alphaFinal;
 			}
-			projectile.alpha = alphaTimer;
+			Projectile.alpha = alphaTimer;
 		}
 
 		private void GiveDebuffs(Player player) {
@@ -76,7 +76,7 @@ namespace SummonersAssociation.Projectiles
 			if (alphaTimer <= 175)
 				player.AddBuff(BuffID.Blackout, 60);
 			//if (alphaTimer <= 165)
-			//	Main.player[projectile.owner].AddBuff(BuffID.Obstructed, 60);
+			//	Main.player[Projectile.owner].AddBuff(BuffID.Obstructed, 60);
 			if (alphaTimer <= alphaFinal)
 				player.AddBuff(BuffID.Electrified, 200);
 		}
@@ -86,14 +86,14 @@ namespace SummonersAssociation.Projectiles
 
 			Visuals();
 
-			if (Main.myPlayer == projectile.owner) {
-				Player player = Main.player[projectile.owner];
+			if (Main.myPlayer == Projectile.owner) {
+				Player player = Main.player[Projectile.owner];
 				if (player.channel) {
 					GiveDebuffs(player);
 
-					projectile.timeLeft = 2;
+					Projectile.timeLeft = 2;
 					float maxDistance = 32f; //This also sets the maximum speed the projectile can reach while following the cursor
-					Vector2 vectorToCursor = Main.MouseWorld - projectile.Center;
+					Vector2 vectorToCursor = Main.MouseWorld - Projectile.Center;
 					float distanceToCursor = vectorToCursor.Length();
 
 					//Here we can see that the speed of the projectile depends on the distance to the cursor
@@ -103,20 +103,20 @@ namespace SummonersAssociation.Projectiles
 					}
 
 					int velocityXBy1000 = (int)(vectorToCursor.X * 1000f);
-					int oldVelocityXBy1000 = (int)(projectile.velocity.X * 1000f);
+					int oldVelocityXBy1000 = (int)(Projectile.velocity.X * 1000f);
 					int velocityYBy1000 = (int)(vectorToCursor.Y * 1000f);
-					int oldVelocityYBy1000 = (int)(projectile.velocity.Y * 1000f);
+					int oldVelocityYBy1000 = (int)(Projectile.velocity.Y * 1000f);
 
 					//This code checks if the previous velocity of the projectile is different enough from its new velocity, and if it is, syncs it with the server and the other clients in MP
 					//We previously multiplied the speed by 1000, then casted it to int, this is to reduce its precision and prevent the speed from being synced too much
 					if (velocityXBy1000 != oldVelocityXBy1000 || velocityYBy1000 != oldVelocityYBy1000) {
-						projectile.netUpdate = true;
+						Projectile.netUpdate = true;
 					}
 
-					projectile.velocity = vectorToCursor;
+					Projectile.velocity = vectorToCursor;
 				}
 				else {
-					projectile.Kill();
+					Projectile.Kill();
 				}
 			}
 		}

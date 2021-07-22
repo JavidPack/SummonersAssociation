@@ -16,8 +16,6 @@ namespace SummonersAssociation.Items
 	/// </summary>
 	public class MinionHistoryBookSimple : ModItem
 	{
-		public override bool CloneNewInstances => true;
-
 		public List<ItemModel> history = new List<ItemModel>();
 
 		public override void SetStaticDefaults() {
@@ -28,20 +26,20 @@ namespace SummonersAssociation.Items
 		}
 
 		public override void SetDefaults() {
-			item.width = 28;
-			item.height = 30;
-			item.maxStack = 1;
-			item.rare = ItemRarityID.Orange;
-			item.mana = 2;
-			item.useAnimation = 16;
-			item.useTime = 16;
-			item.useStyle = ItemUseStyleID.HoldingUp;
-			item.UseSound = SoundID.Item46;
-			item.value = Item.sellPrice(silver: 10);
+			Item.width = 28;
+			Item.height = 30;
+			Item.maxStack = 1;
+			Item.rare = ItemRarityID.Orange;
+			Item.mana = 2;
+			Item.useAnimation = 16;
+			Item.useTime = 16;
+			Item.useStyle = ItemUseStyleID.HoldUp;
+			Item.UseSound = SoundID.Item46;
+			Item.value = Item.sellPrice(silver: 10);
 		}
 
-		public override ModItem Clone() {
-			var clone = (MinionHistoryBookSimple)base.Clone();
+		public override ModItem Clone(Item item) {
+			var clone = (MinionHistoryBookSimple)base.Clone(item);
 			clone.history = history.ConvertAll((itemModel) => new ItemModel(itemModel));
 			return clone;
 		}
@@ -57,7 +55,7 @@ namespace SummonersAssociation.Items
 			history = tag.GetList<ItemModel>(nameof(history)).Where(x => x.ItemType != ItemID.Count).ToList();
 		}
 
-		public override void NetRecieve(BinaryReader reader) {
+		public override void NetReceive(BinaryReader reader) {
 			int length = reader.ReadByte();
 			history = new List<ItemModel>();
 			for (int i = 0; i < length; i++) {
@@ -74,29 +72,24 @@ namespace SummonersAssociation.Items
 		}
 
 		public override void AddRecipes() {
-			var recipe = new ModRecipe(mod);
-			recipe.AddIngredient(ItemID.Book);
-			recipe.AddIngredient(ItemID.FallenStar, 6);
-			recipe.AddTile(TileID.Bookcases);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			CreateRecipe(1).AddIngredient(ItemID.Book).AddIngredient(ItemID.FallenStar, 6).AddTile(TileID.Bookcases).Register();
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
 			if (history.Count > 0) {
 				if (Main.LocalPlayer.HasItem(history[0].ItemType)) {
-					tooltips.Add(new TooltipLine(mod, "ItemModel", "Selected: " + history[0].Name));
+					tooltips.Add(new TooltipLine(Mod, "ItemModel", "Selected: " + history[0].Name));
 				}
 				else {
-					tooltips.Add(new TooltipLine(mod, "NoneFound", "Selected item not found"));
+					tooltips.Add(new TooltipLine(Mod, "NoneFound", "Selected item not found"));
 				}
 			}
 			else {
-				tooltips.Add(new TooltipLine(mod, "None", "No item specified"));
+				tooltips.Add(new TooltipLine(Mod, "None", "No item specified"));
 			}
 		}
 
-		public override bool UseItem(Player player) {
+		public override bool? UseItem(Player player) {
 			EnqueueSpawns(player);
 			return true;
 		}

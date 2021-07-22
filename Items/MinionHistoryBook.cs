@@ -19,19 +19,12 @@ namespace SummonersAssociation.Items
 
 		public override void SetDefaults() {
 			base.SetDefaults();
-			item.rare = ItemRarityID.LightRed;
-			item.mana = 4;
+			Item.rare = ItemRarityID.LightRed;
+			Item.mana = 4;
 		}
 
 		public override void AddRecipes() {
-			var recipe = new ModRecipe(mod);
-			recipe.AddIngredient(ItemType<MinionHistoryBookSimple>());
-			recipe.AddIngredient(ItemID.Bone, 10);
-			recipe.AddIngredient(ItemID.JungleSpores, 5);
-			recipe.AddIngredient(ItemID.SummoningPotion, 5);
-			recipe.AddTile(TileID.Bookcases);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			CreateRecipe(1).AddIngredient(ItemType<MinionHistoryBookSimple>()).AddIngredient(ItemID.Bone, 10).AddIngredient(ItemID.JungleSpores, 5).AddIngredient(ItemID.SummoningPotion, 5).AddTile(TileID.Bookcases).Register();
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
@@ -45,17 +38,17 @@ namespace SummonersAssociation.Items
 					if (itemModel.SummonCount > 0) {
 						if (!history) {
 							history = true;
-							tooltips.Add(new TooltipLine(mod, "History", "History:"));
+							tooltips.Add(new TooltipLine(Mod, "History", "History:"));
 						}
 
-						tooltips.Add(new TooltipLine(mod, "ItemModel", itemModel.Name + ": " + itemModel.SummonCount) {
+						tooltips.Add(new TooltipLine(Mod, "ItemModel", itemModel.Name + ": " + itemModel.SummonCount) {
 							overrideColor = itemModel.Active ? Color.White : Color.Red
 						});
 					}
 				}
 			}
 			else {
-				tooltips.Add(new TooltipLine(mod, "None", "No summon history specified"));
+				tooltips.Add(new TooltipLine(Mod, "None", "No summon history specified"));
 			}
 		}
 	}

@@ -97,7 +97,7 @@ namespace SummonersAssociation.Models
 		/// and deactivate it
 		/// </summary>
 		public void OverrideValuesToInactive(int i) {
-			InventoryIndex = Main.maxInventory + i;
+			InventoryIndex = Main.InventorySlotsTotal + i;
 			Active = false;
 		}
 

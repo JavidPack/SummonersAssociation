@@ -16,17 +16,12 @@ namespace SummonersAssociation.Items
 
 		public override void SetDefaults() {
 			base.SetDefaults();
-			item.rare = ItemRarityID.Pink;
-			item.mana = 6;
+			Item.rare = ItemRarityID.Pink;
+			Item.mana = 6;
 		}
 
 		public override void AddRecipes() {
-			var recipe = new ModRecipe(mod);
-			recipe.AddIngredient(ItemType<MinionHistoryBook>());
-			recipe.AddIngredient(ItemID.PixieDust, 10);
-			recipe.AddTile(TileID.Bookcases);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			CreateRecipe(1).AddIngredient(ItemType<MinionHistoryBook>()).AddIngredient(ItemID.PixieDust, 10).AddTile(TileID.Bookcases).Register();
 		}
 	}
 }

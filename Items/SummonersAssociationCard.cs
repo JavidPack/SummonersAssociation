@@ -12,24 +12,18 @@ namespace SummonersAssociation.Items
 		}
 
 		public override void SetDefaults() {
-			item.width = 20;
-			item.height = 20;
-			item.maxStack = 1;
-			item.value = 500;
-			item.rare = ItemRarityID.Green;
-			item.useAnimation = 45;
-			item.useTime = 45;
-			item.useStyle = ItemUseStyleID.HoldingUp;
+			Item.width = 20;
+			Item.height = 20;
+			Item.maxStack = 1;
+			Item.value = 500;
+			Item.rare = ItemRarityID.Green;
+			Item.useAnimation = 45;
+			Item.useTime = 45;
+			Item.useStyle = ItemUseStyleID.HoldUp;
 		}
 
 		public override void AddRecipes() {
-			var recipe = new ModRecipe(mod);
-			recipe.AddIngredient(ItemID.Gel, 10);
-			recipe.AddRecipeGroup("Wood");
-			recipe.AddTile(TileID.Chairs);
-			recipe.AddTile(TileID.Tables);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			CreateRecipe(1).AddIngredient(ItemID.Gel, 10).AddRecipeGroup("Wood").AddTile(TileID.Chairs).AddTile(TileID.Tables).Register();
 		}
 
 		public override void UpdateInventory(Player player)
