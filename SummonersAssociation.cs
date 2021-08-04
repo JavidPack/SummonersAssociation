@@ -31,6 +31,7 @@ namespace SummonersAssociation
 			Instance = this;
 
 			SupportedMinions = new List<MinionModel>() {
+				new MinionModel(ItemID.BabyBirdStaff, BuffID.BabyBird, ProjectileID.BabyBird),
 				new MinionModel(ItemID.SlimeStaff, BuffID.BabySlime, ProjectileID.BabySlime),
 				new MinionModel(ItemID.FlinxStaff, BuffID.FlinxMinion, ProjectileID.FlinxMinion),
 				new MinionModel(ItemID.VampireFrogStaff, BuffID.VampireFrog, ProjectileID.VampireFrog),
