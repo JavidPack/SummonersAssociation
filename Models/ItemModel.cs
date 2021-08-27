@@ -36,7 +36,7 @@ namespace SummonersAssociation.Models
 		public byte SummonCount { get; set; }
 
 		/// <summary>
-		/// How many minion slots the weapon "creates" on use, hardcoded for vanilla, modded assumes SlotsNeeded
+		/// How many minion slots the weapon "creates" on use, hardcoded for some vanilla items, rest assumes SlotsNeeded
 		/// </summary>
 		public float SlotsFilledPerUse => SummonersAssociation.SlotsFilledPerUse.TryGetValue(ItemType, out float value) ? value : SlotsNeeded;
 

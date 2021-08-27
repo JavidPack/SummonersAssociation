@@ -63,7 +63,7 @@ namespace SummonersAssociation
 
 			//For SlotsFilledPerUse we can't use MinionModel.GetSlotsPerProjectile because thats just a list of projectiles, and not those that are summoned once on use
 			SlotsFilledPerUse = new Dictionary<int, float> {
-				[ItemID.SpiderStaff] = 0.75f
+				//[ItemID.SpiderStaff] = 0.75f //Changed to 1 in 1.4
 			};
 
 			TeleportConditionMinions = new Dictionary<int, Func<Projectile, bool>>() {
