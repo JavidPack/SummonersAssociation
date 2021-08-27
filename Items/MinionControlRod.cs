@@ -100,12 +100,13 @@ namespace SummonersAssociation.Items
 			for (int j = 0; j < Main.maxProjectiles; j++) {
 				Projectile projectile = Main.projectile[j];
 				if (projectile.active && projectile.owner == player.whoAmI) {
-					if (projectile.minion) {
+					if (projectile.minion && (!SummonersAssociation.TeleportConditionMinions.TryGetValue(projectile.type, out var func) || func?.Invoke(projectile) == true)) {
 						for (int i = 0; i < 40; i++) {
 							int index = Dust.NewDust(projectile.position, projectile.width, projectile.height, 14, 0f, 0f, 150, default(Color), 1.1f);
 							Dust dust = Main.dust[index];
 							dust.noLight = true;
 						}
+
 						if (Main.myPlayer == player.whoAmI) {
 							projectile.Center = location;
 							projectile.netUpdate = true;
@@ -114,6 +115,7 @@ namespace SummonersAssociation.Items
 					}
 				}
 			}
+
 			if (teleAny) { //Only true clientside
 				for (int i = 0; i < 40; i++) {
 					var size = new Vector2(26);

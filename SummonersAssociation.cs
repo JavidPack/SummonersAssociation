@@ -18,9 +18,17 @@ namespace SummonersAssociation
 		/// Hardcoded special vanilla minions that summon a non-1f amount of minions on use
 		/// </summary>
 		internal static Dictionary<int, float> SlotsFilledPerUse;
+
+		/// <summary>
+		/// Mainly for "Counter" projectiles that count as minions but should not be teleported (by the Minion Control Rod)
+		/// </summary>
+		internal static Dictionary<int, Func<Projectile, bool>> TeleportConditionMinions;
+
 		private bool SupportedMinionsFinalized = false;
 
 		public static SummonersAssociation Instance;
+
+		private static bool ProjectileFalse(Projectile p) => false;
 
 		/// <summary>
 		/// Array of the different minion book types. Simple is 0, Normal is 1, Auto is 2
@@ -58,6 +66,10 @@ namespace SummonersAssociation
 				[ItemID.SpiderStaff] = 0.75f
 			};
 
+			TeleportConditionMinions = new Dictionary<int, Func<Projectile, bool>>() {
+				[ProjectileID.StormTigerGem] = ProjectileFalse
+			};
+
 			MinionControlRod.LoadHooks();
 		}
 
@@ -72,6 +84,7 @@ namespace SummonersAssociation
 		public override void Unload() {
 			SupportedMinions = null;
 			SlotsFilledPerUse = null;
+			TeleportConditionMinions = null;
 			BookTypes = null;
 
 			MinionControlRod.UnloadHooks();
@@ -107,10 +120,13 @@ namespace SummonersAssociation
 
 		//Examples:
 		//############
-		//Mod summonersAssociation = ModLoader.GetMod("SummonersAssociation");
+		//if (ModLoader.TryGetMod("SummonersAssociation", out Mod summonersAssociation)) 
+		//{
+		//  Calls here
+		//}
 		//
 		//	Regular call for a regular summon weapon
-		//	summonersAssociation?.Call(
+		//	summonersAssociation.Call(
 		//		"AddMinionInfo",
 		//		ItemType<MinionItem>(),
 		//		BuffType<MinionBuff>(),
@@ -118,7 +134,7 @@ namespace SummonersAssociation
 		//	);
 		//
 		//  If the weapon summons two minions
-		//	summonersAssociation?.Call(
+		//	summonersAssociation.Call(
 		//		"AddMinionInfo",
 		//		ItemType<MinionItem>(),
 		//		BuffType<MinionBuff>(),
@@ -130,7 +146,7 @@ namespace SummonersAssociation
 		//
 		//  If you want to override the minionSlots of the projectile
 		//  (for example useful if you have a Stardust Dragon-like minion and you only want it to count one segment towards the number of summoned minions)
-		//	summonersAssociation?.Call(
+		//	summonersAssociation.Call(
 		//		"AddMinionInfo",
 		//		ItemType<MinionItem>(),
 		//		BuffType<MinionBuff>(),
@@ -140,7 +156,7 @@ namespace SummonersAssociation
 		//
 		//  If you want to override the minionSlots of the projectiles you specify (same order)
 		//  (for example useful if you have some complex minion that consists of multiple parts)
-		//	summonersAssociation?.Call(
+		//	summonersAssociation.Call(
 		//		"AddMinionInfo",
 		//		ItemType<MinionItem>(),
 		//		BuffType<MinionBuff>(),
@@ -152,6 +168,20 @@ namespace SummonersAssociation
 		//		0.25f,
 		//		0.5f
 		//		}
+		//	);
+		//
+		//	Storm Tiger-like "counter" projectile that is a minion but should not be teleported
+		//  Or if a minion hovers over your head and should never move
+		//	summonersAssociation.Call(
+		//		"AddTeleportConditionMinion",
+		//		ProjectileType<MinionCounterProjectile>()
+		//	);
+		//	
+		//  Customizable condition (no condition: defaults to false):
+		//	summonersAssociation.Call(
+		//		"AddTeleportConditionMinion",
+		//	    ModContent.ProjectileType<MinionProjectile>(),
+		//	    (Func<Projectile, bool>) ((Projectile p) => false) //return false here to prevent it from teleporting, otherwise, true
 		//	);
 
 		public override object Call(params object[] args) {
@@ -165,7 +195,10 @@ namespace SummonersAssociation
 			 * or
 			 * int, int, int
 			 * 
-			 * else if "SomeOther":
+			 * else if "TeleportConditionMinions":
+			 * int
+			 * or
+			 * int, Func<Projectile, bool>
 			 * ...
 			 */
 			try {
@@ -177,22 +210,25 @@ namespace SummonersAssociation
 					int itemID = Convert.ToInt32(args[1]);
 					int buffID = Convert.ToInt32(args[2]);
 
-					if (itemID == 0 || itemID >= ItemLoader.ItemCount) throw new Exception("Invalid item '" + itemID + "' registered");
+					if (itemID <= 0 || itemID >= ItemLoader.ItemCount) throw new Exception("Invalid item '" + itemID + "' registered");
 
 					string itemMsg = " ### Minion from item '" + Lang.GetItemNameValue(itemID) + "' not added";
 
-					if (buffID == 0 || buffID >= BuffLoader.BuffCount) throw new Exception("Invalid buff '" + buffID + "' registered" + itemMsg);
+					if (buffID <= 0 || buffID >= BuffLoader.BuffCount) throw new Exception("Invalid buff '" + buffID + "' registered" + itemMsg);
 
 					if (args[3] is List<int>) {
 						var projIDs = args[3] as List<int>;
 						if (projIDs.Count == 0) throw new Exception("Projectile list empty" + itemMsg);
+
 						foreach (int type in projIDs) {
-							if (type == 0 || type >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile '" + type + "' registered" + itemMsg);
+							if (type <= 0 || type >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile '" + type + "' registered" + itemMsg);
 						}
+
 						if (args.Length == 5) {
 							var slots = args[4] as List<float>;
 							if (projIDs.Count != slots.Count)
 								throw new Exception("Length of the projectile list does not match up with the length of the slot list" + itemMsg);
+
 							AddMinion(new MinionModel(itemID, buffID, projIDs, slots));
 						}
 						else {
@@ -201,15 +237,30 @@ namespace SummonersAssociation
 					}
 					else {
 						int projID = Convert.ToInt32(args[3]);
-						if (projID == 0 || projID >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile '" + projID + "' registered" + itemMsg);
+						if (projID <= 0 || projID >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile '" + projID + "' registered" + itemMsg);
+						
 						if (args.Length == 5) {
 							float slot = Convert.ToSingle(args[4]);
+
 							AddMinion(new MinionModel(itemID, buffID, projID, slot));
 						}
 						else {
 							AddMinion(new MinionModel(itemID, buffID, projID));
 						}
 					}
+					return "Success";
+				}
+				else if (message == "AddTeleportConditionMinion") {
+					//New with v0.4.6
+					int projID = Convert.ToInt32(args[1]);
+					if (projID <= 0 || projID >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile '" + projID + "' registered");
+
+					Func<Projectile, bool> func = ProjectileFalse;
+					if (args.Length == 3 && args[2] is Func<Projectile, bool>) {
+						func = args[2] as Func<Projectile, bool>;
+					}
+
+					TeleportConditionMinions[projID] = func;
 					return "Success";
 				}
 			}
