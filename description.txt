@@ -14,6 +14,9 @@ Contains two configs: 'Server Config' contains settings related to the reticle f
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 Changelog:
+v0.4.6:
+* Add 1 new mod.Call
+
 v0.4.5.3:
 * Fixed unloading bug
 
