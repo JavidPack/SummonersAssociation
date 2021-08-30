@@ -183,6 +183,12 @@ namespace SummonersAssociation
 		//	    ModContent.ProjectileType<MinionProjectile>(),
 		//	    (Func<Projectile, bool>) ((Projectile p) => false) //return false here to prevent it from teleporting, otherwise, true
 		//	);
+		//
+		//  Get a copy of the stored information about all minions (See SummonersAssociationIntegrationExample.cs for more info)
+		//  var data = (List<Dictionary<string, object>>)summonersAssociation?.Call(
+		//		"GetSupportedMinions",
+		//	);
+		//
 
 		public override object Call(params object[] args) {
 			/* message string, then 
@@ -199,6 +205,10 @@ namespace SummonersAssociation
 			 * int
 			 * or
 			 * int, Func<Projectile, bool>
+			 * 
+			 * else if "GetSupportedMinions":
+			 * Mod, apiVersionString
+			 * returns List<Dictionary<string, object>>
 			 * ...
 			 */
 			try {
@@ -262,6 +272,23 @@ namespace SummonersAssociation
 
 					TeleportConditionMinions[projID] = func;
 					return "Success";
+				}
+				else if (message == "GetSupportedMinions") {
+					//New with v0.4.7
+					var mod = args[1] as Mod;
+					if (mod == null) {
+						throw new Exception($"Call Error: The Mod argument for the attempted message, \"{message}\" has returned null.");
+					}
+					var apiVersion = args[2] is string ? new Version(args[2] as string) : Version; // Future-proofing. Allowing new info to be returned while maintaining backwards compat if necessary.
+
+					Logger.Info($"{(mod.DisplayName ?? "A mod")} has registered for {message}");
+
+					if (!SupportedMinionsFinalized) {
+						Logger.Warn($"Call Warning: The attempted message, \"{message}\", was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.");
+					}
+
+					var list = SupportedMinions.Select(m => m.ConvertToDictionary(apiVersion)).ToList();
+					return list;
 				}
 			}
 			catch (Exception e) {

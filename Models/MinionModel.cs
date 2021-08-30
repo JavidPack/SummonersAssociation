@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Terraria;
 
@@ -5,10 +6,10 @@ namespace SummonersAssociation.Models
 {
 	public class MinionModel
 	{
-		public int ItemID { get; set; }
-		public int BuffID { get; set; }
-		public List<int> ProjectileIDs { get; set; }
-		public List<float> Slots { get; set; }
+		public int ItemID { get; private set; }
+		public int BuffID { get; private set; }
+		public List<int> ProjectileIDs { get; private set; }
+		public List<float> Slots { get; private set; }
 
 		public override string ToString() => Lang.GetItemNameValue(ItemID);
 
@@ -27,6 +28,17 @@ namespace SummonersAssociation.Models
 			Slots = slots ?? GetSlotsPerProjectile();
 		}
 
+		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		/// <param name="other">MinionModel to copy</param>
+		public MinionModel(MinionModel other) {
+			ItemID = other.ItemID;
+			BuffID = other.BuffID;
+			ProjectileIDs = other.ProjectileIDs;
+			Slots = other.Slots;
+		}
+
 		private List<float> GetSlotsPerProjectile() {
 			var slots = new List<float>();
 			foreach (int type in ProjectileIDs) {
@@ -41,6 +53,19 @@ namespace SummonersAssociation.Models
 				}
 			}
 			return slots;
+		}
+
+		internal Dictionary<string, object> ConvertToDictionary(Version GetSupportedMinionsAPIVersion) {
+			// We may want to allow different returns based on api version.
+			//if (GetSupportedMinionsDictionaryAPIVersion == new Version(0, 4, 7)) {
+			var dict = new Dictionary<string, object> {
+				{ "ItemID", ItemID },
+				{ "BuffID", BuffID },
+				{ "ProjectileIDs", ProjectileIDs },
+				{ "Slots", Slots },
+			};
+
+			return dict;
 		}
 	}
 }
