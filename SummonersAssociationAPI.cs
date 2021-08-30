@@ -12,11 +12,11 @@ namespace SummonersAssociation
 	public static class SummonersAssociationAPI
 	{
 		/// <summary>
-		/// Returns an IEnumerable[MinionModel] that is a copy of this mod's data. Cache the result.
+		/// Returns an List[MinionModel] that is a copy of this mod's data. Cache the result.
 		/// </summary>
 		/// <returns>Data of all supported minions by this mod</returns>
-		public static IEnumerable<MinionModel> GetSupportedMinions() =>
-			SummonersAssociation.SupportedMinions.Select(model => new MinionModel(model));
+		public static List<MinionModel> GetSupportedMinions() =>
+			SummonersAssociation.SupportedMinions.Select(model => new MinionModel(model)).ToList();
 
 		/// <summary>
 		/// Returns the number of "minion" buffs currently active on the player.
