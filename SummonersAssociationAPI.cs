@@ -1,7 +1,9 @@
 ﻿using SummonersAssociation.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace SummonersAssociation
 {
@@ -12,11 +14,27 @@ namespace SummonersAssociation
 	public static class SummonersAssociationAPI
 	{
 		/// <summary>
-		/// Returns an List[MinionModel] that is a copy of this mod's data. Cache the result.
+		/// Returns an List[MinionModel] that is a copy of this mod's data.
+		/// For best results, call it once in Mod.PostAddRecipes and cache the result
 		/// </summary>
+		/// <param name="mod">Your mod</param>
 		/// <returns>Data of all supported minions by this mod</returns>
-		public static List<MinionModel> GetSupportedMinions() =>
-			SummonersAssociation.SupportedMinions.Select(model => new MinionModel(model)).ToList();
+		public static List<MinionModel> GetSupportedMinions(Mod mod) {
+			const string method = nameof(GetSupportedMinions);
+			if (mod == null) {
+				throw new Exception($"Call Error: The Mod argument for {method} is null.");
+			}
+
+			var saMod = SummonersAssociation.Instance;
+			var logger = saMod.Logger;
+			logger.Info($"{(mod.DisplayName ?? "A mod")} has registered for {method} via API");
+
+			if (!saMod.SupportedMinionsFinalized) {
+				logger.Warn($"Call Warning: The attempted method \"{method}\" is called early. Expect the method to return incomplete data. For best results, call in PostAddRecipes.");
+			}
+
+			return SummonersAssociation.SupportedMinions.Select(model => new MinionModel(model)).ToList();
+		}
 
 		/// <summary>
 		/// Returns the number of "minion" buffs currently active on the player.
