@@ -24,10 +24,13 @@ namespace SummonersAssociation
 		/// </summary>
 		internal static Dictionary<int, Func<Projectile, bool>> TeleportConditionMinions;
 
-		private bool SupportedMinionsFinalized = false;
+		internal bool SupportedMinionsFinalized = false;
 
-		public static SummonersAssociation Instance;
+		internal static UserInterface HistoryBookUIInterface;
+		internal static HistoryBookUI HistoryBookUI;
 
+		public static SummonersAssociation Instance { get; private set; }
+		
 		private static bool ProjectileFalse(Projectile p) => false;
 
 		/// <summary>
@@ -108,6 +111,7 @@ namespace SummonersAssociation
 					}
 				}
 			}
+
 			SupportedMinionsFinalized = true;
 
 			var group = new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " Magic Mirror", new int[]
@@ -281,7 +285,7 @@ namespace SummonersAssociation
 					}
 					var apiVersion = args[2] is string ? new Version(args[2] as string) : Version; // Future-proofing. Allowing new info to be returned while maintaining backwards compat if necessary.
 
-					Logger.Info($"{(mod.DisplayName ?? "A mod")} has registered for {message}");
+					Logger.Info($"{(mod.DisplayName ?? "A mod")} has registered for {message} via Call");
 
 					if (!SupportedMinionsFinalized) {
 						Logger.Warn($"Call Warning: The attempted message, \"{message}\", was sent too early. Expect the Call message to return incomplete data. For best results, call in PostAddRecipes.");
