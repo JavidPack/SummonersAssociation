@@ -22,7 +22,7 @@ namespace <YourModNameHere>
 			public List<float> Slots { get; set; } //The minionSlots of the minion(s) (matching the index of ProjectileIDs)
 
 			//Helper method to represent the item this minion model is associated with
-			public override string ToString() => Terraria.ID.ItemID.GetUniqueKey(ItemID);
+			public override string ToString() => Lang.GetItemNameValue(ItemID);
 		}
 
 		public static List<MinionModel> supportedMinions = new List<MinionModel>();
@@ -30,8 +30,7 @@ namespace <YourModNameHere>
 		public static bool DoSummonersAssociationIntegration(Mod mod) {
 			// Make sure to call this method in PostAddRecipes or later for best results: SummonersAssociationIntegration.DoSummonersAssociationIntegration(this);
 			supportedMinions.Clear();
-			Mod SummonersAssociation = ModLoader.GetMod("SummonersAssociation");
-			if (SummonersAssociation != null && SummonersAssociation.Version >= SummonersAssociationAPIVersion) {
+			if (ModLoader.TryGetMod("SummonersAssociation", out var SummonersAssociation) && SummonersAssociation.Version >= SummonersAssociationAPIVersion) {
 				object currentSupportedMinionsResponse = SummonersAssociation.Call("GetSupportedMinions", mod, SummonersAssociationAPIVersion.ToString());
 				if (currentSupportedMinionsResponse is List<Dictionary<string, object>> supportedMinionsList) {
 					supportedMinions = supportedMinionsList.Select(dict => new MinionModel() {

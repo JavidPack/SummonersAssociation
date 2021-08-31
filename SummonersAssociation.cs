@@ -26,9 +26,6 @@ namespace SummonersAssociation
 
 		internal bool SupportedMinionsFinalized = false;
 
-		internal static UserInterface HistoryBookUIInterface;
-		internal static HistoryBookUI HistoryBookUI;
-
 		public static SummonersAssociation Instance { get; private set; }
 		
 		private static bool ProjectileFalse(Projectile p) => false;
@@ -189,7 +186,7 @@ namespace SummonersAssociation
 		//	);
 		//
 		//  Get a copy of the stored information about all minions (See SummonersAssociationIntegrationExample.cs for more info)
-		//  var data = (List<Dictionary<string, object>>)summonersAssociation?.Call(
+		//  var data = (List<Dictionary<string, object>>)summonersAssociation.Call(
 		//		"GetSupportedMinions",
 		//	);
 		//
