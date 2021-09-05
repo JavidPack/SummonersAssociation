@@ -314,7 +314,7 @@ namespace SummonersAssociation.Items
 			ModPacket packet = SummonersAssociation.Instance.GetPacket();
 			packet.Write((byte)PacketType.SpawnTarget);
 			packet.Write((byte)player.whoAmI);
-			packet.WritePackedVector2(location.ToVector2());
+			packet.WriteVector2(location.ToVector2());
 			packet.Write(new BitsByte(mouseover, mouseoverOwnTarget));
 			packet.Send(toClient);
 		}
@@ -330,7 +330,7 @@ namespace SummonersAssociation.Items
 			byte whoAmI = reader.ReadByte();
 			Player player = Main.player[whoAmI];
 
-			var location = reader.ReadPackedVector2().ToPoint();
+			var location = reader.ReadVector2().ToPoint();
 
 			BitsByte flags = reader.ReadByte();
 			bool mouseover = flags[0];
