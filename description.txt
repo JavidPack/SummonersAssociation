@@ -15,7 +15,7 @@ If you experience issues with Minion Control Rods' reticle feature, let us know 
 
 Changelog:
 v0.4.7.1:
-* Fix Minion Control Rod reticle feature bug on "tml 64 bit"
+* Fix Minion Control Rod reticle feature bug
 
 v0.4.7:
 * Add 1 new mod.Call (See the github)
