@@ -44,13 +44,11 @@ namespace SummonersAssociation.Items
 			return clone;
 		}
 
-		public override TagCompound Save() {
-			return new TagCompound {
-				{nameof(history), history}
-			};
+		public override void SaveData(TagCompound tag) {
+			tag.Add(nameof(history), history);
 		}
 
-		public override void Load(TagCompound tag) {
+		public override void LoadData(TagCompound tag) {
 			//Load and remove unloaded items from history
 			history = tag.GetList<ItemModel>(nameof(history)).Where(x => x.ItemType != ItemID.Count).ToList();
 		}
