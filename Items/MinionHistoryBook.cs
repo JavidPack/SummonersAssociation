@@ -47,7 +47,8 @@ namespace SummonersAssociation.Items
 					}
 				}
 			}
-			else {
+			
+			if (!history) {
 				tooltips.Add(new TooltipLine(Mod, "None", "No summon history specified"));
 			}
 		}

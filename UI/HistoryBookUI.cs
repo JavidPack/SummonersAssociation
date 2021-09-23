@@ -197,6 +197,7 @@ namespace SummonersAssociation.UI
 				x = outerRadius * Math.Sin(angleSteps * done * Math.PI);
 				y = outerRadius * -Math.Cos(angleSteps * done * Math.PI);
 				itemModel = itemModels[done];
+				int itemType = itemModel.ItemType;
 				tooltip = new List<string>();
 
 				isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
@@ -233,7 +234,8 @@ namespace SummonersAssociation.UI
 				#endregion
 
 				#region Setup weapon sprite
-				texture = TextureAssets.Item[itemModel.ItemType].Value;
+				Main.instance.LoadItem(itemType);
+				texture = TextureAssets.Item[itemType].Value;
 				width = texture.Width;
 				height = texture.Height;
 				itemColor = Color.White;
@@ -242,7 +244,7 @@ namespace SummonersAssociation.UI
 					else itemColor = Color.Gray;
 				}
 
-				DrawAnimation drawAnim = Main.itemAnimations[itemModel.ItemType];
+				DrawAnimation drawAnim = Main.itemAnimations[itemType];
 				if (drawAnim != null) {
 					sourceRect = drawAnim.GetFrame(texture);
 					height = sourceRect.Height;
@@ -271,7 +273,7 @@ namespace SummonersAssociation.UI
 
 				uiModels.Add(new UIModel(
 					isMouseWithinSegment,
-					itemModel.ItemType,
+					itemType,
 					bgRect,
 					bgColor,
 					destRect,
