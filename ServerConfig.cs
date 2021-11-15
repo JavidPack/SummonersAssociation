@@ -25,7 +25,7 @@ namespace SummonersAssociation
 		public bool DisableAdvancedTargetingFeature;
 
 		[Label("Enable Persistent Reticle")]
-		[Tooltip("If toggled, makes the reticle never disappear when going out of range")]
+		[Tooltip("If toggled, makes the reticle from the Minion Control Rod never disappear when going out of range")]
 		[DefaultValue(false)]
 		public bool PersistentReticle;
 
