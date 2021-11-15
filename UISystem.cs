@@ -159,31 +159,14 @@ namespace SummonersAssociation
 
 		private void DisplayMaxMinionIcon(SpriteBatch spriteBatch, Player player) {
 			if (Main.EquipPage == 0) {
-				int mH = 0;
-				if (Main.mapEnabled) {
-					if (!Main.mapFullscreen && Main.mapStyle == 1) {
-						mH = 256;
-					}
-					if (mH + 600 > Main.screenHeight) {
-						mH = Main.screenHeight - 600;
-					}
-				}
-
-				int six = 6;
-				int slot = six;
-				int x = Main.screenWidth - 64 - 28;
-
-				float inventoryScale = 0.85f;
-
-				int y = mH + (int)(174 + 0 + slot * 56 * inventoryScale);
-
 				Texture2D tex = TextureAssets.Buff[BuffID.Bewitched].Value;
 				Vector2 size = Utils.Size(tex);
 
-				//Vector2 vector2_1 = new Vector2(num9 - 10 - 47 - 47 - 14, num11 + Main.inventoryBackTexture.Height * 0.5f);
-				//- 10 - 47 - 47 - 14: x offset from the right edge of the screen
-				//+ Main.inventoryBackTexture.Height * 0.5f: y offset so its aligned with an inv slot
-				Vector2 drawPos = new Vector2(x - 10 - 47 - 47 - 14, y + TextureAssets.InventoryBack.Height() * 0.5f);
+				var defensePos = AccessorySlotLoader.DefenseIconPosition;
+				Vector2 drawPos = new Vector2(defensePos.X - 10 - 47 - 47 - 14, defensePos.Y + TextureAssets.InventoryBack.Height() * 0.5f);
+				float inventoryScale = 0.85f;
+				Vector2 slotOffset = new Vector2(0, -1 * 56 * inventoryScale); //One slot higher
+				drawPos += slotOffset;
 
 				Vector2 offset = Config.Instance.Offset;
 				offset = new Vector2((offset.X - Config.DefaultX) * Main.screenWidth, (offset.Y - Config.DefaultY) * Main.screenHeight);
