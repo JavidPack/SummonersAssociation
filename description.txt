@@ -9,13 +9,13 @@ Minion Selection Book - Allows summoning any minion from the inventory
 Minion History Book - Allows summoning a set of minions from the inventory with one click
 Automatic Minion History Book - Upgraded Minion History Book that summons a minion set automatically after respawn
 
-Contains two configs: 'Server Config' contains settings related to the reticle from Minion Control Rod, while 'Client Config' contains settings related to the UI
+Contains two configs: 'Server Config' contains settings related to the reticle from Minion Control Rod, while 'Client Config' contains settings related to the UI and info icons
 
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 Changelog:
+v0.4.8:
+* Added info icons for sentry/minion count, and configs for toggling all UI icons
+
 v0.4.7.2:
 * Fix bug due to tml update
-
-v0.4.7.1:
-* Fix Minion Control Rod reticle feature bug

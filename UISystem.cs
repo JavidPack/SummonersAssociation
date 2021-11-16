@@ -68,7 +68,7 @@ namespace SummonersAssociation
 
 		public override void PostDrawInterface(SpriteBatch spriteBatch) {
 			// Give this to everyone because why not
-			if (Main.playerInventory) {
+			if (Main.playerInventory && Config.Instance.InventoryIcon) {
 				DisplayMaxMinionIcon(spriteBatch, Main.LocalPlayer);
 			}
 
@@ -188,24 +188,7 @@ namespace SummonersAssociation
 						Main.hoverItemName = str;
 				}
 
-				int sentryCount = 0;
-				var sentryNameToCount = new Dictionary<string, int>();
-				for (int i = 0; i < Main.maxProjectiles; i++) {
-					Projectile p = Main.projectile[i];
-					if (p.active && p.sentry && p.owner == Main.myPlayer) {
-						sentryCount++;
-						string name = Lang.GetProjectileName(p.type).Value;
-						if (string.IsNullOrEmpty(name)) {
-							name = "Uncountable";
-						}
-						if (sentryNameToCount.ContainsKey(name)) {
-							sentryNameToCount[name]++;
-						}
-						else {
-							sentryNameToCount.Add(name, 1);
-						}
-					}
-				}
+				var sentryNameToCount = GetSentryNameToCount(out int sentryCount);
 
 				drawPos.Y -= size.Y * 1.5f;
 
@@ -227,6 +210,35 @@ namespace SummonersAssociation
 						Main.hoverItemName = str;
 				}
 			}
+		}
+
+		internal static Dictionary<string, int> GetSentryNameToCount(out int totalCount, bool onlyCount = false) {
+			totalCount = 0;
+
+			var sentryNameToCount = new Dictionary<string, int>();
+			for (int i = 0; i < Main.maxProjectiles; i++) {
+				Projectile p = Main.projectile[i];
+				if (p.active && p.sentry && p.owner == Main.myPlayer) {
+					totalCount++;
+					if (onlyCount) {
+						continue;
+					}
+
+					string name = Lang.GetProjectileName(p.type).Value;
+					if (string.IsNullOrEmpty(name)) {
+						name = "Uncountable";
+					}
+
+					if (sentryNameToCount.ContainsKey(name)) {
+						sentryNameToCount[name]++;
+					}
+					else {
+						sentryNameToCount.Add(name, 1);
+					}
+				}
+			}
+
+			return sentryNameToCount;
 		}
 	}
 }
