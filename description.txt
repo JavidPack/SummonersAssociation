@@ -14,8 +14,8 @@ Contains two configs: 'Server Config' contains settings related to the reticle f
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 Changelog:
+v0.4.8.5:
+* Fix unloaded items appearing in the minion history books
+
 v0.4.8.4:
 * Added support for "Abigail's Flower"
-
-v0.4.8.1 to v.0.4.8.3:
-* Various bug fixes regarding tml updates
