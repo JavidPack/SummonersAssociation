@@ -6,6 +6,7 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Default;
 using Terraria.ModLoader.IO;
 
 namespace SummonersAssociation.Items
@@ -50,7 +51,11 @@ namespace SummonersAssociation.Items
 
 		public override void LoadData(TagCompound tag) {
 			//Load and remove unloaded items from history
-			history = tag.GetList<ItemModel>(nameof(history)).Where(x => x.ItemType != ItemID.Count).ToList();
+			history = tag.GetList<ItemModel>(nameof(history)).Where(IsNotUnloadedItem).ToList();
+		}
+
+		private static bool IsNotUnloadedItem(ItemModel x) {
+			return ItemLoader.GetItem(x.ItemType) is not UnloadedItem;
 		}
 
 		public override void NetReceive(BinaryReader reader) {
