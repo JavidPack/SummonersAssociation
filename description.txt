@@ -14,8 +14,8 @@ Contains two configs: 'Server Config' contains settings related to the reticle f
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 Changelog:
-v0.4.8:
-* Added info icons for sentry/minion count, and configs for toggling all UI icons
+v0.4.8.4:
+* Added support for "Abigail's Flower"
 
-v0.4.7.2:
-* Fix bug due to tml update
+v0.4.8.1 to v.0.4.8.3:
+* Various bug fixes regarding tml updates
