@@ -68,7 +68,8 @@ namespace SummonersAssociation
 			};
 
 			TeleportConditionMinions = new Dictionary<int, Func<Projectile, bool>>() {
-				[ProjectileID.StormTigerGem] = ProjectileFalse
+				[ProjectileID.StormTigerGem] = ProjectileFalse,
+				[ProjectileID.AbigailCounter] = ProjectileFalse
 			};
 
 			MinionControlRod.LoadHooks();
