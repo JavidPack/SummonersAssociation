@@ -1,4 +1,5 @@
-﻿/*using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -8,7 +9,7 @@ namespace <YourModNameHere>
 {
 	// This class provides an example of advanced Summoners Association integration utilizing the "GetSupportedMinions" Mod.Call that other Mods can copy into their mod's source code.
 	// By copying this class into your mod, you can access Summoners Association minion data reliably and with type safety without requiring a strong dependency.
-	public static class SummonersAssociationIntegration
+	public class SummonersAssociationIntegration : ModSystem
 	{
 		// Summoners Association might add new features, so a version is passed into GetSupportedMinions. 
 		// If a new version of the GetSupportedMinions Call is implemented, find this class in the Summoners Association Github once again and replace this version with the new version: https://github.com/JavidPack/SummonersAssociation/blob/master/SummonersAssociationIntegrationExample.cs
@@ -27,11 +28,14 @@ namespace <YourModNameHere>
 
 		public static List<MinionModel> supportedMinions = new List<MinionModel>();
 
-		public static bool DoSummonersAssociationIntegration(Mod mod) {
-			// Make sure to call this method in PostAddRecipes or later for best results: SummonersAssociationIntegration.DoSummonersAssociationIntegration(this);
+		public static bool IntegrationSuccessful { get; private set; }
+
+		public override void PostAddRecipes() {
+			// For best results, this code is in PostAddRecipes
 			supportedMinions.Clear();
-			if (ModLoader.TryGetMod("SummonersAssociation", out var SummonersAssociation) && SummonersAssociation.Version >= SummonersAssociationAPIVersion) {
-				object currentSupportedMinionsResponse = SummonersAssociation.Call("GetSupportedMinions", mod, SummonersAssociationAPIVersion.ToString());
+
+			if (ModLoader.TryGetMod("SummonersAssociation", out var summonersAssociation) && summonersAssociation.Version >= SummonersAssociationAPIVersion) {
+				object currentSupportedMinionsResponse = summonersAssociation.Call("GetSupportedMinions", Mod, SummonersAssociationAPIVersion.ToString());
 				if (currentSupportedMinionsResponse is List<Dictionary<string, object>> supportedMinionsList) {
 					supportedMinions = supportedMinionsList.Select(dict => new MinionModel() {
 						ItemID = dict.ContainsKey("ItemID") ? Convert.ToInt32(dict["ItemID"]) : 0,
@@ -39,14 +43,13 @@ namespace <YourModNameHere>
 						ProjectileIDs = dict.ContainsKey("ProjectileIDs") ? dict["ProjectileIDs"] as List<int> : new List<int>(),
 						Slots = dict.ContainsKey("Slots") ? dict["Slots"] as List<float> : new List<float>(),
 					}).ToList();
-					return true;
+
+					IntegrationSuccessful = true;
 				}
 			}
-			return false;
 		}
 
-		public static void UnloadSummonersAssociationIntegration() {
-			// Make sure to call this method in your Mod.Unload method to properly release memory: SummonersAssociationIntegration.UnloadSummonersAssociationIntegration();
+		public override void Unload() {
 			supportedMinions.Clear();
 		}
 
