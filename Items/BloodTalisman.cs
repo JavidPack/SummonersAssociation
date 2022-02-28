@@ -1,4 +1,5 @@
 ﻿using SummonersAssociation.Projectiles;
+using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
@@ -11,6 +12,8 @@ namespace SummonersAssociation.Items
 		public override void SetStaticDefaults() {
 			Tooltip.SetDefault("Sacrifice your lifeforce to greatly strengthen minions"
 				+ "\n'Try not to fall into madness'");
+
+			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}
 
 		public override void SetDefaults() {

@@ -1,5 +1,4 @@
 ﻿using Terraria.ID;
-using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 
 namespace SummonersAssociation.Items
@@ -7,6 +6,7 @@ namespace SummonersAssociation.Items
 	public class MinionHistoryBookAuto : MinionHistoryBook
 	{
 		public override void SetStaticDefaults() {
+			base.SetStaticDefaults();
 			DisplayName.SetDefault("Automatic Minion History Book");
 			Tooltip.SetDefault("Left click to summon minions based on history"
 				+ "\nRight click to open the UI"

@@ -11,6 +11,7 @@ namespace SummonersAssociation.Items
 	public class MinionHistoryBook : MinionHistoryBookSimple
 	{
 		public override void SetStaticDefaults() {
+			base.SetStaticDefaults();
 			DisplayName.SetDefault("Minion History Book");
 			Tooltip.SetDefault("Left click to summon minions based on history"
 				+ "\nRight click to open an UI"

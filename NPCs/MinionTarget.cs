@@ -45,7 +45,7 @@ namespace SummonersAssociation.NPCs
 				NPC.life = 0;
 				NPC.active = false;
 				if (Main.netMode == NetmodeID.Server) {
-					NetMessage.SendData(MessageID.StrikeNPC, number: NPC.whoAmI, number2: -1f);
+					NetMessage.SendData(MessageID.DamageNPC, number: NPC.whoAmI, number2: -1f);
 				}
 				//Console.WriteLine("killed " + NPC.whoAmI);
 				//Main.NewText("killed " + NPC.whoAmI);

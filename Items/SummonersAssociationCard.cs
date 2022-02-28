@@ -1,4 +1,5 @@
 ﻿using Terraria;
+using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -9,6 +10,8 @@ namespace SummonersAssociation.Items
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Summoners Association Card");
 			Tooltip.SetDefault("Welcome to the Summoners Association\nDisplays Summoner-related information");
+
+			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}
 
 		public override void SetDefaults() {

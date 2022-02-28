@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 using Terraria.Audio;
+using Terraria.GameContent.Creative;
 
 namespace SummonersAssociation.Items
 {
@@ -19,6 +20,8 @@ namespace SummonersAssociation.Items
 			DisplayName.SetDefault("Minion Control Rod");
 			Tooltip.SetDefault("'Dominate and direct your minions'" +
 				"\nLeft click to teleport all your minions to the cursor");
+
+			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {

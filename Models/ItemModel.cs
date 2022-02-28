@@ -132,7 +132,7 @@ namespace SummonersAssociation.Models
 			};
 		}
 
-		public void NetRecieve(BinaryReader reader) {
+		public void NetReceive(BinaryReader reader) {
 			ItemType = reader.ReadInt32();
 			Name = reader.ReadString();
 			InventoryIndex = reader.ReadInt32();

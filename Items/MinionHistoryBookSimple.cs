@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Default;
@@ -24,6 +25,8 @@ namespace SummonersAssociation.Items
 			Tooltip.SetDefault("Right click to open the UI"
 				+ "\nLeft/Right click on the item icon to select it"
 				+ "\nLeft click to use the selected item");
+
+			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}
 
 		public override void SetDefaults() {
@@ -63,7 +66,7 @@ namespace SummonersAssociation.Items
 			history = new List<ItemModel>();
 			for (int i = 0; i < length; i++) {
 				history.Add(new ItemModel());
-				history[i].NetRecieve(reader);
+				history[i].NetReceive(reader);
 			}
 		}
 
