@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 using Terraria.Audio;
 using Terraria.GameContent.Creative;
+using Terraria.DataStructures;
 
 namespace SummonersAssociation.Items
 {
@@ -260,7 +261,7 @@ namespace SummonersAssociation.Items
 				else {
 					//2) Didn't mouseover, has no target: Spawn one
 					if (Main.netMode != NetmodeID.MultiplayerClient) {
-						int index = NPC.NewNPC(location.X, location.Y + MinionTarget.size / 2, type);
+						int index = NPC.NewNPC(new EntitySource_Parent(player), location.X, location.Y + MinionTarget.size / 2, type);
 
 						if (index < Main.maxNPCs) {
 							NPC npc = Main.npc[index];
