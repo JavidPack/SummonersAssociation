@@ -43,7 +43,7 @@ namespace SummonersAssociation.Items
 						}
 
 						tooltips.Add(new TooltipLine(Mod, "ItemModel", itemModel.Name + ": " + itemModel.SummonCount) {
-							overrideColor = itemModel.Active ? Color.White : Color.Red
+							OverrideColor = itemModel.Active ? Color.White : Color.Red
 						});
 					}
 				}
