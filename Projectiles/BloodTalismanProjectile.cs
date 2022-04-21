@@ -50,7 +50,7 @@ namespace SummonersAssociation.Projectiles
 		private void SpawnAura(Player player) {
 			int aura = ModContent.ProjectileType<BloodTalismanTargetProjectile>();
 			if (player.ownedProjectileCounts[aura] <= 0) {
-				Projectile.NewProjectile(Projectile.GetProjectileSource_FromThis(), Main.MouseWorld, Projectile.velocity, aura, 0, 0, player.whoAmI);
+				Projectile.NewProjectile(Projectile.GetSource_FromThis(), Main.MouseWorld, Projectile.velocity, aura, 0, 0, player.whoAmI);
 			}
 		}
 
