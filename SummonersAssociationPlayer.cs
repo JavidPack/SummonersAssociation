@@ -215,7 +215,7 @@ namespace SummonersAssociation
 					Player.ItemCheck(Player.whoAmI);
 				}
 				else
-					SoundEngine.PlaySound(SoundID.Drip, (int)Player.Center.X, (int)Player.Center.Y, Main.rand.Next(3));
+					SoundEngine.PlaySound(SoundID.Drip with { Variants = stackalloc int[] { 0, 1, 2 } }, Player.Center);
 			}
 		}
 

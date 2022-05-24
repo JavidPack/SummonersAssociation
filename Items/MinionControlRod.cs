@@ -81,7 +81,7 @@ namespace SummonersAssociation.Items
 			if (player.altFunctionUse != 2) {
 				//This runs for all clients, not the server
 				if (player.itemTime == 0) {
-					SoundEngine.PlaySound(SoundID.Item6?.WithVolume(0.6f), player.Center); //Magic mirror sound
+					SoundEngine.PlaySound(SoundID.Item6 with { Volume = 0.6f }, player.Center); //Magic mirror sound
 					player.itemTime = totalTime;
 				}
 				if (player.itemTime == totalTime / 2) {
@@ -92,7 +92,7 @@ namespace SummonersAssociation.Items
 				//This runs for just the client using it
 				if (player.itemTime == 0) {
 					player.itemTime = totalTime;
-					SoundEngine.PlaySound(SoundID.Item66?.WithVolume(0.6f), player.Center); //Common minion staff sound
+					SoundEngine.PlaySound(SoundID.Item66 with { Volume = 0.6f }, player.Center); //Common minion staff sound
 
 					DoRightClick(player);
 				}
