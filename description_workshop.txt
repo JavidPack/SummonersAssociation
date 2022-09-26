@@ -22,3 +22,9 @@ v0.4.8.10:
 
 v0.4.8.6 to 9:
 * Fixes to keep up with tml updates
+
+[h1]Links[/h1]
+Source code hosted on [url=github.com/JavidPack/SummonersAssociation]GitHub[/url], collaboration welcome
+For questions or suggestions, come to my Discord: [url=discord.gg/w8Hcwby][img]https://discordapp.com/api/guilds/276235094622994433/widget.png?style=shield[/img][/url]
+Bug reports in the comments here will not be seen, come to Discord or Github to report issues.
+If you'd like to support my mods, I have a Patreon [url=www.patreon.com/jopojelly][img]https://i.imgur.com/xII2DwJ.png[/img][/url]
