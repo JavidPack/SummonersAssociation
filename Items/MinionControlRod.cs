@@ -592,7 +592,12 @@ namespace SummonersAssociation.Items
 			}
 		}
 
-		internal static void LoadHooks() {
+		private static bool loadedOnce = false;
+
+		public override void Load() {
+			if (loadedOnce) return; //Futureproofing in case this class gets inherited, as all the things here should only run once 
+			loadedOnce = true;
+
 			On.Terraria.Main.DrawInterface_1_2_DrawEntityMarkersInWorld += ForceMinionTargetIndicatorDrawIfThisItemIsSelected;
 
 			if (ServerConfig.Instance.DisableAdvancedTargetingFeature) return;
@@ -611,7 +616,9 @@ namespace SummonersAssociation.Items
 			}
 		}
 
-		internal static void UnloadHooks() {
+		public override void Unload() {
+			loadedOnce = false;
+
 			if (m_ProjectileAI != null) {
 				try {
 					if (ServerConfig.Instance?.DisableAdvancedTargetingFeature == false) {
