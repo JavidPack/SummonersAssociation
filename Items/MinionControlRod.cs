@@ -57,7 +57,6 @@ namespace SummonersAssociation.Items
 		public override void SetDefaults() {
 			Item.width = 42;
 			Item.height = 42;
-			Item.DamageType = DamageClass.Summon; //This makes the minion target indicator appear when this item is selected
 			Item.maxStack = 1;
 			Item.value = Item.sellPrice(gold: 1);
 			Item.rare = ItemRarityID.Green;
@@ -436,8 +435,24 @@ namespace SummonersAssociation.Items
 		}
 		#endregion
 
-		//All hooks won't be loaded if disabled in the config
+		//Most hooks won't be loaded if disabled in the config
 		#region Hooks
+		private static void ForceMinionTargetIndicatorDrawIfThisItemIsSelected(On.Terraria.Main.orig_DrawInterface_1_2_DrawEntityMarkersInWorld orig) {
+			var heldItem = Main.LocalPlayer.HeldItem;
+			var oldDamageClass = heldItem.DamageType;
+			bool reset = false;
+			if (heldItem.type == ItemType<MinionControlRod>()) {
+				reset = true;
+				heldItem.DamageType = DamageClass.Summon; //Need to spoof the damage class so that the indicator draws. We don't want to set this permanently
+			}
+
+			orig();
+
+			if (reset) {
+				heldItem.DamageType = oldDamageClass;
+			}
+		}
+
 		internal static void IgnoreTargetHealthMouseover(On.Terraria.Main.orig_DrawInterface_39_MouseOver orig, Main self) {
 			var resetFlag = new List<int>();
 			try {
@@ -578,6 +593,8 @@ namespace SummonersAssociation.Items
 		}
 
 		internal static void LoadHooks() {
+			On.Terraria.Main.DrawInterface_1_2_DrawEntityMarkersInWorld += ForceMinionTargetIndicatorDrawIfThisItemIsSelected;
+
 			if (ServerConfig.Instance.DisableAdvancedTargetingFeature) return;
 
 			On.Terraria.Main.DrawInterface_39_MouseOver += IgnoreTargetHealthMouseover;
