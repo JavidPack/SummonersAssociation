@@ -85,7 +85,18 @@ namespace SummonersAssociation.NPCs
 			return true;
 		}
 
-		public override void SetStaticDefaults() => DisplayName.SetDefault("Minion Target");
+		public override void SetStaticDefaults() {
+			DisplayName.SetDefault("Minion Target");
+
+			NPCID.Sets.NPCBestiaryDrawOffset[NPC.type] = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
+				Hide = true, //Hides this NPC from the Bestiary
+			};
+
+			NPCID.Sets.DebuffImmunitySets[NPC.type] = new Terraria.DataStructures.NPCDebuffImmunityData() {
+				ImmuneToAllBuffsThatAreNotWhips = true,
+				ImmuneToWhips = true
+			};
+		}
 
 		public override void SetDefaults() {
 			NPC.width = size;
@@ -99,9 +110,6 @@ namespace SummonersAssociation.NPCs
 			NPC.netAlways = true;
 			NPC.dontTakeDamageFromHostiles = true;
 			NPC.npcSlots = 0f;
-			for (int i = 0; i < BuffLoader.BuffCount; i++) {
-				NPC.buffImmune[i] = true;
-			}
 
 			//Flag it as "chaseable", because the threshold is 5
 			NPC.lifeMax = 6;

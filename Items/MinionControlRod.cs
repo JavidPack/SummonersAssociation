@@ -57,6 +57,7 @@ namespace SummonersAssociation.Items
 		public override void SetDefaults() {
 			Item.width = 42;
 			Item.height = 42;
+			Item.DamageType = DamageClass.Summon; //This makes the minion target indicator appear when this item is selected
 			Item.maxStack = 1;
 			Item.value = Item.sellPrice(gold: 1);
 			Item.rare = ItemRarityID.Green;
@@ -468,6 +469,12 @@ namespace SummonersAssociation.Items
 		}
 
 		internal static void AdjustMinionTarget(On.Terraria.Player.orig_UpdateMinionTarget orig, Player self) {
+			if (self.whoAmI != Main.myPlayer) {
+				//Don't execute our code unnecessarily
+				orig(self);
+				return;
+			}
+
 			//Because we keep npc.friendly on true, there is an unintended reset happening:
 			//Because this vanilla method uses CanBeChasedBy, which checks for !npc.friendly, the target gets reset,
 			//here we need to revert it so the reticle is kept onto our target
@@ -496,21 +503,6 @@ namespace SummonersAssociation.Items
 				NPC npc = Main.npc[self.MinionAttackTargetNPC];
 				if (!npc.active) {
 					return;
-				}
-
-				//Visual restore
-				Vector2 center = npc.Center;
-				float counter = self.miscCounter / -60f; //original has no -
-				float full = (float)Math.PI * 2f;
-				float third = full / 3f;
-				for (int i = 0; i < 3; i++) {
-					int index = Dust.NewDust(center, 0, 0, 135, 0f, 0f, 100, default(Color), 1.15f); //272, 135 is the magic mirror dust that creates no light
-					Dust dust = Main.dust[index];
-					dust.noGravity = true;
-					dust.velocity = Vector2.Zero;
-					dust.noLight = true;
-					dust.fadeIn += 0.3f;
-					dust.position = center + (counter * full + third * i).ToRotationVector2() * 12f;
 				}
 			}
 		}
