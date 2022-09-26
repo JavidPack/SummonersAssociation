@@ -2,6 +2,7 @@
 using SummonersAssociation.Models;
 using SummonersAssociation.UI;
 using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
@@ -29,6 +30,29 @@ namespace SummonersAssociation.Items
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
+			GetHistoryInfo(out List<TooltipLine> historyTooltips, out int totalManaCost);
+			bool hasHistory = historyTooltips.Count > 0;
+
+			//Append history stuff to the end
+			if (!hasHistory) {
+				tooltips.Add(new TooltipLine(Mod, "None", "No summon history specified"));
+			}
+			else {
+				if (totalManaCost > 0) {
+					int manaCostIndex = tooltips.FindIndex(t => t.Mod == "Terraria" && t.Name == "UseMana");
+					if (manaCostIndex > -1) {
+						tooltips.Insert(manaCostIndex + 1, new TooltipLine(Mod, "HistoryManaCost", $"Expected {totalManaCost} additional mana from current loadout"));
+					}
+				}
+
+				tooltips.AddRange(historyTooltips);
+			}
+		}
+
+		private void GetHistoryInfo(out List<TooltipLine> historyTooltips, out int totalManaCost) {
+			historyTooltips = new List<TooltipLine>();
+			totalManaCost = 0;
+
 			bool history = false;
 			List<ItemModel> localHistory = HistoryBookUI.MergeHistoryIntoInventory(this);
 			if (localHistory.Count > 0) {
@@ -39,18 +63,16 @@ namespace SummonersAssociation.Items
 					if (itemModel.SummonCount > 0) {
 						if (!history) {
 							history = true;
-							tooltips.Add(new TooltipLine(Mod, "History", "History:"));
+							historyTooltips.Add(new TooltipLine(Mod, "History", "History:"));
 						}
 
-						tooltips.Add(new TooltipLine(Mod, "ItemModel", itemModel.Name + ": " + itemModel.SummonCount) {
+						totalManaCost += itemModel.SummonCount * ContentSamples.ItemsByType[itemModel.ItemType].mana; //Rough estimate, could've added this to ItemModel itself, but mana changes through ModifyManaCost won't get detected through this either way
+
+						historyTooltips.Add(new TooltipLine(Mod, $"ItemModel_{itemModel.Name}", $"{itemModel.Name}: {itemModel.SummonCount}") {
 							OverrideColor = itemModel.Active ? Color.White : Color.Red
 						});
 					}
 				}
-			}
-			
-			if (!history) {
-				tooltips.Add(new TooltipLine(Mod, "None", "No summon history specified"));
 			}
 		}
 	}
