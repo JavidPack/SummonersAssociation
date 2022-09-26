@@ -103,7 +103,11 @@ namespace SummonersAssociation.Items
 		public void EnqueueSpawns(Player player) {
 			if (player.whoAmI == Main.myPlayer) {
 				int count = history.Sum(x => x.Active ? x.SummonCount : 0);
-				if (count > 1) {
+				bool canKillMinions = count >= 1;
+				if (Array.IndexOf(SummonersAssociation.BookTypes, player.HeldItem.type) == 0) {
+					canKillMinions = false;
+				}
+				if (canKillMinions) {
 					for (int i = 0; i < Main.maxProjectiles; i++) {
 						Projectile p = Main.projectile[i];
 						if (p.active && p.owner == Main.myPlayer && p.minion) {
