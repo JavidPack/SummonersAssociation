@@ -14,11 +14,11 @@ Contains two configs: 'Server Config' contains settings related to the reticle f
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 Changelog:
+v0.4.8.11:
+* Fix cross mod calls to this mod not working
+
 v0.4.8.10:
 * Fix Minion History Books not despawning minions if only 1 minion was selected
 * Fixed not showing vanilla targeting indicator when holding Minion Control Rod
 * Hide Minion Control Rod reticle from bestiary
 * Add additional tooltip to Minion History Books for total mana cost
-
-v0.4.8.6 to 9:
-* Fixes to keep up with tml updates
