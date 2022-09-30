@@ -88,6 +88,10 @@ namespace SummonersAssociation
 			Instance = null;
 		}
 
+		public override object Call(params object[] args) {
+			return SummonersAssociationSystem.Call(args);
+		}
+
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			byte type = reader.ReadByte();
 
