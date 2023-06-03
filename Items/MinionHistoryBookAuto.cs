@@ -5,15 +5,6 @@ namespace SummonersAssociation.Items
 {
 	public class MinionHistoryBookAuto : MinionHistoryBook
 	{
-		public override void SetStaticDefaults() {
-			base.SetStaticDefaults();
-			DisplayName.SetDefault("Automatic Minion History Book");
-			Tooltip.SetDefault("Left click to summon minions based on history"
-				+ "\nRight click to open the UI"
-				+ "\nScroll wheel over the item icons to adjust the summon count"
-				+ "\nAutomatically summons minions when you respawn");
-		}
-
 		public override void SetDefaults() {
 			base.SetDefaults();
 			Item.rare = ItemRarityID.Pink;

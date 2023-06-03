@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using MonoMod.RuntimeDetour.HookGen;
 using SummonersAssociation.NPCs;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -10,48 +8,24 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 using Terraria.Audio;
-using Terraria.GameContent.Creative;
 using Terraria.DataStructures;
+using MonoMod.RuntimeDetour;
+using Terraria.Localization;
 
 namespace SummonersAssociation.Items
 {
 	public class MinionControlRod : ModItem
 	{
+		public static LocalizedText Rightclick1Text { get; private set; }
+		public static LocalizedText Rightclick2RemoveText { get; private set; }
+		public static LocalizedText Rightclick2SpawnText { get; private set; }
+		public static LocalizedText Rightclick3Text { get; private set; }
+
 		public override void SetStaticDefaults() {
-			DisplayName.SetDefault("Minion Control Rod");
-			Tooltip.SetDefault("'Dominate and direct your minions'" +
-				"\nLeft click to teleport all your minions to the cursor");
-
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-		}
-
-		public override void ModifyTooltips(List<TooltipLine> tooltips) {
-			int insertIndex = -1;
-			for (int i = tooltips.Count - 1; i >= 0; i--) {
-				if (tooltips[i].Name.StartsWith("Tooltip")) {
-					insertIndex = i;
-					break;
-				}
-			}
-
-			if (insertIndex != -1) {
-				tooltips.Insert(++insertIndex, new TooltipLine(Mod, "Rightclick1", "Right click on an enemy to target it"));
-
-				if (!ServerConfig.Instance.DisableAdvancedTargetingFeature) {
-					string text;
-					if (Main.LocalPlayer.GetModPlayer<SummonersAssociationPlayer>().TargetWhoAmI > -1) {
-						text = "or right click on the reticle to remove it again";
-					}
-					else {
-						text = "or right click somewhere else to spawn a reticle your minions will attack";
-					}
-					tooltips.Insert(++insertIndex, new TooltipLine(Mod, "Rightclick2", text));
-
-					if (Main.netMode == NetmodeID.MultiplayerClient) {
-						tooltips.Insert(++insertIndex, new TooltipLine(Mod, "Rightclick3", "Right click another players' reticle so he has control over your minions' target"));
-					}
-				}
-			}
+			Rightclick1Text = this.GetLocalization("Rightclick1");
+			Rightclick2RemoveText = this.GetLocalization("Rightclick2Remove");
+			Rightclick2SpawnText = this.GetLocalization("Rightclick2Spawn");
+			Rightclick3Text = this.GetLocalization("Rightclick3");
 		}
 
 		public override void SetDefaults() {
@@ -67,8 +41,37 @@ namespace SummonersAssociation.Items
 			//Item.UseSound = SoundID.Item6?.WithVolume(0.6f);
 		}
 
+		public override void ModifyTooltips(List<TooltipLine> tooltips) {
+			int insertIndex = -1;
+			for (int i = tooltips.Count - 1; i >= 0; i--) {
+				if (tooltips[i].Name.StartsWith("Tooltip")) {
+					insertIndex = i;
+					break;
+				}
+			}
+
+			if (insertIndex != -1) {
+				tooltips.Insert(++insertIndex, new TooltipLine(Mod, "Rightclick1", Rightclick1Text.ToString()));
+
+				if (!ServerConfig.Instance.DisableAdvancedTargetingFeature) {
+					string text;
+					if (Main.LocalPlayer.GetModPlayer<SummonersAssociationPlayer>().TargetWhoAmI > -1) {
+						text = Rightclick2RemoveText.ToString();
+					}
+					else {
+						text = Rightclick2SpawnText.ToString();
+					}
+					tooltips.Insert(++insertIndex, new TooltipLine(Mod, "Rightclick2", text));
+
+					if (Main.netMode == NetmodeID.MultiplayerClient) {
+						tooltips.Insert(++insertIndex, new TooltipLine(Mod, "Rightclick3", Rightclick3Text.ToString()));
+					}
+				}
+			}
+		}
+
 		public override void AddRecipes() {
-			CreateRecipe(1).AddIngredient(ItemID.FallenStar, 10).AddRecipeGroup("SummonersAssociation:MagicMirrors").AddTile(TileID.Anvils).Register();
+			CreateRecipe(1).AddIngredient(ItemID.FallenStar, 10).AddRecipeGroup(SummonersAssociationSystem.MagicMirrorRecipeGroup).AddTile(TileID.Anvils).Register();
 		}
 
 		public override bool AltFunctionUse(Player player) => true;
@@ -437,7 +440,7 @@ namespace SummonersAssociation.Items
 
 		//Most hooks won't be loaded if disabled in the config
 		#region Hooks
-		private static void ForceMinionTargetIndicatorDrawIfThisItemIsSelected(On.Terraria.Main.orig_DrawInterface_1_2_DrawEntityMarkersInWorld orig) {
+		private static void ForceMinionTargetIndicatorDrawIfThisItemIsSelected(On_Main.orig_DrawInterface_1_2_DrawEntityMarkersInWorld orig) {
 			var heldItem = Main.LocalPlayer.HeldItem;
 			var oldDamageClass = heldItem.DamageType;
 			bool reset = false;
@@ -453,7 +456,7 @@ namespace SummonersAssociation.Items
 			}
 		}
 
-		internal static void IgnoreTargetHealthMouseover(On.Terraria.Main.orig_DrawInterface_39_MouseOver orig, Main self) {
+		internal static void IgnoreTargetHealthMouseover(On_Main.orig_DrawInterface_39_MouseOver orig, Main self) {
 			var resetFlag = new List<int>();
 			try {
 				int type = NPCType<MinionTarget>();
@@ -483,7 +486,7 @@ namespace SummonersAssociation.Items
 			}
 		}
 
-		internal static void AdjustMinionTarget(On.Terraria.Player.orig_UpdateMinionTarget orig, Player self) {
+		internal static void AdjustMinionTarget(On_Player.orig_UpdateMinionTarget orig, Player self) {
 			if (self.whoAmI != Main.myPlayer) {
 				//Don't execute our code unnecessarily
 				orig(self);
@@ -581,16 +584,9 @@ namespace SummonersAssociation.Items
 		internal delegate void hook_ProjectileAI(orig_ProjectileAI orig, Projectile self);
 
 		//namespace Terraria.ModLoader //public static class ProjectileLoader //public static void ProjectileAI(Projectile projectile)
-		private static readonly MethodInfo m_ProjectileAI = typeof(ProjectileLoader).GetMethod("ProjectileAI", BindingFlags.Static | BindingFlags.Public);
+		private static readonly MethodInfo m_ProjectileAI = typeof(ProjectileLoader).GetMethod("ProjectileAI", BindingFlags.Instance | BindingFlags.NonPublic);
 
-		internal static event hook_ProjectileAI OnProjectileAI {
-			add {
-				HookEndpointManager.Add(m_ProjectileAI, value);
-			}
-			remove {
-				HookEndpointManager.Remove(m_ProjectileAI, value);
-			}
-		}
+		private static Hook ProjectileAIHook;
 
 		private static bool loadedOnce = false;
 
@@ -598,37 +594,27 @@ namespace SummonersAssociation.Items
 			if (loadedOnce) return; //Futureproofing in case this class gets inherited, as all the things here should only run once 
 			loadedOnce = true;
 
-			On.Terraria.Main.DrawInterface_1_2_DrawEntityMarkersInWorld += ForceMinionTargetIndicatorDrawIfThisItemIsSelected;
+			On_Main.DrawInterface_1_2_DrawEntityMarkersInWorld += ForceMinionTargetIndicatorDrawIfThisItemIsSelected;
 
 			if (ServerConfig.Instance.DisableAdvancedTargetingFeature) return;
 
-			On.Terraria.Main.DrawInterface_39_MouseOver += IgnoreTargetHealthMouseover;
+			On_Main.DrawInterface_39_MouseOver += IgnoreTargetHealthMouseover;
 
-			On.Terraria.Player.UpdateMinionTarget += AdjustMinionTarget;
+			On_Player.UpdateMinionTarget += AdjustMinionTarget;
 
 			if (m_ProjectileAI != null) {
 				try {
-					OnProjectileAI += ResetFriendlyAndChaseable;
+					//TODO 1.4.4 fix this, what is the correct syntax?
+					//ProjectileAIHook = new Hook(ResetFriendlyAndChaseable, m_ProjectileAI);
 				}
 				catch {
-					SummonersAssociation.Instance.Logger.Error("ResetFriendlyAndChaseable failed to hook OnProjectileAI, Minion Control Rod targeting will not work");
+					SummonersAssociation.Instance.Logger.Error($"{nameof(ResetFriendlyAndChaseable)} failed to hook 'ProjectileAI', Minion Control Rod targeting will not work");
 				}
 			}
 		}
 
 		public override void Unload() {
 			loadedOnce = false;
-
-			if (m_ProjectileAI != null) {
-				try {
-					if (ServerConfig.Instance?.DisableAdvancedTargetingFeature == false) {
-						OnProjectileAI -= ResetFriendlyAndChaseable;
-					}
-				}
-				catch {
-
-				}
-			}
 		}
 		#endregion
 	}

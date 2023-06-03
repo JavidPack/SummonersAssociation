@@ -22,7 +22,7 @@ namespace SummonersAssociation.Models
 		/// <summary>
 		/// Display name of the item
 		/// </summary>
-		public string Name { get; set; }
+		public string Name => Lang.GetItemNameValue(ItemType);
 
 		/// <summary>
 		/// This is just for sorting on the UI and in the tooltip.
@@ -55,7 +55,6 @@ namespace SummonersAssociation.Models
 		/// </summary>
 		public ItemModel() {
 			ItemType = 0;
-			Name = "";
 			InventoryIndex = 0;
 			SummonCount = 0;
 			Active = false;
@@ -66,7 +65,6 @@ namespace SummonersAssociation.Models
 		/// </summary>
 		public ItemModel(ItemModel itemModel) {
 			ItemType = itemModel.ItemType;
-			Name = itemModel.Name;
 			InventoryIndex = itemModel.InventoryIndex;
 			SummonCount = itemModel.SummonCount;
 			Active = itemModel.Active;
@@ -78,7 +76,6 @@ namespace SummonersAssociation.Models
 		public ItemModel(Item item, int inventoryIndex, byte summonCount = 0, bool active = true) {
 			//If created from an item, it is by definition active
 			ItemType = item.type;
-			Name = item.Name;
 			InventoryIndex = inventoryIndex;
 			SummonCount = summonCount;
 			Active = active;
@@ -125,7 +122,6 @@ namespace SummonersAssociation.Models
 			var item = tag.Get<Item>("item");
 			return new ItemModel {
 				ItemType = item.type,
-				Name = item.Name,
 				InventoryIndex = tag.GetInt(nameof(InventoryIndex)),
 				SummonCount = tag.GetByte(nameof(SummonCount)),
 				Active = tag.GetBool(nameof(Active))
@@ -134,7 +130,6 @@ namespace SummonersAssociation.Models
 
 		public void NetReceive(BinaryReader reader) {
 			ItemType = reader.ReadInt32();
-			Name = reader.ReadString();
 			InventoryIndex = reader.ReadInt32();
 			SummonCount = reader.ReadByte();
 			Active = reader.ReadBoolean();
@@ -142,7 +137,6 @@ namespace SummonersAssociation.Models
 
 		public void NetSend(BinaryWriter writer) {
 			writer.Write((int)ItemType);
-			writer.Write((string)Name);
 			writer.Write((int)InventoryIndex);
 			writer.Write((byte)SummonCount);
 			writer.Write((bool)Active);

@@ -7,8 +7,6 @@ namespace SummonersAssociation.Projectiles
 {
 	public class BloodTalismanTargetProjectile : ModProjectile
 	{
-		public override void SetStaticDefaults() => DisplayName.SetDefault("Blood Talisman Target Projectile");
-
 		public override void SetDefaults() {
 			Projectile.width = 100;
 			Projectile.height = 100;
@@ -20,6 +18,7 @@ namespace SummonersAssociation.Projectiles
 			Projectile.tileCollide = false;
 			Projectile.ownerHitCheck = true;
 			Projectile.ignoreWater = true;
+			Projectile.netImportant = true;
 		}
 
 		public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;

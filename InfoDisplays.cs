@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -6,34 +7,31 @@ namespace SummonersAssociation
 {
 	public class MinionInfoDisplay : InfoDisplay
 	{
-		public override void SetStaticDefaults() {
-			InfoName.SetDefault("Minion Slots");
-		}
+		public override bool Active() => Config.Instance.InfoIcon;
 
-		public override bool Active() {
-			return Config.Instance.InfoIcon;
-		}
-
-		public override string DisplayValue() {
+		public override string DisplayValue(ref Color displayColor) {
 			Player player = Main.LocalPlayer;
-			return "" + Math.Round(player.slotsMinions, 2) + " / " + player.maxMinions + " Minion Slots";
+			double minionCount = Math.Round(player.slotsMinions, 2);
+			if (minionCount <= 0) {
+				displayColor = InactiveInfoTextColor;
+			}
+
+			return UISystem.MinionSlotsIconText.Format(Math.Round(player.slotsMinions, 2), player.maxMinions);
 		}
 	}
 
 	public class SentryInfoDisplay : InfoDisplay
 	{
-		public override void SetStaticDefaults() {
-			InfoName.SetDefault("Sentry Slots");
-		}
+		public override bool Active() => Config.Instance.InfoIcon;
 
-		public override bool Active() {
-			return Config.Instance.InfoIcon;
-		}
-
-		public override string DisplayValue() {
+		public override string DisplayValue(ref Color displayColor) {
 			Player player = Main.LocalPlayer;
 			UISystem.GetSentryNameToCount(out int sentryCount, onlyCount: true);
-			return "" + sentryCount + " / " + player.maxTurrets + " Sentry Slots";
+			if (sentryCount <= 0) {
+				displayColor = InactiveInfoTextColor;
+			}
+
+			return UISystem.SentrySlotsIconText.Format(sentryCount, player.maxTurrets);
 		}
 	}
 }

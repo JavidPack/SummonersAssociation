@@ -7,8 +7,6 @@ namespace SummonersAssociation.Projectiles
 	//Spawns the "aura" in AI
 	public class BloodTalismanProjectile : ModProjectile
 	{
-		public override void SetStaticDefaults() => DisplayName.SetDefault("Blood Talisman Projectile");
-
 		public override void SetDefaults() {
 			Projectile.width = 30;
 			Projectile.height = 30;
@@ -18,6 +16,7 @@ namespace SummonersAssociation.Projectiles
 			Projectile.penetrate = -1;
 			Projectile.ignoreWater = true;
 			Projectile.tileCollide = false;
+			Projectile.netImportant = true;
 		}
 
 		public override bool? CanCutTiles() => false;

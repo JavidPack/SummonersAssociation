@@ -14,8 +14,14 @@ namespace SummonersAssociation
 	{
 		internal static bool SupportedMinionsFinalized { get; private set; }
 
+		internal static int MagicMirrorRecipeGroup { get; private set; }
+
+		internal static LocalizedText RecipeGroupGenericText { get; private set; }
+
 		public override void OnModLoad() {
 			SupportedMinionsFinalized = false;
+
+			RecipeGroupGenericText ??= Language.GetOrRegister(Mod.GetLocalizationKey($"RecipeGroups.RecipeGroupGeneric"));
 		}
 
 		public override void AddRecipeGroups() {
@@ -37,12 +43,12 @@ namespace SummonersAssociation
 
 			SupportedMinionsFinalized = true;
 
-			var group = new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " Magic Mirror", new int[]
+			var group = new RecipeGroup(() => RecipeGroupGenericText.Format(Language.GetTextValue("LegacyMisc.37") , Lang.GetItemNameValue(ItemID.MagicMirror)), new int[]
 			{
 				ItemID.MagicMirror,
 				ItemID.IceMirror
 			});
-			RecipeGroup.RegisterGroup("SummonersAssociation:MagicMirrors", group);
+			MagicMirrorRecipeGroup = RecipeGroup.RegisterGroup("SummonersAssociation:MagicMirrors", group);
 		}
 
 		//Examples:

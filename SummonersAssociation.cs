@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace SummonersAssociation
@@ -32,6 +33,8 @@ namespace SummonersAssociation
 		/// Array of the different minion book types. Simple is 0, Normal is 1, Auto is 2
 		/// </summary>
 		public static int[] BookTypes;
+
+		public static LocalizedText AcceptClientChangesText { get; private set; }
 
 		public override void Load() {
 			Instance = this;
@@ -69,6 +72,9 @@ namespace SummonersAssociation
 				[ProjectileID.StormTigerGem] = ProjectileFalse,
 				[ProjectileID.AbigailCounter] = ProjectileFalse
 			};
+
+			string category = $"Configs.Common.";
+			AcceptClientChangesText ??= Language.GetOrRegister(this.GetLocalizationKey($"{category}AcceptClientChanges"));
 		}
 
 		public override void PostSetupContent()
