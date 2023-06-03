@@ -1,19 +1,46 @@
 ﻿This mod aims to fix a few grievances with summons and flesh out Summoner to be a fully developed class. This vision is of a summoner who has their hands full buffing and controlling minions and has little time for other weapons.
 
-Includes 6 items:
+[h1]Includes 6 items[/h1]
+[b]Summoners Association Card[/b] - Displays summoner-related information
+[list]
+[*] Shows the amount of minions summoned (out of the total available) under every minion slot
+[*] Simply has to be in your inventory for it to work
+[/list]
+[b]Minion Control Rod[/b] - Dominate and direct your minions
+[list]
+[*] Left click to teleport all your minions to the cursor
+[*] Right click to target an enemy, or spawn a reticle as a target
+[/list]
+[b]Blood Talisman[/b] - Sacrifice your lifeforce to greatly strengthen minions
+[list]
+[*] Buffs minions at your cursor, gets more powerful the longer you channel it
+[*] Sacrifices your own abilities as a trade off
+[/list]
+[b]Minion Selection Book[/b] - Allows summoning any minion from the inventory
+[list]
+[*] Radial UI that shows all summon weapons in your inventory
+[*] Keeps your hotbar clean
+[/list]
+[b]Minion History Book[/b] - Allows summoning a set of minions from the inventory with one click
+[list]
+[*] Upgraded [b]Minion Selection Book[/b]
+[*] Lets you define a "loadout" for a one click summon, instead of having to use every weapon individually
+[/list]
+[b]Automatic Minion History Book[/b] - Summons a minion set automatically after respawn
+[list]
+[*] Upgraded [b]Minion History Book[/b]
+[*] Spawns the minions automatically when you (re)spawn
+[/list]
 
-Summoners Association Card - Displays summoner-related information
-Minion Control Rod - Teleport your minions, select an enemy or spawn a reticle as a target
-Blood Talisman - Sacrifice your own abilities to buff your minions at the cursor
-Minion Selection Book - Allows summoning any minion from the inventory
-Minion History Book - Allows summoning a set of minions from the inventory with one click
-Automatic Minion History Book - Upgraded Minion History Book that summons a minion set automatically after respawn
-
+[h1]Other additions[/h1]
+[b]Minion&Sentry Slots Info[/b] - Displays the amount of minions/sentries currently summoned out of the available slots on the right side of your screen, like similar informational accessories
+[b]Minion&Sentry Slots Icon[/b] - Displays the amount of minions/sentries currently summoned above your defense
+[hr][/hr]
 Contains two configs: 'Server Config' contains settings related to the reticle from Minion Control Rod, while 'Client Config' contains settings related to the UI and info icons
 
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
-Changelog:
+[b]Changelog:[/b]
 v0.4.8.11:
 * Fix cross mod calls to this mod not working
 
