@@ -24,6 +24,7 @@ namespace SummonersAssociation
 		[DefaultValue(false)]
 		public bool PersistentReticle;
 
+		[Header("HintToClientConfig")]
 		[JsonIgnore]
 		[ShowDespiteJsonIgnore]
 		public bool Hint => true;

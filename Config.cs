@@ -26,6 +26,7 @@ namespace SummonersAssociation
 		[DefaultValue(typeof(Vector2), "0.89, 0.87")]
 		public Vector2 Offset;
 
+		[Header("HintToServerConfig")]
 		[JsonIgnore]
 		[ShowDespiteJsonIgnore]
 		public bool Hint => true;

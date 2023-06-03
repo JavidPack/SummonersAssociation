@@ -78,7 +78,7 @@ Mods: {
 		NPCs: {
 			MinionTarget: {
 				DisplayName: Minion Target
-				GivenName: {0} ({1})
+				GivenName: "{0} ({1})"
 			}
 		}
 
