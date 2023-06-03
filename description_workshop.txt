@@ -3,7 +3,7 @@
 [h1]Includes 6 items[/h1]
 [b]Summoners Association Card[/b] - Displays summoner-related information
 [list]
-[*] Shows the amount of minions summoned (out of the total available) under every minion slot
+[*] Shows the amount of minions summoned (out of the total available) under every minion buff
 [*] Simply has to be in your inventory for it to work
 [/list]
 [b]Minion Control Rod[/b] - Dominate and direct your minions
