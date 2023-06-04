@@ -1,4 +1,6 @@
-﻿This mod aims to fix a few grievances with summons and flesh out Summoner to be a fully developed class. This vision is of a summoner who has their hands full buffing and controlling minions and has little time for other weapons.
+﻿[img]https://i.imgur.com/W2c5CX6.gif[/img]
+
+This mod aims to fix a few grievances with summons and flesh out Summoner to be a fully developed class. This vision is of a summoner who has their hands full buffing and controlling minions and has little time for other weapons.
 
 [h1]Includes 6 items[/h1]
 [b]Summoners Association Card[/b] - Displays summoner-related information
@@ -55,3 +57,4 @@ Source code hosted on [url=github.com/JavidPack/SummonersAssociation]GitHub[/url
 For questions or suggestions, come to my Discord: [url=discord.gg/w8Hcwby][img]https://discordapp.com/api/guilds/276235094622994433/widget.png?style=shield[/img][/url]
 Bug reports in the comments here will not be seen, come to Discord or Github to report issues.
 If you'd like to support my mods, I have a Patreon [url=www.patreon.com/jopojelly][img]https://i.imgur.com/xII2DwJ.png[/img][/url]
+[url=https://steamcommunity.com/profiles/76561198025715866/myworkshopfiles/?appid=1281930]Check out all my mods[/url]
