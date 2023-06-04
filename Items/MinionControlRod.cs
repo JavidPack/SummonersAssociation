@@ -584,7 +584,7 @@ namespace SummonersAssociation.Items
 		internal delegate void hook_ProjectileAI(orig_ProjectileAI orig, Projectile self);
 
 		//namespace Terraria.ModLoader //public static class ProjectileLoader //public static void ProjectileAI(Projectile projectile)
-		private static readonly MethodInfo m_ProjectileAI = typeof(ProjectileLoader).GetMethod("ProjectileAI", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static readonly MethodInfo m_ProjectileAI = typeof(ProjectileLoader).GetMethod("ProjectileAI", BindingFlags.Static | BindingFlags.Public);
 
 		private static Hook ProjectileAIHook;
 
@@ -604,8 +604,7 @@ namespace SummonersAssociation.Items
 
 			if (m_ProjectileAI != null) {
 				try {
-					//TODO 1.4.4 fix this, what is the correct syntax?
-					//ProjectileAIHook = new Hook(ResetFriendlyAndChaseable, m_ProjectileAI);
+					ProjectileAIHook = new Hook(m_ProjectileAI, new hook_ProjectileAI(ResetFriendlyAndChaseable));
 				}
 				catch {
 					SummonersAssociation.Instance.Logger.Error($"{nameof(ResetFriendlyAndChaseable)} failed to hook 'ProjectileAI', Minion Control Rod targeting will not work");
