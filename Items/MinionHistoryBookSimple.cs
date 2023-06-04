@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
-using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Default;
 using Terraria.ModLoader.IO;
@@ -20,13 +20,14 @@ namespace SummonersAssociation.Items
 	{
 		public List<ItemModel> history = new List<ItemModel>();
 
-		public override void SetStaticDefaults() {
-			DisplayName.SetDefault("Minion Selection Book");
-			Tooltip.SetDefault("Right click to open the UI"
-				+ "\nLeft/Right click on the item icon to select it"
-				+ "\nLeft click to use the selected item");
+		public static LocalizedText SelectedNotInInventoryText { get; private set; }
+		public static LocalizedText NoSelectedText { get; private set; }
 
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+		public override void SetStaticDefaults() {
+			//Localizations here should be "static" since this class is inherited from
+			string category = $"{ModContent.GetInstance<MinionHistoryBookSimple>().LocalizationCategory}.{nameof(MinionHistoryBookSimple)}.";
+			SelectedNotInInventoryText ??= Language.GetOrRegister(Mod.GetLocalizationKey($"{category}SelectedNotInInventory"));
+			NoSelectedText ??= Language.GetOrRegister(Mod.GetLocalizationKey($"{category}NoSelected"));
 		}
 
 		public override void SetDefaults() {
@@ -84,14 +85,14 @@ namespace SummonersAssociation.Items
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
 			if (history.Count > 0) {
 				if (Main.LocalPlayer.HasItem(history[0].ItemType)) {
-					tooltips.Add(new TooltipLine(Mod, "ItemModel", "Selected: " + history[0].Name));
+					tooltips.Add(new TooltipLine(Mod, "ItemModel", UISystem.HistoryBookOnUseSelected.Format(history[0].Name)));
 				}
 				else {
-					tooltips.Add(new TooltipLine(Mod, "NoneFound", "Selected item not found"));
+					tooltips.Add(new TooltipLine(Mod, "NoneFound", SelectedNotInInventoryText.ToString()));
 				}
 			}
 			else {
-				tooltips.Add(new TooltipLine(Mod, "None", "No item specified"));
+				tooltips.Add(new TooltipLine(Mod, "None", NoSelectedText.ToString()));
 			}
 		}
 

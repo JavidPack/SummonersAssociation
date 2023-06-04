@@ -79,7 +79,7 @@ namespace SummonersAssociation
 
 			if (TriggerStart && holdingBook && AllowedToOpenHistoryBookUI) {
 				bool success = HistoryBookUI.Start();
-				if (!success) CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.DamagedFriendly, "No summon weapons found");
+				if (!success) CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.DamagedFriendly, UISystem.HistoryBookOnUseNoWeapons.ToString());
 				//if (success) Main.NewText("" + Main.time + ": just opened the UI");
 			}
 			else if (HistoryBookUI.visible) {
@@ -97,7 +97,7 @@ namespace SummonersAssociation
 								else {
 									//Clear history, and use fresh inventory data
 									HistoryBookUI.itemModels = HistoryBookUI.GetSummonWeapons();
-									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Reset history");
+									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, UISystem.HistoryBookOnUseReset.ToString());
 									HistoryBookUI.aboutToDelete = false;
 								}
 							}
@@ -109,7 +109,7 @@ namespace SummonersAssociation
 									HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)Player.HeldItem.ModItem);
 
 									HistoryBookUI.Stop();
-									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Saved history");
+									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, UISystem.HistoryBookOnUseSaved.ToString());
 									//Main.NewText("" + Main.time + ": just saved history");
 									//Main.NewText("######");
 								}
@@ -166,7 +166,7 @@ namespace SummonersAssociation
 								if (TriggerSelect) {
 									HistoryBookUI.selected = HistoryBookUI.returned;
 									HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.ModItem);
-									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, "Selected: " + highlighted.Name);
+									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, UISystem.HistoryBookOnUseSelected.Format(highlighted.Name));
 									HistoryBookUI.Stop();
 								}
 							}
@@ -212,7 +212,7 @@ namespace SummonersAssociation
 					//if(Main.netMode == 1)
 					//	NetMessage.SendData(13, -1, -1, null, Main.myPlayer, 0f, 0f, 0f, 0, 0, 0);
 					// TODO: Swings not shown on other clients.
-					Player.ItemCheck(Player.whoAmI);
+					Player.ItemCheck();
 				}
 				else
 					SoundEngine.PlaySound(SoundID.Drip with { Variants = stackalloc int[] { 0, 1, 2 } }, Player.Center);
@@ -300,6 +300,6 @@ namespace SummonersAssociation
 				!(Player.frozen || Player.webbed || Player.stoned);
 		}
 
-		public override void OnRespawn(Player player) => UseAutomaticHistoryBook();
+		public override void OnRespawn() => UseAutomaticHistoryBook();
 	}
 }

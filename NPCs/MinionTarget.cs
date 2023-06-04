@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace SummonersAssociation.NPCs
@@ -10,6 +11,8 @@ namespace SummonersAssociation.NPCs
 	{
 		//So the NewNPC call centers it
 		public const int size = 34;
+
+		public static LocalizedText GivenNameText { get; private set; }
 
 		public Player Owner => Initialized && PlayerIndex >= 0 && PlayerIndex < Main.maxPlayers ? Main.player[PlayerIndex] : null;
 
@@ -86,8 +89,6 @@ namespace SummonersAssociation.NPCs
 		}
 
 		public override void SetStaticDefaults() {
-			DisplayName.SetDefault("Minion Target");
-
 			NPCID.Sets.NPCBestiaryDrawOffset[NPC.type] = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
 				Hide = true, //Hides this NPC from the Bestiary
 			};
@@ -96,6 +97,8 @@ namespace SummonersAssociation.NPCs
 				ImmuneToAllBuffsThatAreNotWhips = true,
 				ImmuneToWhips = true
 			};
+
+			GivenNameText = this.GetLocalization("GivenName");
 		}
 
 		public override void SetDefaults() {
@@ -143,13 +146,14 @@ namespace SummonersAssociation.NPCs
 				}
 			}
 
+			NPC.life = NPC.lifeMax;
 			NPC.Center = Location;
 			//NPC.visualOffset = Vector2.Zero;
 			NPC.timeLeft = 120;
 
 			//Change name
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
-				NPC.GivenName = $"{NPC.TypeName} ({Owner?.name})";
+				NPC.GivenName = GivenNameText.Format(NPC.TypeName, Owner?.name);
 			}
 			else if (Main.netMode == NetmodeID.SinglePlayer) {
 				NPC.GivenName = " ";
@@ -176,13 +180,12 @@ namespace SummonersAssociation.NPCs
 
 		public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
 
-		public override bool? CanHitNPC(NPC target) => false;
+		public override bool CanHitNPC(NPC target) => false;
 
 		//Safety net for whatever
 		//Cheatsheet butcher, other outside-of-projectile-ai direct damage applications
-		public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit) {
-			damage = 0;
-			return false;
+		public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers) {
+			modifiers.FinalDamage *= 0f;
 		}
 	}
 }

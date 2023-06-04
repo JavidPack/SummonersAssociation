@@ -210,14 +210,14 @@ namespace SummonersAssociation.UI
 					tooltip.Add(itemModel.Name);
 
 					if (itemModel.SlotsFilledPerUse > 1) {
-						tooltip.Add("Slots required: " + itemModel.SlotsFilledPerUse);
+						tooltip.Add(UISystem.HistoryBookSlotsRequired.Format(itemModel.SlotsFilledPerUse));
 					}
 
 					if (simple && selected == done) {
-						tooltip.Add("(Selected)");
+						tooltip.Add(UISystem.HistoryBookSelected.ToString());
 
 						if (!itemModel.Active) {
-							tooltip.Add("Not found in inventory");
+							tooltip.Add(UISystem.HistoryBookNotFoundInInventory.ToString());
 						}
 					}
 					#endregion
@@ -349,7 +349,7 @@ namespace SummonersAssociation.UI
 				drawPos = new Vector2((int)TopLeftCorner.X, (int)TopLeftCorner.Y + height) + new Vector2(-4, mainRadius - 20);
 
 				if (summonCountDelta < 0) fontColor = Color.Red;
-				middleTip = Math.Round(summonCountDelta, 2).ToString() + "/" + summonCountTotal.ToString();
+				middleTip = UISystem.HistoryBookSummonCountTotal.Format(Math.Round(summonCountDelta, 2), summonCountTotal);
 
 				DrawText(spriteBatch, middleTip, drawPos, fontColor);
 			}
@@ -380,11 +380,11 @@ namespace SummonersAssociation.UI
 
 					#region Draw tooltip for what happens on click
 					if (!simple) {
-						middleTip = "Click left to clear history";
+						middleTip = UISystem.HistoryBookLeftClickClear.ToString();
 						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 
 						drawPos.Y += 24;
-						middleTip = "Click right to cancel";
+						middleTip = UISystem.HistoryBookRightClickCancel.ToString();
 						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 					}
 					#endregion
@@ -393,10 +393,10 @@ namespace SummonersAssociation.UI
 					#region Draw tooltip for what happens on click
 					if (!simple) {
 						drawPos = mousePos;
-						middleTip = "Click left twice to clear history";
+						middleTip = UISystem.HistoryBookLeftClickTwiceClear.ToString();
 						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 						drawPos.Y += 24;
-						middleTip = "Click right to save history";
+						middleTip = UISystem.HistoryBookRightClickSave.ToString();
 						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 					}
 					#endregion

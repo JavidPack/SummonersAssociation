@@ -1,5 +1,4 @@
 ﻿using Terraria;
-using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -7,13 +6,6 @@ namespace SummonersAssociation.Items
 {
 	public class SummonersAssociationCard : ModItem
 	{
-		public override void SetStaticDefaults() {
-			DisplayName.SetDefault("Summoners Association Card");
-			Tooltip.SetDefault("Welcome to the Summoners Association\nDisplays Summoner-related information");
-
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-		}
-
 		public override void SetDefaults() {
 			Item.width = 20;
 			Item.height = 20;
@@ -26,7 +18,7 @@ namespace SummonersAssociation.Items
 		}
 
 		public override void AddRecipes() {
-			CreateRecipe(1).AddIngredient(ItemID.Gel, 10).AddRecipeGroup("Wood").AddTile(TileID.Chairs).AddTile(TileID.Tables).Register();
+			CreateRecipe(1).AddIngredient(ItemID.Gel, 10).AddRecipeGroup(RecipeGroupID.Wood).AddTile(TileID.Chairs).AddTile(TileID.Tables).Register();
 		}
 
 		public override void UpdateInventory(Player player)

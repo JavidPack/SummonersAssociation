@@ -10,16 +10,41 @@ using System.Linq;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
 namespace SummonersAssociation
 {
+	[Autoload(Side = ModSide.Client)]
 	public class UISystem : ModSystem
 	{
 		internal static UserInterface HistoryBookUIInterface;
 		internal static HistoryBookUI HistoryBookUI;
+
+		public static LocalizedText MinionSlotsBuffText { get; private set; }
+		public static LocalizedText UncountableMinionsText { get; private set; }
+
+		public static LocalizedText MinionSlotsIconText { get; private set; }
+
+		public static LocalizedText SentrySlotsIconText { get; private set; }
+		public static LocalizedText SentrySlotsIconCountedText { get; private set; }
+		public static LocalizedText SentrySlotsIconUncountableText { get; private set; }
+
+		public static LocalizedText HistoryBookSlotsRequired { get; private set; }
+		public static LocalizedText HistoryBookSelected { get; private set; }
+		public static LocalizedText HistoryBookNotFoundInInventory { get; private set; }
+		public static LocalizedText HistoryBookSummonCountTotal { get; private set; }
+		public static LocalizedText HistoryBookLeftClickClear { get; private set; }
+		public static LocalizedText HistoryBookRightClickCancel { get; private set; }
+		public static LocalizedText HistoryBookLeftClickTwiceClear { get; private set; }
+		public static LocalizedText HistoryBookRightClickSave { get; private set; }
+
+		public static LocalizedText HistoryBookOnUseNoWeapons { get; private set; }
+		public static LocalizedText HistoryBookOnUseReset { get; private set; }
+		public static LocalizedText HistoryBookOnUseSaved { get; private set; }
+		public static LocalizedText HistoryBookOnUseSelected { get; private set; }
 
 		/// <summary>
 		/// Accurate in-UI Mouse position used to spawn UI outside UpdateUI()
@@ -27,14 +52,42 @@ namespace SummonersAssociation
 		public static Vector2 MousePositionUI;
 
 		public override void OnModLoad() {
-			if (!Main.dedServ && Main.netMode != NetmodeID.Server) {
-				HistoryBookUI = new HistoryBookUI();
-				HistoryBookUI.Activate();
-				HistoryBookUIInterface = new UserInterface();
-				HistoryBookUIInterface.SetState(HistoryBookUI);
-				HistoryBookUI.redCrossTexture = SummonersAssociation.Instance.Assets.Request<Texture2D>("UI/UIRedCross", AssetRequestMode.ImmediateLoad);
-			}
+			HistoryBookUI = new HistoryBookUI();
+			HistoryBookUI.Activate();
+			HistoryBookUIInterface = new UserInterface();
+			HistoryBookUIInterface.SetState(HistoryBookUI);
+			HistoryBookUI.redCrossTexture = SummonersAssociation.Instance.Assets.Request<Texture2D>("UI/UIRedCross", AssetRequestMode.ImmediateLoad);
+
+			string category = $"UI.Buffs.";
+			MinionSlotsBuffText ??= GetText(category, "MinionSlots");
+			UncountableMinionsText ??= GetText(category, "UncountableMinions");
+
+			category = $"UI.MinionSlotsIcon.";
+			MinionSlotsIconText ??= GetText(category, "MinionSlots");
+
+			category = $"UI.SentrySlotsIcon.";
+			SentrySlotsIconText ??= GetText(category, "SentrySlots");
+			SentrySlotsIconCountedText ??= GetText(category, "Counted");
+			SentrySlotsIconUncountableText ??= GetText(category, "Uncountable");
+
+			category = $"UI.HistoryBook.";
+			HistoryBookSlotsRequired ??= GetText(category, "SlotsRequired");
+			HistoryBookSelected ??= GetText(category, "Selected");
+			HistoryBookNotFoundInInventory ??= GetText(category, "NotFoundInInventory");
+			HistoryBookSummonCountTotal ??= GetText(category, "SummonCountTotal");
+			HistoryBookLeftClickClear ??= GetText(category, "LeftClickClear");
+			HistoryBookRightClickCancel ??= GetText(category, "RightClickCancel");
+			HistoryBookLeftClickTwiceClear ??= GetText(category, "LeftClickTwiceClear");
+			HistoryBookRightClickSave ??= GetText(category, "RightClickSave");
+
+			HistoryBookOnUseNoWeapons ??= GetText(category, "OnUseNoWeapons");
+			HistoryBookOnUseReset ??= GetText(category, "OnUseReset");
+			HistoryBookOnUseSaved ??= GetText(category, "OnUseSaved");
+			HistoryBookOnUseSelected ??= GetText(category, "OnUseSelected");
 		}
+
+		private LocalizedText GetText(string category, string name)
+			=> Language.GetOrRegister(Mod.GetLocalizationKey($"{category}{name}"));
 
 		public override void Unload() {
 			HistoryBookUIInterface = null;
@@ -128,7 +181,7 @@ namespace SummonersAssociation
 						//edge case 0, if for whatever reason a mod manually assigns 0 as the slot, it will turn it to 1
 						float lowestSlots = minion.Slots.Min(x => x == 0 ? 1 : x);
 						int newMaxMinions = (int)Math.Floor(player.maxMinions / lowestSlots);
-						string ratio = number + " / " + newMaxMinions;
+						string ratio = MinionSlotsBuffText.Format(number, newMaxMinions);
 						// TODO: 7/8 shown for spider minions with stardust armor. Technically there is .75 slots left, but StaffMinionSlotsRequired defaults to 1 and is an int. Might need to do the math and show 1 less if available minion slots is less than 1.
 						workingMinions += slots;
 						spriteBatch.DrawString(FontAssets.ItemStack.Value, ratio, new Vector2(xPosition, yPosition), color, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
@@ -151,7 +204,7 @@ namespace SummonersAssociation
 			//Projectiles spawn one tick after the buff is applied, causing "one tick delay" for otherMinion ?? Fix through ModPlayer
 			var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
 			if (otherMinions > 0 && mPlayer.lastOtherMinions > 0) {
-				string modMinionText = "Uncountable mod minion slots: " + otherMinions + " / " + player.maxMinions;
+				string modMinionText = UncountableMinionsText.Format(otherMinions, player.maxMinions);
 				spriteBatch.DrawString(FontAssets.ItemStack.Value, modMinionText, new Vector2(xPosition, yPosition), color, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
 			}
 			mPlayer.lastOtherMinions = otherMinions;
@@ -183,7 +236,7 @@ namespace SummonersAssociation
 				var mouse = new Point(Main.mouseX, Main.mouseY);
 				if (Utils.CenteredRectangle(drawPos, size).Contains(mouse)) {
 					player.mouseInterface = true;
-					string str = "" + Math.Round(player.slotsMinions, 2) + " / " + player.maxMinions + " Minion Slots";
+					string str = MinionSlotsIconText.Format(Math.Round(player.slotsMinions, 2), player.maxMinions);
 					if (!string.IsNullOrEmpty(str))
 						Main.hoverItemName = str;
 				}
@@ -200,10 +253,10 @@ namespace SummonersAssociation
 				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, font, text, drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
 				if (Utils.CenteredRectangle(drawPos, size).Contains(mouse)) {
 					player.mouseInterface = true;
-					string str = "" + sentryCount + " / " + player.maxTurrets + " Sentry Slots";
+					string str = SentrySlotsIconText.Format(sentryCount, player.maxTurrets);
 					if (sentryCount > 0) {
 						foreach (var item in sentryNameToCount) {
-							str += $"\n{item.Value}: {item.Key}";
+							str += $"\n{SentrySlotsIconCountedText.Format(item.Value, item.Key)}";
 						}
 					}
 					if (!string.IsNullOrEmpty(str))
@@ -226,7 +279,7 @@ namespace SummonersAssociation
 
 					string name = Lang.GetProjectileName(p.type).Value;
 					if (string.IsNullOrEmpty(name)) {
-						name = "Uncountable";
+						name = SentrySlotsIconUncountableText.ToString();
 					}
 
 					if (sentryNameToCount.ContainsKey(name)) {

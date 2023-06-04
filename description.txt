@@ -1,13 +1,16 @@
 ﻿This mod aims to fix a few grievances with summons and flesh out Summoner to be a fully developed class. This vision is of a summoner who has their hands full buffing and controlling minions and has little time for other weapons.
 
 Includes 6 items:
-
 Summoners Association Card - Displays summoner-related information
 Minion Control Rod - Teleport your minions, select an enemy or spawn a reticle as a target
 Blood Talisman - Sacrifice your own abilities to buff your minions at the cursor
 Minion Selection Book - Allows summoning any minion from the inventory
 Minion History Book - Allows summoning a set of minions from the inventory with one click
 Automatic Minion History Book - Upgraded Minion History Book that summons a minion set automatically after respawn
+
+Other additions:
+Minion&Sentry Slots Info - Displays the amount of minions/sentries currently summoned out of the available slots on the right side of your screen, like similar informational accessories
+Minion&Sentry Slots Icon - Displays the amount of minions/sentries currently summoned above your defense
 
 Contains two configs: 'Server Config' contains settings related to the reticle from Minion Control Rod, while 'Client Config' contains settings related to the UI and info icons
 
