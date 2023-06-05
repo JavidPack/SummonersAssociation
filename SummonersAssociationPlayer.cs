@@ -25,9 +25,9 @@ namespace SummonersAssociation
 		internal Queue<Tuple<int, int>> pendingCasts = new Queue<Tuple<int, int>>();
 
 		/// <summary>
-		/// Checks if player can open HistoryBookUI
+		/// Checks if player can open LoadoutBookUI
 		/// </summary>
-		private bool AllowedToOpenHistoryBookUI;
+		private bool AllowedToOpenLoadoutBookUI;
 
 		/// <summary>
 		/// This is so when the UI is open, it closes itself when player presses ESC (open inventory).
@@ -60,91 +60,91 @@ namespace SummonersAssociation
 
 		public int PendingTargetAssignment { get; set; } = -1;
 
-		private void UseAutomaticHistoryBook() {
+		private void UseAutomaticLoadoutBook() {
 			int slot = -1;
 			for (int i = 0; i < Main.InventorySlotsTotal; i++) {
 				Item item = Player.inventory[i];
 				if (item.type == SummonersAssociation.BookTypes[2]) {
-					var book = (MinionHistoryBookSimple)item.ModItem;
-					if (book.history.Sum(x => x.Active ? x.SummonCount : 0) > 0) slot = i;
+					var book = (MinionLoadoutBookSimple)item.ModItem;
+					if (book.loadout.Sum(x => x.Active ? x.SummonCount : 0) > 0) slot = i;
 				}
 			}
 			if (slot != -1) QuickUseItemInSlot(slot);
 		}
 
-		private void UpdateHistoryBookUI() {
+		private void UpdateLoadoutBookUI() {
 			//Since this is UI related, make sure to only run on client
 
 			bool holdingBook = Array.IndexOf(SummonersAssociation.BookTypes, Player.HeldItem.type) > -1;
 
-			if (TriggerStart && holdingBook && AllowedToOpenHistoryBookUI) {
-				bool success = HistoryBookUI.Start();
-				if (!success) CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.DamagedFriendly, UISystem.HistoryBookOnUseNoWeapons.ToString());
+			if (TriggerStart && holdingBook && AllowedToOpenLoadoutBookUI) {
+				bool success = LoadoutBookUI.Start();
+				if (!success) CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.DamagedFriendly, UISystem.LoadoutBookOnUseNoWeapons.ToString());
 				//if (success) Main.NewText("" + Main.time + ": just opened the UI");
 			}
-			else if (HistoryBookUI.visible) {
-				HistoryBookUI.visible = false;
-				if (HistoryBookUI.heldItemIndex == Main.LocalPlayer.selectedItem) {
+			else if (LoadoutBookUI.visible) {
+				LoadoutBookUI.visible = false;
+				if (LoadoutBookUI.heldItemIndex == Main.LocalPlayer.selectedItem) {
 					//Keep it updated
-					HistoryBookUI.summonCountTotal = Player.maxMinions;
+					LoadoutBookUI.summonCountTotal = Player.maxMinions;
 
-					if (HistoryBookUI.middle) {
-						if (!HistoryBookUI.simple) {
+					if (LoadoutBookUI.middle) {
+						if (!LoadoutBookUI.simple) {
 							if (TriggerDelete) {
-								if (!HistoryBookUI.aboutToDelete) {
-									HistoryBookUI.aboutToDelete = true;
+								if (!LoadoutBookUI.aboutToDelete) {
+									LoadoutBookUI.aboutToDelete = true;
 								}
 								else {
-									//Clear history, and use fresh inventory data
-									HistoryBookUI.itemModels = HistoryBookUI.GetSummonWeapons();
-									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, UISystem.HistoryBookOnUseReset.ToString());
-									HistoryBookUI.aboutToDelete = false;
+									//Clear loadout, and use fresh inventory data
+									LoadoutBookUI.itemModels = LoadoutBookUI.GetSummonWeapons();
+									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, UISystem.LoadoutBookOnUseReset.ToString());
+									LoadoutBookUI.aboutToDelete = false;
 								}
 							}
 							else if (TriggerStop) {
-								if (HistoryBookUI.aboutToDelete) {
-									HistoryBookUI.aboutToDelete = false;
+								if (LoadoutBookUI.aboutToDelete) {
+									LoadoutBookUI.aboutToDelete = false;
 								}
-								else if (HistoryBookUI.returned == HistoryBookUI.UPDATE) {
-									HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)Player.HeldItem.ModItem);
+								else if (LoadoutBookUI.returned == LoadoutBookUI.UPDATE) {
+									LoadoutBookUI.UpdateLoadoutBook((MinionLoadoutBookSimple)Player.HeldItem.ModItem);
 
-									HistoryBookUI.Stop();
-									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, UISystem.HistoryBookOnUseSaved.ToString());
-									//Main.NewText("" + Main.time + ": just saved history");
+									LoadoutBookUI.Stop();
+									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, UISystem.LoadoutBookOnUseSaved.ToString());
+									//Main.NewText("" + Main.time + ": just saved loadout");
 									//Main.NewText("######");
 								}
-								else if (HistoryBookUI.returned == HistoryBookUI.NONE) {
+								else if (LoadoutBookUI.returned == LoadoutBookUI.NONE) {
 									//Nothing, just close
-									HistoryBookUI.Stop();
+									LoadoutBookUI.Stop();
 								}
 							}
 						}
 						//If simple, just stop, since middle has no function there (saving is done when clicked on a weapon instead)
 						else {
 							if (mouseRightPressed || mouseLeftPressed) {
-								HistoryBookUI.Stop(false);
+								LoadoutBookUI.Stop(false);
 							}
 						}
 					}
 					//If in a segment
-					else if (HistoryBookUI.IsMouseWithinAnySegment) {
-						ItemModel highlighted = HistoryBookUI.itemModels[HistoryBookUI.returned];
+					else if (LoadoutBookUI.IsMouseWithinAnySegment) {
+						ItemModel highlighted = LoadoutBookUI.itemModels[LoadoutBookUI.returned];
 						if (highlighted.Active) {
-							if (!HistoryBookUI.simple) {
+							if (!LoadoutBookUI.simple) {
 								bool triggered = false;
 
 								if (TriggerInc) {
 									PlayerInput.ScrollWheelDelta = 0;
 									//Only allow to increase if total summon count differential is above or
 									//equal to the number of slots needed to summon
-									if (HistoryBookUI.summonCountDelta >= highlighted.SlotsFilledPerUse) {
+									if (LoadoutBookUI.summonCountDelta >= highlighted.SlotsFilledPerUse) {
 										triggered = true;
 
 										highlighted.SummonCount++;
 									}
 									else {
 										//Indicate that incrementing isn't possible
-										HistoryBookUI.colorFadeIn = 1f;
+										LoadoutBookUI.colorFadeIn = 1f;
 									}
 								}
 								else if (TriggerDec) {
@@ -164,17 +164,17 @@ namespace SummonersAssociation
 							//If simple, set selected and stop/spawn
 							else {
 								if (TriggerSelect) {
-									HistoryBookUI.selected = HistoryBookUI.returned;
-									HistoryBookUI.UpdateHistoryBook((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.ModItem);
-									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, UISystem.HistoryBookOnUseSelected.Format(highlighted.Name));
-									HistoryBookUI.Stop();
+									LoadoutBookUI.selected = LoadoutBookUI.returned;
+									LoadoutBookUI.UpdateLoadoutBook((MinionLoadoutBookSimple)Main.LocalPlayer.HeldItem.ModItem);
+									CombatText.NewText(Main.LocalPlayer.getRect(), CombatText.HealLife, UISystem.LoadoutBookOnUseSelected.Format(highlighted.Name));
+									LoadoutBookUI.Stop();
 								}
 							}
 						}
-						else if (HistoryBookUI.simple) {
+						else if (LoadoutBookUI.simple) {
 							if (TriggerSelect) {
-								//If the selected item is saved in the history but it's not in the players inventory, just stop
-								HistoryBookUI.Stop();
+								//If the selected item is saved in the loadout but it's not in the players inventory, just stop
+								LoadoutBookUI.Stop();
 							}
 						}
 						PlayerInput.ScrollWheelDelta = 0;
@@ -183,18 +183,18 @@ namespace SummonersAssociation
 					else {
 						/*if (triggerStop) {*/
 						if (mouseRightPressed || mouseLeftPressed) {
-							HistoryBookUI.Stop();
+							LoadoutBookUI.Stop();
 						}
 					}
 				}
 				else {
 					//Cancel the UI when you switch items
-					HistoryBookUI.Stop(false);
+					LoadoutBookUI.Stop(false);
 				}
 
 				if (justOpenedInventory) {
 					//Cancel UI when inventory is opened
-					HistoryBookUI.Stop(false);
+					LoadoutBookUI.Stop(false);
 				}
 			}
 		}
@@ -241,7 +241,7 @@ namespace SummonersAssociation
 			//In here things like Main.MouseScreen are not correct (related to UI)
 			//and in UpdateUI Main.mouseRight etc aren't correct
 			//but you need both to properly interact with the UI
-			//these two are used in PreUpdate, together with AllowedToOpenHistoryBookUI
+			//these two are used in PreUpdate, together with AllowedToOpenLoadoutBookUI
 			//since that also doesn't work in ProcessTriggers (set in PostUpdate)
 
 			mouseLeftPressed = Main.mouseLeft && Main.mouseLeftRelease;
@@ -267,14 +267,14 @@ namespace SummonersAssociation
 					}
 				}
 
-				UpdateHistoryBookUI();
+				UpdateLoadoutBookUI();
 			}
 		}
 
 		public override void PostUpdate() {
 			if (!enteredWorld) {
 				enteredWorld = true;
-				UseAutomaticHistoryBook();
+				UseAutomaticLoadoutBook();
 			}
 
 			MinionControlRod.PendingTargetAssignment(this);
@@ -282,8 +282,8 @@ namespace SummonersAssociation
 
 			//This has to be set in PostUpdate cause crucial fields in PreUpdate are not set correctly
 			//(representative of the fields)
-			AllowedToOpenHistoryBookUI =
-				!HistoryBookUI.visible &&
+			AllowedToOpenLoadoutBookUI =
+				!LoadoutBookUI.visible &&
 				Main.hasFocus &&
 				!Main.gamePaused &&
 				!Player.dead &&
@@ -300,6 +300,6 @@ namespace SummonersAssociation
 				!(Player.frozen || Player.webbed || Player.stoned);
 		}
 
-		public override void OnRespawn() => UseAutomaticHistoryBook();
+		public override void OnRespawn() => UseAutomaticLoadoutBook();
 	}
 }

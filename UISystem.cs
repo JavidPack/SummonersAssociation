@@ -20,8 +20,8 @@ namespace SummonersAssociation
 	[Autoload(Side = ModSide.Client)]
 	public class UISystem : ModSystem
 	{
-		internal static UserInterface HistoryBookUIInterface;
-		internal static HistoryBookUI HistoryBookUI;
+		internal static UserInterface LoadoutBookUIInterface;
+		internal static LoadoutBookUI LoadoutBookUI;
 
 		public static LocalizedText MinionSlotsBuffText { get; private set; }
 		public static LocalizedText UncountableMinionsText { get; private set; }
@@ -32,19 +32,19 @@ namespace SummonersAssociation
 		public static LocalizedText SentrySlotsIconCountedText { get; private set; }
 		public static LocalizedText SentrySlotsIconUncountableText { get; private set; }
 
-		public static LocalizedText HistoryBookSlotsRequired { get; private set; }
-		public static LocalizedText HistoryBookSelected { get; private set; }
-		public static LocalizedText HistoryBookNotFoundInInventory { get; private set; }
-		public static LocalizedText HistoryBookSummonCountTotal { get; private set; }
-		public static LocalizedText HistoryBookLeftClickClear { get; private set; }
-		public static LocalizedText HistoryBookRightClickCancel { get; private set; }
-		public static LocalizedText HistoryBookLeftClickTwiceClear { get; private set; }
-		public static LocalizedText HistoryBookRightClickSave { get; private set; }
+		public static LocalizedText LoadoutBookSlotsRequired { get; private set; }
+		public static LocalizedText LoadoutBookSelected { get; private set; }
+		public static LocalizedText LoadoutBookNotFoundInInventory { get; private set; }
+		public static LocalizedText LoadoutBookSummonCountTotal { get; private set; }
+		public static LocalizedText LoadoutBookLeftClickClear { get; private set; }
+		public static LocalizedText LoadoutBookRightClickCancel { get; private set; }
+		public static LocalizedText LoadoutBookLeftClickTwiceClear { get; private set; }
+		public static LocalizedText LoadoutBookRightClickSave { get; private set; }
 
-		public static LocalizedText HistoryBookOnUseNoWeapons { get; private set; }
-		public static LocalizedText HistoryBookOnUseReset { get; private set; }
-		public static LocalizedText HistoryBookOnUseSaved { get; private set; }
-		public static LocalizedText HistoryBookOnUseSelected { get; private set; }
+		public static LocalizedText LoadoutBookOnUseNoWeapons { get; private set; }
+		public static LocalizedText LoadoutBookOnUseReset { get; private set; }
+		public static LocalizedText LoadoutBookOnUseSaved { get; private set; }
+		public static LocalizedText LoadoutBookOnUseSelected { get; private set; }
 
 		/// <summary>
 		/// Accurate in-UI Mouse position used to spawn UI outside UpdateUI()
@@ -52,11 +52,11 @@ namespace SummonersAssociation
 		public static Vector2 MousePositionUI;
 
 		public override void OnModLoad() {
-			HistoryBookUI = new HistoryBookUI();
-			HistoryBookUI.Activate();
-			HistoryBookUIInterface = new UserInterface();
-			HistoryBookUIInterface.SetState(HistoryBookUI);
-			HistoryBookUI.redCrossTexture = SummonersAssociation.Instance.Assets.Request<Texture2D>("UI/UIRedCross", AssetRequestMode.ImmediateLoad);
+			LoadoutBookUI = new LoadoutBookUI();
+			LoadoutBookUI.Activate();
+			LoadoutBookUIInterface = new UserInterface();
+			LoadoutBookUIInterface.SetState(LoadoutBookUI);
+			LoadoutBookUI.redCrossTexture = SummonersAssociation.Instance.Assets.Request<Texture2D>("UI/UIRedCross", AssetRequestMode.ImmediateLoad);
 
 			string category = $"UI.Buffs.";
 			MinionSlotsBuffText ??= GetText(category, "MinionSlots");
@@ -70,47 +70,47 @@ namespace SummonersAssociation
 			SentrySlotsIconCountedText ??= GetText(category, "Counted");
 			SentrySlotsIconUncountableText ??= GetText(category, "Uncountable");
 
-			category = $"UI.HistoryBook.";
-			HistoryBookSlotsRequired ??= GetText(category, "SlotsRequired");
-			HistoryBookSelected ??= GetText(category, "Selected");
-			HistoryBookNotFoundInInventory ??= GetText(category, "NotFoundInInventory");
-			HistoryBookSummonCountTotal ??= GetText(category, "SummonCountTotal");
-			HistoryBookLeftClickClear ??= GetText(category, "LeftClickClear");
-			HistoryBookRightClickCancel ??= GetText(category, "RightClickCancel");
-			HistoryBookLeftClickTwiceClear ??= GetText(category, "LeftClickTwiceClear");
-			HistoryBookRightClickSave ??= GetText(category, "RightClickSave");
+			category = $"UI.LoadoutBook.";
+			LoadoutBookSlotsRequired ??= GetText(category, "SlotsRequired");
+			LoadoutBookSelected ??= GetText(category, "Selected");
+			LoadoutBookNotFoundInInventory ??= GetText(category, "NotFoundInInventory");
+			LoadoutBookSummonCountTotal ??= GetText(category, "SummonCountTotal");
+			LoadoutBookLeftClickClear ??= GetText(category, "LeftClickClear");
+			LoadoutBookRightClickCancel ??= GetText(category, "RightClickCancel");
+			LoadoutBookLeftClickTwiceClear ??= GetText(category, "LeftClickTwiceClear");
+			LoadoutBookRightClickSave ??= GetText(category, "RightClickSave");
 
-			HistoryBookOnUseNoWeapons ??= GetText(category, "OnUseNoWeapons");
-			HistoryBookOnUseReset ??= GetText(category, "OnUseReset");
-			HistoryBookOnUseSaved ??= GetText(category, "OnUseSaved");
-			HistoryBookOnUseSelected ??= GetText(category, "OnUseSelected");
+			LoadoutBookOnUseNoWeapons ??= GetText(category, "OnUseNoWeapons");
+			LoadoutBookOnUseReset ??= GetText(category, "OnUseReset");
+			LoadoutBookOnUseSaved ??= GetText(category, "OnUseSaved");
+			LoadoutBookOnUseSelected ??= GetText(category, "OnUseSelected");
 		}
 
 		private LocalizedText GetText(string category, string name)
 			=> Language.GetOrRegister(Mod.GetLocalizationKey($"{category}{name}"));
 
 		public override void Unload() {
-			HistoryBookUIInterface = null;
-			HistoryBookUI = null;
-			HistoryBookUI.redCrossTexture = null;
-			HistoryBookUI.uiModels?.Clear();
-			HistoryBookUI.itemModels?.Clear();
+			LoadoutBookUIInterface = null;
+			LoadoutBookUI = null;
+			LoadoutBookUI.redCrossTexture = null;
+			LoadoutBookUI.uiModels?.Clear();
+			LoadoutBookUI.itemModels?.Clear();
 		}
 
-		public override void UpdateUI(GameTime gameTime) => UpdateHistoryBookUI(gameTime);
+		public override void UpdateUI(GameTime gameTime) => UpdateLoadoutBookUI(gameTime);
 
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
 			int inventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Hotbar"));
 			if (inventoryIndex != -1) {
-				if (HistoryBookUI.active) {
+				if (LoadoutBookUI.active) {
 					//Remove the item icon when using the item while held outside the inventory (selectedItem == 58)
 					int mouseItemIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Item / NPC Head"));
 					if (mouseItemIndex != -1) layers.RemoveAt(mouseItemIndex);
 					layers.Insert(++inventoryIndex, new LegacyGameInterfaceLayer
 						(
-						"Summoners Association: History",
+						"Summoners Association: Loadout",
 						delegate {
-							HistoryBookUIInterface.Draw(Main.spriteBatch, new GameTime());
+							LoadoutBookUIInterface.Draw(Main.spriteBatch, new GameTime());
 							return true;
 						},
 						InterfaceScaleType.UI)
@@ -138,10 +138,10 @@ namespace SummonersAssociation
 		/// <summary>
 		/// Called in UpdateUI
 		/// </summary>
-		private void UpdateHistoryBookUI(GameTime gameTime) {
+		private void UpdateLoadoutBookUI(GameTime gameTime) {
 			//This is updated to the "in UI" Mouse Position, because the UI itself is spawned in SummonersAssociationPlayer.PreUpdate()
 			MousePositionUI = Main.MouseScreen;
-			if (HistoryBookUI.active) HistoryBookUI.Update(gameTime);
+			if (LoadoutBookUI.active) LoadoutBookUI.Update(gameTime);
 		}
 
 		private void UpdateBuffText(SpriteBatch spriteBatch, Player player) {

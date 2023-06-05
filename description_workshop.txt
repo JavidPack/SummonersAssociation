@@ -23,14 +23,14 @@ This mod aims to fix a few grievances with summons and flesh out Summoner to be 
 [*] Radial UI that shows all summon weapons in your inventory
 [*] Keeps your hotbar clean
 [/list]
-[b]Minion History Book[/b] - Allows summoning a set of minions from the inventory with one click
+[b]Minion Loadout Book[/b] - Allows summoning a set of minions from the inventory with one click
 [list]
 [*] Upgraded [b]Minion Selection Book[/b]
 [*] Lets you define a "loadout" for a one click summon, instead of having to use every weapon individually
 [/list]
-[b]Automatic Minion History Book[/b] - Summons a minion set automatically after respawn
+[b]Automatic Minion Loadout Book[/b] - Summons a minion set automatically after respawn
 [list]
-[*] Upgraded [b]Minion History Book[/b]
+[*] Upgraded [b]Minion Loadout Book[/b]
 [*] Spawns the minions automatically when you (re)spawn
 [/list]
 
@@ -43,14 +43,11 @@ Contains two configs: 'Server Config' contains settings related to the reticle f
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 [b]Changelog:[/b]
+v0.5:
+* Renamed (Automatic) Minion History Book to (Automatic) Minion Loadout Book
+
 v0.4.8.11:
 * Fix cross mod calls to this mod not working
-
-v0.4.8.10:
-* Fix Minion History Books not despawning minions if only 1 minion was selected
-* Fixed not showing vanilla targeting indicator when holding Minion Control Rod
-* Hide Minion Control Rod reticle from bestiary
-* Add additional tooltip to Minion History Books for total mana cost
 
 [h1]Links[/h1]
 Source code hosted on [url=github.com/JavidPack/SummonersAssociation]GitHub[/url], collaboration welcome

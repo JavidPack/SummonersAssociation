@@ -5,8 +5,8 @@ Summoners Association Card - Displays summoner-related information
 Minion Control Rod - Teleport your minions, select an enemy or spawn a reticle as a target
 Blood Talisman - Sacrifice your own abilities to buff your minions at the cursor
 Minion Selection Book - Allows summoning any minion from the inventory
-Minion History Book - Allows summoning a set of minions from the inventory with one click
-Automatic Minion History Book - Upgraded Minion History Book that summons a minion set automatically after respawn
+Minion Loadout Book - Allows summoning a set of minions from the inventory with one click
+Automatic Minion Loadout Book - Upgraded Minion Loadout Book that summons a minion set automatically after respawn
 
 Other additions:
 Minion&Sentry Slots Info - Displays the amount of minions/sentries currently summoned out of the available slots on the right side of your screen, like similar informational accessories
@@ -17,11 +17,8 @@ Contains two configs: 'Server Config' contains settings related to the reticle f
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 Changelog:
+v0.5:
+* Renamed (Automatic) Minion History Book to (Automatic) Minion Loadout Book
+
 v0.4.8.11:
 * Fix cross mod calls to this mod not working
-
-v0.4.8.10:
-* Fix Minion History Books not despawning minions if only 1 minion was selected
-* Fixed not showing vanilla targeting indicator when holding Minion Control Rod
-* Hide Minion Control Rod reticle from bestiary
-* Add additional tooltip to Minion History Books for total mana cost

@@ -80,9 +80,9 @@ namespace SummonersAssociation
 		public override void PostSetupContent()
 			//don't change order here (simple is first, normal is second, automatic is third)
 			=> BookTypes = new int[] {
-				ModContent.ItemType<MinionHistoryBookSimple>(),
-				ModContent.ItemType<MinionHistoryBook>(),
-				ModContent.ItemType<MinionHistoryBookAuto>()
+				ModContent.ItemType<MinionLoadoutBookSimple>(),
+				ModContent.ItemType<MinionLoadoutBook>(),
+				ModContent.ItemType<MinionLoadoutBookAuto>()
 			};
 
 		public override void Unload() {

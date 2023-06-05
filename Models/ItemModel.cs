@@ -82,10 +82,10 @@ namespace SummonersAssociation.Models
 		}
 
 		/// <summary>
-		/// Set current itemModel SummonCount to what the history had
+		/// Set current itemModel SummonCount to what the loadout had
 		/// </summary>
-		public void OverrideValuesFromHistory(ItemModel historyModel) {
-			SummonCount = historyModel.SummonCount;
+		public void OverrideValuesFromLoadout(ItemModel loadoutModel) {
+			SummonCount = loadoutModel.SummonCount;
 			Active = true;
 		}
 

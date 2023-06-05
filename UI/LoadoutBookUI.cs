@@ -23,14 +23,14 @@ namespace SummonersAssociation.UI
 	* The other custom methods are all over the place right now (Some in this class, some in the SummonersAssociation class)
 	* Caveats:
 	* 1. spawning the UI in ProcessTriggers didn't work because the custom conditions I setup
-	* don't work there (AllowedToOpenHistoryBookUI)
+	* don't work there (AllowedToOpenLoadoutBookUI)
 	* 2. Read comments in ProcessTriggers
 	*/
 
 	/// <summary>
-	/// UIState for the history book that handles all its logic in DrawSelf
+	/// UIState for the loadout book that handles all its logic in DrawSelf
 	/// </summary>
-	class HistoryBookUI : UIState
+	class LoadoutBookUI : UIState
 	{
 		//output
 		internal const int NONE = -1;
@@ -210,14 +210,14 @@ namespace SummonersAssociation.UI
 					tooltip.Add(itemModel.Name);
 
 					if (itemModel.SlotsFilledPerUse > 1) {
-						tooltip.Add(UISystem.HistoryBookSlotsRequired.Format(itemModel.SlotsFilledPerUse));
+						tooltip.Add(UISystem.LoadoutBookSlotsRequired.Format(itemModel.SlotsFilledPerUse));
 					}
 
 					if (simple && selected == done) {
-						tooltip.Add(UISystem.HistoryBookSelected.ToString());
+						tooltip.Add(UISystem.LoadoutBookSelected.ToString());
 
 						if (!itemModel.Active) {
-							tooltip.Add(UISystem.HistoryBookNotFoundInInventory.ToString());
+							tooltip.Add(UISystem.LoadoutBookNotFoundInInventory.ToString());
 						}
 					}
 					#endregion
@@ -349,7 +349,7 @@ namespace SummonersAssociation.UI
 				drawPos = new Vector2((int)TopLeftCorner.X, (int)TopLeftCorner.Y + height) + new Vector2(-4, mainRadius - 20);
 
 				if (summonCountDelta < 0) fontColor = Color.Red;
-				middleTip = UISystem.HistoryBookSummonCountTotal.Format(Math.Round(summonCountDelta, 2), summonCountTotal);
+				middleTip = UISystem.LoadoutBookSummonCountTotal.Format(Math.Round(summonCountDelta, 2), summonCountTotal);
 
 				DrawText(spriteBatch, middleTip, drawPos, fontColor);
 			}
@@ -380,11 +380,11 @@ namespace SummonersAssociation.UI
 
 					#region Draw tooltip for what happens on click
 					if (!simple) {
-						middleTip = UISystem.HistoryBookLeftClickClear.ToString();
+						middleTip = UISystem.LoadoutBookLeftClickClear.ToString();
 						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 
 						drawPos.Y += 24;
-						middleTip = UISystem.HistoryBookRightClickCancel.ToString();
+						middleTip = UISystem.LoadoutBookRightClickCancel.ToString();
 						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 					}
 					#endregion
@@ -393,10 +393,10 @@ namespace SummonersAssociation.UI
 					#region Draw tooltip for what happens on click
 					if (!simple) {
 						drawPos = mousePos;
-						middleTip = UISystem.HistoryBookLeftClickTwiceClear.ToString();
+						middleTip = UISystem.LoadoutBookLeftClickTwiceClear.ToString();
 						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 						drawPos.Y += 24;
-						middleTip = UISystem.HistoryBookRightClickSave.ToString();
+						middleTip = UISystem.LoadoutBookRightClickSave.ToString();
 						DrawText(spriteBatch, middleTip, drawPos, fontColor);
 					}
 					#endregion
@@ -480,41 +480,41 @@ namespace SummonersAssociation.UI
 		}
 
 		/// <summary>
-		/// Returns an "updated" history and removes duplicate entries from the passed history
+		/// Returns an "updated" loadout and removes duplicate entries from the passed loadout
 		/// </summary>
-		public static List<ItemModel> MergeHistoryIntoInventory(MinionHistoryBookSimple book) {
-			List<ItemModel> historyCopy = book.history.ConvertAll(model => new ItemModel(model));
-			return MergeHistoryIntoInventory(historyCopy);
+		public static List<ItemModel> MergeLoadoutIntoInventory(MinionLoadoutBookSimple book) {
+			List<ItemModel> loadoutCopy = book.loadout.ConvertAll(model => new ItemModel(model));
+			return MergeLoadoutIntoInventory(loadoutCopy);
 		}
 
 		/// <summary>
-		/// Returns an "updated" history and removes duplicate entries from the passed history
+		/// Returns an "updated" loadout and removes duplicate entries from the passed loadout
 		/// </summary>
-		public static List<ItemModel> MergeHistoryIntoInventory(List<ItemModel> history) {
+		public static List<ItemModel> MergeLoadoutIntoInventory(List<ItemModel> loadout) {
 			//Get all summon weapons currently in inventory
 			List<ItemModel> passedModels = GetSummonWeapons();
 
 			ItemModel itemModel;
 
-			//Adjust the list passed to the UI in a way that matches the history of items that were
+			//Adjust the list passed to the UI in a way that matches the loadout of items that were
 			//once used but aren't in the inventory anymore,
 			//and those just found
 			for (int i = 0; i < passedModels.Count; i++) {
 				itemModel = passedModels[i];
-				int index = history.FindIndex(model => model.ItemType == itemModel.ItemType);
+				int index = loadout.FindIndex(model => model.ItemType == itemModel.ItemType);
 				if (index > -1) {
-					itemModel.OverrideValuesFromHistory(history[index]);
-					history.RemoveAt(index);
+					itemModel.OverrideValuesFromLoadout(loadout[index]);
+					loadout.RemoveAt(index);
 				}
 			}
 
-			//Here, history only contains "old" items that don't exist in the inventory
+			//Here, loadout only contains "old" items that don't exist in the inventory
 			//set their InventoryIndex to a high value (so they are all sorted last)
 			//and add them in if there was atleast one summonCount specified,
 			//or this is the simple book
 
-			for (int i = 0; i < history.Count; i++) {
-				itemModel = history[i];
+			for (int i = 0; i < loadout.Count; i++) {
+				itemModel = loadout[i];
 				itemModel.OverrideValuesToInactive(i);
 				//If simple, keep "last selected" item in the UI
 				if (itemModel.SummonCount > 0 || simple) passedModels.Add(itemModel);
@@ -527,18 +527,18 @@ namespace SummonersAssociation.UI
 		}
 
 		/// <summary>
-		/// Sets the history of the passed History Book based on the one in the UI
+		/// Sets the loadout of the passed Loadout Book based on the one in the UI
 		/// </summary>
-		public static void UpdateHistoryBook(MinionHistoryBookSimple book) {
+		public static void UpdateLoadoutBook(MinionLoadoutBookSimple book) {
 			if (simple && selected != NONE) {
 				//Only add the first element as the selected one
-				book.history = new List<ItemModel> {
+				book.loadout = new List<ItemModel> {
 					new ItemModel(itemModels[selected])
 				};
-				book.history[0].SummonCount = 1;
+				book.loadout[0].SummonCount = 1;
 			}
 			else {
-				book.history = itemModels.ConvertAll((itemModel) => new ItemModel(itemModel));
+				book.loadout = itemModels.ConvertAll((itemModel) => new ItemModel(itemModel));
 			}
 		}
 
@@ -561,9 +561,9 @@ namespace SummonersAssociation.UI
 		/// Called when the UI is about to appear
 		/// </summary>
 		public static bool Start() {
-			List<ItemModel> history = ((MinionHistoryBookSimple)Main.LocalPlayer.HeldItem.ModItem).history;
-			List<ItemModel> historyCopy = history.ConvertAll(model => new ItemModel(model));
-			List<ItemModel> passedModels = MergeHistoryIntoInventory(historyCopy);
+			List<ItemModel> loadout = ((MinionLoadoutBookSimple)Main.LocalPlayer.HeldItem.ModItem).loadout;
+			List<ItemModel> loadoutCopy = loadout.ConvertAll(model => new ItemModel(model));
+			List<ItemModel> passedModels = MergeLoadoutIntoInventory(loadoutCopy);
 
 			itemModels = passedModels;
 
@@ -577,10 +577,10 @@ namespace SummonersAssociation.UI
 			simple = Array.IndexOf(SummonersAssociation.BookTypes, heldItemType) == 0;
 			uiModels.Clear();
 
-			if (simple && history.Count > 0) {
-				//Set the selected index to what the original history has
+			if (simple && loadout.Count > 0) {
+				//Set the selected index to what the original loadout has
 				//by definition, if not found it is -1 == NONE
-				selected = itemModels.FindIndex(model => model.ItemType == history[0].ItemType);
+				selected = itemModels.FindIndex(model => model.ItemType == loadout[0].ItemType);
 			}
 
 			try { SoundEngine.PlaySound(SoundID.Item1, Main.LocalPlayer.position); }

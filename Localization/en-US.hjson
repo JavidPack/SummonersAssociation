@@ -23,32 +23,30 @@ Mods: {
 				Rightclick3: Right click another players' reticle so he has control over your minions' target
 			}
 
-			MinionHistoryBook: {
-				DisplayName: Minion History Book
+			MinionLoadoutBook: {
+				DisplayName: Minion Loadout Book
 				Tooltip:
 					'''
-					Left click to summon minions based on history
+					Left click to summon minions based on loadout
 					Right click to open an UI
 					Scroll wheel over the item icons to adjust the summon count
 					'''
-				NoHistory: No summon history specified
+				NoLoadout: No summon loadout specified
 				ExpectedManaCost: Expected {0} additional mana from current loadout
-				HistoryHeader: History:
+				LoadoutHeader: Loadout:
 				SummonsPerUse: "{0}: {1}"
 			}
 
-			MinionHistoryBookAuto: {
-				DisplayName: Automatic Minion History Book
+			MinionLoadoutBookAuto: {
+				DisplayName: Automatic Minion Loadout Book
 				Tooltip:
 					'''
-					Left click to summon minions based on history
-					Right click to open the UI
-					Scroll wheel over the item icons to adjust the summon count
+					{$Items.MinionLoadoutBook.Tooltip}
 					Automatically summons minions when you respawn
 					'''
 			}
 
-			MinionHistoryBookSimple: {
+			MinionLoadoutBookSimple: {
 				DisplayName: Minion Selection Book
 				Tooltip:
 					'''
@@ -157,18 +155,18 @@ Mods: {
 				Uncountable: Uncountable
 			}
 
-			HistoryBook: {
+			LoadoutBook: {
 				SlotsRequired: Slots required: {0}
 				Selected: (Selected)
 				NotFoundInInventory: Not found in inventory
 				SummonCountTotal: "{0}/{1}"
-				LeftClickClear: Click left to clear history
+				LeftClickClear: Click left to clear loadout
 				RightClickCancel: Click right to cancel
-				LeftClickTwiceClear: Click left twice to clear history
-				RightClickSave: Click right to save history
+				LeftClickTwiceClear: Click left twice to clear loadout
+				RightClickSave: Click right to save loadout
 				OnUseNoWeapons: No summon weapons found
-				OnUseReset: Reset history
-				OnUseSaved: Saved history
+				OnUseReset: Reset loadout
+				OnUseSaved: Saved loadout
 				OnUseSelected: Selected: {0}
 			}
 		}
