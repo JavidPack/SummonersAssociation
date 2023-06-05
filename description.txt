@@ -19,6 +19,7 @@ If you experience issues with Minion Control Rods' reticle feature, let us know 
 Changelog:
 v0.5:
 * Fix missing apostrophe in "Summoners Association"
+* Fix whips appearing in the Minion Books
 * Renamed (Automatic) Minion History Book to (Automatic) Minion Loadout Book
 
 v0.4.8.11:
