@@ -165,21 +165,26 @@ namespace SummonersAssociation
 					// Check to see if this buff represents a minion or not
 					MinionModel minion = SummonersAssociation.SupportedMinions.SingleOrDefault(minionEntry => minionEntry.BuffID == buffID);
 					if (minion != null) {
-						List<int> projectileList = minion.ProjectileIDs;
+						var projData = minion.ProjData;
 
-						for (int i = 0; i < minion.ProjectileIDs.Count; i++) {
-							int num = player.ownedProjectileCounts[minion.ProjectileIDs[i]];
+						// Use lowest slot of currently summoned minions so the highest possible total minion count is shown for this buff
+						float lowestSlots = float.MaxValue;
+
+						foreach (var data in projData) {
+							int num = player.ownedProjectileCounts[data.ProjID];
 							if (num > 0) {
 								number += num;
-								slots += num * minion.Slots[i];
+								float slot = data.Slot;
+								if (slot < lowestSlots)
+									lowestSlots = slot;
+
+								slots += num * data.Slot;
 							}
 						}
-						//Projectiles spawn one tick after the buff is applied, showing 0 for a single tick if the buff is fresh
+
+						// Projectiles spawn one tick after the buff is applied, showing 0 for a single tick if the buff is fresh
 						if (number == 0) continue;
 
-						//Use lowestSlots so the highest possible minion count is shown for this buff
-						//edge case 0, if for whatever reason a mod manually assigns 0 as the slot, it will turn it to 1
-						float lowestSlots = minion.Slots.Min(x => x == 0 ? 1 : x);
 						int newMaxMinions = (int)Math.Floor(player.maxMinions / lowestSlots);
 						string ratio = MinionSlotsBuffText.Format(number, newMaxMinions);
 						// TODO: 7/8 shown for spider minions with stardust armor. Technically there is .75 slots left, but StaffMinionSlotsRequired defaults to 1 and is an int. Might need to do the math and show 1 less if available minion slots is less than 1.

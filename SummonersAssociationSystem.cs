@@ -34,7 +34,7 @@ namespace SummonersAssociation
 					projectile = ProjectileLoader.GetProjectile(item.shoot).Projectile;
 					if (projectile.minionSlots > 0) {
 						// Avoid automatic support for manually supported
-						if (!SummonersAssociation.SupportedMinions.Any(x => x.ItemID == i || x.ProjectileIDs.Contains(projectile.type) || x.BuffID == item.buffType)) {
+						if (!SummonersAssociation.SupportedMinions.Any(x => x.ItemID == i || x.ContainsProjID(projectile.type) || x.BuffID == item.buffType)) {
 							AddMinion(new MinionModel(item.type, item.buffType, projectile.type));
 						}
 					}
@@ -66,7 +66,7 @@ namespace SummonersAssociation
 		//		ProjectileType<MinionProjectile>()
 		//	);
 		//
-		//  If the weapon summons two minions
+		//  If the weapon summons two (or more) minions
 		//	summonersAssociation.Call(
 		//		"AddMinionInfo",
 		//		ItemType<MinionItem>(),
@@ -77,29 +77,33 @@ namespace SummonersAssociation
 		//		}
 		//	);
 		//
-		//  If you want to override the minionSlots of the projectile
+		//  If you need to add any additional info to the projectile, such as overriding the minion slot
 		//  (for example useful if you have a Stardust Dragon-like minion and you only want it to count one segment towards the number of summoned minions)
 		//	summonersAssociation.Call(
 		//		"AddMinionInfo",
 		//		ItemType<MinionItem>(),
 		//		BuffType<MinionBuff>(),
-		//		ProjectileType<MinionProjectile>(),
-		//		1f
+		//		new Dictionary<string, object>() {
+		//			["ProjID"] = ProjectileType<MinionProjectile>(),
+		//			["Slot"] = 1f
+		//		}
 		//	);
 		//
-		//  If you want to override the minionSlots of the projectiles you specify (same order)
+		//  If you need to add any additional info to multiple projectiles, such as overriding the minion slot
 		//  (for example useful if you have some complex minion that consists of multiple parts)
 		//	summonersAssociation.Call(
 		//		"AddMinionInfo",
 		//		ItemType<MinionItem>(),
 		//		BuffType<MinionBuff>(),
-		//		new List<int> {
-		//		ProjectileType<MinionProjectile1>(),
-		//		ProjectileType<MinionProjectile2>()
-		//		},
-		//		new List<float> {
-		//		0.25f,
-		//		0.5f
+		//		new List<Dictionary<string, object>> {
+		//			new Dictionary<string, object>() {
+		//				["ProjID"] = ProjectileType<MinionProjectile1>(),
+		//				["Slot"] = 0.25f
+		//			},
+		//			new Dictionary<string, object>() {
+		//				["ProjID"] = ProjectileType<MinionProjectile2>(),
+		//				["Slot"] = 1f //This can be omitted aswell (then it'll default to Projectile.minionSlots), only ProjID is mandatory
+		//			}
 		//		}
 		//	);
 		//
@@ -125,12 +129,12 @@ namespace SummonersAssociation
 
 		public static object Call(params object[] args) {
 			/* message string, then 
-			 * if "AddMinionInfo":
-			 * int, int, List<int>, List<float>
+			 * if "AddMinionInfo": all calls have the same number of args
+			 * int, int, List<Dictionary<string, object>>
 			 * or
 			 * int, int, List<int>
 			 * or
-			 * int, int, int, float
+			 * int, int, Dictionary<string, object>
 			 * or
 			 * int, int, int
 			 * 
@@ -155,43 +159,54 @@ namespace SummonersAssociation
 					int itemID = Convert.ToInt32(args[1]);
 					int buffID = Convert.ToInt32(args[2]);
 
-					if (itemID <= 0 || itemID >= ItemLoader.ItemCount) throw new Exception("Invalid item '" + itemID + "' registered");
+					if (itemID <= 0 || itemID >= ItemLoader.ItemCount)
+						throw new Exception("Invalid item '" + itemID + "' registered");
 
-					string itemMsg = " ### Minion from item '" + Lang.GetItemNameValue(itemID) + "' not added";
+					string itemMsg = " ### Minion from item '" + (itemID < ItemID.Count ? Lang.GetItemNameValue(itemID) : ItemLoader.GetItem(itemID).DisplayName) + "' not added";
 
-					if (buffID <= 0 || buffID >= BuffLoader.BuffCount) throw new Exception("Invalid buff '" + buffID + "' registered" + itemMsg);
+					if (buffID <= 0 || buffID >= BuffLoader.BuffCount)
+						throw new Exception("Invalid buff '" + buffID + "' registered" + itemMsg);
 
-					if (args[3] is List<int>) {
-						var projIDs = args[3] as List<int>;
+					object projArg = args[3];
+					if (projArg is List<Dictionary<string, object>> projDataDicts) {
+						if (projDataDicts.Count == 0) throw new Exception("ProjModel list empty" + itemMsg);
+
+						var addedProjIDs = new HashSet<int>(); // Sanitize lists to not contain duplicates
+						var projDataList = new List<ProjModel>();
+						foreach (var projModelDict in projDataDicts) {
+							var projModel = ProjModel.FromDictionary(projModelDict, itemMsg);
+
+							int projID = projModel.ProjID;
+							if (!addedProjIDs.Contains(projID))
+							{
+								projDataList.Add(projModel);
+								addedProjIDs.Add(projID);
+							}
+						}
+
+						AddMinion(new MinionModel(itemID, buffID, projDataList));
+					}
+					else if (projArg is List<int> projIDs) {
 						if (projIDs.Count == 0) throw new Exception("Projectile list empty" + itemMsg);
 
-						foreach (int type in projIDs) {
-							if (type <= 0 || type >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile '" + type + "' registered" + itemMsg);
+						// Sanitize list via Distinct() to not contain duplicates
+						foreach (int projID in projIDs.Distinct()) {
+							CheckProj(itemMsg, projID);
 						}
 
-						if (args.Length == 5) {
-							var slots = args[4] as List<float>;
-							if (projIDs.Count != slots.Count)
-								throw new Exception("Length of the projectile list does not match up with the length of the slot list" + itemMsg);
-
-							AddMinion(new MinionModel(itemID, buffID, projIDs, slots));
-						}
-						else {
-							AddMinion(new MinionModel(itemID, buffID, projIDs));
-						}
+						AddMinion(new MinionModel(itemID, buffID, projIDs));
+					}
+					else if (projArg is Dictionary<string, object> projModelDict) {
+						AddMinion(new MinionModel(itemID, buffID, ProjModel.FromDictionary(projModelDict, itemMsg)));
+					}
+					else if (projArg is int) {
+						int projID = Convert.ToInt32(args[3]);
+						CheckProj(itemMsg, projID);
+						AddMinion(new MinionModel(itemID, buffID, projID));
 					}
 					else {
-						int projID = Convert.ToInt32(args[3]);
-						if (projID <= 0 || projID >= ProjectileLoader.ProjectileCount) throw new Exception("Invalid projectile '" + projID + "' registered" + itemMsg);
-						
-						if (args.Length == 5) {
-							float slot = Convert.ToSingle(args[4]);
-
-							AddMinion(new MinionModel(itemID, buffID, projID, slot));
-						}
-						else {
-							AddMinion(new MinionModel(itemID, buffID, projID));
-						}
+						//TODO should this case exist? throw exception perhaps?
+						return "Failure";
 					}
 					return "Success";
 				}
@@ -232,17 +247,20 @@ namespace SummonersAssociation
 			return "Failure";
 		}
 
+		private static void CheckProj(string itemMsg, int type) {
+			if (type <= 0 || type >= ProjectileLoader.ProjectileCount)
+				throw new Exception("Invalid projectile '" + type + "' registered" + itemMsg);
+		}
+
 		/// <summary>
-		/// Almost the same as Add, but merges projectile lists on the same buff and registers its item without creating a new model
+		/// Almost the same as Add, but merges projectile lists on the same buff and registers its projectile(s) without creating a new model
 		/// </summary>
 		private static void AddMinion(MinionModel model) {
 			MinionModel existing = SummonersAssociation.SupportedMinions.SingleOrDefault(m => m.BuffID == model.BuffID);
 			if (existing != null) {
-				for (int i = 0; i < model.ProjectileIDs.Count; i++) {
-					int id = model.ProjectileIDs[i];
-					if (!existing.ProjectileIDs.Contains(id)) {
-						existing.ProjectileIDs.Add(id);
-						existing.Slots.Add(model.Slots[i]);
+				foreach (var data in model.ProjData) {
+					if (!existing.ContainsProjID(data.ProjID)) {
+						existing.ProjData.Add(data);
 					}
 				}
 			}
