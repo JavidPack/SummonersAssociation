@@ -7,12 +7,12 @@ using Terraria.ModLoader;
 
 namespace <YourModNameHere>
 {
-	// This class provides an example of advanced Summoners Association integration utilizing the "GetSupportedMinions" Mod.Call that other Mods can copy into their mod's source code.
-	// By copying this class into your mod, you can access Summoners Association minion data reliably and with type safety without requiring a strong dependency.
+	// This class provides an example of advanced Summoners' Association integration utilizing the "GetSupportedMinions" Mod.Call that other Mods can copy into their mod's source code.
+	// By copying this class into your mod, you can access Summoners' Association minion data reliably and with type safety without requiring a strong dependency.
 	public class SummonersAssociationIntegration : ModSystem
 	{
-		// Summoners Association might add new features, so a version is passed into GetSupportedMinions. 
-		// If a new version of the GetSupportedMinions Call is implemented, find this class in the Summoners Association Github once again and replace this version with the new version: https://github.com/JavidPack/SummonersAssociation/blob/master/SummonersAssociationIntegrationExample.cs
+		// Summoners' Association might add new features, so a version is passed into GetSupportedMinions. 
+		// If a new version of the GetSupportedMinions Call is implemented, find this class in the Summoners' Association Github once again and replace this version with the new version: https://github.com/JavidPack/SummonersAssociation/blob/master/SummonersAssociationIntegrationExample.cs
 		private static readonly Version SummonersAssociationAPIVersion = new Version(0, 4, 7); // Do not change this yourself.
 
 		public class MinionModel

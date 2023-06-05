@@ -108,7 +108,7 @@ namespace SummonersAssociation
 					if (mouseItemIndex != -1) layers.RemoveAt(mouseItemIndex);
 					layers.Insert(++inventoryIndex, new LegacyGameInterfaceLayer
 						(
-						"Summoners Association: Loadout",
+						"Summoners' Association: Loadout",
 						delegate {
 							LoadoutBookUIInterface.Draw(Main.spriteBatch, new GameTime());
 							return true;

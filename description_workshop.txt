@@ -3,7 +3,7 @@
 This mod aims to fix a few grievances with summons and flesh out Summoner to be a fully developed class. This vision is of a summoner who has their hands full buffing and controlling minions and has little time for other weapons.
 
 [h1]Includes 6 items[/h1]
-[b]Summoners Association Card[/b] - Displays summoner-related information
+[b]Summoners' Association Card[/b] - Displays summoner-related information
 [list]
 [*] Shows the amount of minions summoned (out of the total available) under every minion buff
 [*] Simply has to be in your inventory for it to work
@@ -44,6 +44,7 @@ If you experience issues with Minion Control Rods' reticle feature, let us know 
 
 [b]Changelog:[/b]
 v0.5:
+* Fix missing apostrophe in "Summoners Association"
 * Renamed (Automatic) Minion History Book to (Automatic) Minion Loadout Book
 
 v0.4.8.11:

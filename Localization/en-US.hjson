@@ -59,10 +59,10 @@ Mods: {
 			}
 
 			SummonersAssociationCard: {
-				DisplayName: Summoners Association Card
+				DisplayName: Summoners' Association Card
 				Tooltip:
 					'''
-					Welcome to the Summoners Association
+					'Welcome to the Summoners' Association'
 					Displays Summoner-related information
 					'''
 			}
