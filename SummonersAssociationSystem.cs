@@ -168,7 +168,10 @@ namespace SummonersAssociation
 						throw new Exception("Invalid buff '" + buffID + "' registered" + itemMsg);
 
 					object projArg = args[3];
-					if (projArg is List<Dictionary<string, object>> projDataDicts) {
+					if (args.Length > 3 + 1) {
+						throw new Exception($"\"{message}\" does not take more than 3 parameters");
+					}
+					else if (projArg is List<Dictionary<string, object>> projDataDicts) {
 						if (projDataDicts.Count == 0) throw new Exception("ProjModel list empty" + itemMsg);
 
 						var addedProjIDs = new HashSet<int>(); // Sanitize lists to not contain duplicates
@@ -205,8 +208,7 @@ namespace SummonersAssociation
 						AddMinion(new MinionModel(itemID, buffID, projID));
 					}
 					else {
-						//TODO should this case exist? throw exception perhaps?
-						return "Failure";
+						throw new Exception($"{projArg} does not have a suitable type for \"{message}\"");
 					}
 					return "Success";
 				}
@@ -240,9 +242,12 @@ namespace SummonersAssociation
 					var list = SummonersAssociation.SupportedMinions.Select(m => m.ConvertToDictionary(apiVersion)).ToList();
 					return list;
 				}
+				else {
+					throw new Exception($"\"{message}\" is not an accepted call");
+				}
 			}
 			catch (Exception e) {
-				logger.Error(modSA.Name + " Call Error: " + e.StackTrace + e.Message);
+				logger.Error(modSA.Name + " Call Error: " + e.StackTrace + ": " + e.Message + "\nConsult https://github.com/JavidPack/SummonersAssociation/wiki/Support-using-Mod-Call");
 			}
 			return "Failure";
 		}
