@@ -101,21 +101,19 @@ namespace SummonersAssociation
 
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
 			int inventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Hotbar"));
-			if (inventoryIndex != -1) {
-				if (LoadoutBookUI.active) {
-					//Remove the item icon when using the item while held outside the inventory (selectedItem == 58)
-					int mouseItemIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Item / NPC Head"));
-					if (mouseItemIndex != -1) layers.RemoveAt(mouseItemIndex);
-					layers.Insert(++inventoryIndex, new LegacyGameInterfaceLayer
-						(
-						"Summoners' Association: Loadout",
-						delegate {
-							LoadoutBookUIInterface.Draw(Main.spriteBatch, new GameTime());
-							return true;
-						},
-						InterfaceScaleType.UI)
-					);
-				}
+			if (inventoryIndex != -1 && LoadoutBookUI.active) {
+				//Remove the item icon when using the item while held outside the inventory (selectedItem == 58)
+				int mouseItemIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Item / NPC Head"));
+				if (mouseItemIndex != -1) layers.RemoveAt(mouseItemIndex);
+				layers.Insert(++inventoryIndex, new LegacyGameInterfaceLayer
+					(
+					"Summoners' Association: Loadout",
+					delegate {
+						LoadoutBookUIInterface.Draw(Main.spriteBatch, new GameTime());
+						return true;
+					},
+					InterfaceScaleType.UI)
+				);
 			}
 		}
 
@@ -152,49 +150,52 @@ namespace SummonersAssociation
 			int buffsPerLine = 11;
 			int lineOffset = 0;
 			for (int b = 0; b < player.buffType.Length; ++b) {
-				if (player.buffType[b] > 0) {
-					lineOffset = b / buffsPerLine;
-					int buffID = player.buffType[b];
-					xPosition = 32 + (b - lineOffset * buffsPerLine) * 38;
-					yPosition = 76 + lineOffset * 50 + TextureAssets.Buff[buffID].Height();
-					color = new Color(new Vector4(Main.buffAlpha[b]));
+				int buffID = player.buffType[b];
+				if (buffID <= 0) {
+					continue;
+				}
 
-					int number = 0;
-					double slots = 0;
+				// Check to see if this buff represents a minion or not
+				MinionModel minion = SummonersAssociation.SupportedMinions.SingleOrDefault(minionEntry => minionEntry.BuffID == buffID);
+				if (minion == null) {
+					continue;
+				}
 
-					// Check to see if this buff represents a minion or not
-					MinionModel minion = SummonersAssociation.SupportedMinions.SingleOrDefault(minionEntry => minionEntry.BuffID == buffID);
-					if (minion != null) {
-						var projData = minion.ProjData;
+				lineOffset = b / buffsPerLine;
+				xPosition = 32 + (b - lineOffset * buffsPerLine) * 38;
+				yPosition = 76 + lineOffset * 50 + TextureAssets.Buff[buffID].Height();
+				color = new Color(new Vector4(Main.buffAlpha[b]));
 
-						// Use lowest slot of currently summoned minions so the highest possible total minion count is shown for this buff
-						float lowestSlots = float.MaxValue;
+				int number = 0;
+				double slots = 0;
 
-						foreach (var data in projData) {
-							int num = player.ownedProjectileCounts[data.ProjID];
-							float slot = data.Slot;
-							if (num > 0 && slot > 0) {
-								// Checking for slots existing is required as it's a prerequisite for being concidered a minion (no MinionModel otherwise) and contributing to the minion limit
-								// Stardust Dragon has a custom model that sets all segments to 0 except one to 1, don't want it to count as 4/1 minions
-								number += num;
+				var projData = minion.ProjData;
 
-								if (slot < lowestSlots)
-									lowestSlots = slot;
+				// Use lowest slot of currently summoned minions so the highest possible total minion count is shown for this buff
+				float lowestSlots = float.MaxValue;
 
-								slots += num * data.Slot;
-							}
-						}
+				foreach (var data in projData) {
+					int num = player.ownedProjectileCounts[data.ProjID];
+					float slot = data.Slot;
+					if (num > 0 && slot > 0) {
+						// Checking for slots existing is required as it's a prerequisite for being concidered a minion (no MinionModel otherwise) and contributing to the minion limit
+						// Stardust Dragon has a custom model that sets all segments to 0 except one to 1, don't want it to count as 4/1 minions
+						number += num;
 
-						// Projectiles spawn one tick after the buff is applied, showing 0 for a single tick if the buff is fresh
-						if (number == 0) continue;
+						if (slot < lowestSlots)
+							lowestSlots = slot;
 
-						int newMaxMinions = (int)Math.Floor(player.maxMinions / lowestSlots);
-						string ratio = MinionSlotsBuffText.Format(number, newMaxMinions);
-						// TODO: 7/8 shown for spider minions with stardust armor. Technically there is .75 slots left, but StaffMinionSlotsRequired defaults to 1 and is an int. Might need to do the math and show 1 less if available minion slots is less than 1.
-						workingMinions += slots;
-						spriteBatch.DrawString(FontAssets.ItemStack.Value, ratio, new Vector2(xPosition, yPosition), color, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
+						slots += num * data.Slot;
 					}
 				}
+
+				// Projectiles spawn one tick after the buff is applied, showing 0 for a single tick if the buff is fresh
+				if (number == 0) continue;
+
+				int newMaxMinions = (int)Math.Floor(player.maxMinions / lowestSlots);
+				string ratio = MinionSlotsBuffText.Format(number, newMaxMinions);
+				workingMinions += slots;
+				spriteBatch.DrawString(FontAssets.ItemStack.Value, ratio, new Vector2(xPosition, yPosition), color, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
 			}
 			//Count non-registered mod minions
 			color = new Color(new Vector4(0.4f));
@@ -219,57 +220,58 @@ namespace SummonersAssociation
 		}
 
 		private void DisplayMaxMinionIcon(SpriteBatch spriteBatch, Player player) {
-			if (Main.EquipPage == 0) {
-				Texture2D tex = TextureAssets.Buff[BuffID.Bewitched].Value;
-				Vector2 size = Utils.Size(tex);
+			if (Main.EquipPage != 0) {
+				return;
+			}
+			Texture2D tex = TextureAssets.Buff[BuffID.Bewitched].Value;
+			Vector2 size = Utils.Size(tex);
 
-				var defensePos = AccessorySlotLoader.DefenseIconPosition;
-				Vector2 drawPos = new Vector2(defensePos.X - 10 - 47 - 47 - 14, defensePos.Y + TextureAssets.InventoryBack.Height() * 0.5f);
-				float inventoryScale = 0.85f;
-				Vector2 slotOffset = new Vector2(0, -1 * 56 * inventoryScale); //One slot higher
-				drawPos += slotOffset;
+			var defensePos = AccessorySlotLoader.DefenseIconPosition;
+			Vector2 drawPos = new Vector2(defensePos.X - 10 - 47 - 47 - 14, defensePos.Y + TextureAssets.InventoryBack.Height() * 0.5f);
+			float inventoryScale = 0.85f;
+			Vector2 slotOffset = new Vector2(0, -1 * 56 * inventoryScale); //One slot higher
+			drawPos += slotOffset;
 
-				Vector2 offset = Config.Instance.Offset;
-				offset = new Vector2((offset.X - Config.DefaultX) * Main.screenWidth, (offset.Y - Config.DefaultY) * Main.screenHeight);
+			Vector2 offset = Config.Instance.Offset;
+			offset = new Vector2((offset.X - Config.DefaultX) * Main.screenWidth, (offset.Y - Config.DefaultY) * Main.screenHeight);
 
-				drawPos += offset;
-				drawPos.X = Utils.Clamp(drawPos.X, size.X / 2, Main.screenWidth - size.X / 2);
-				drawPos.Y = Utils.Clamp(drawPos.Y, size.Y / 2, Main.screenHeight - size.Y / 2);
+			drawPos += offset;
+			drawPos.X = Utils.Clamp(drawPos.X, size.X / 2, Main.screenWidth - size.X / 2);
+			drawPos.Y = Utils.Clamp(drawPos.Y, size.Y / 2, Main.screenHeight - size.Y / 2);
 
-				spriteBatch.Draw(tex, drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
-				string text = player.maxMinions.ToString();
-				DynamicSpriteFont font = FontAssets.MouseText.Value;
-				Vector2 stringLength = font.MeasureString(text);
-				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, font, text, drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
-				var mouse = new Point(Main.mouseX, Main.mouseY);
-				if (Utils.CenteredRectangle(drawPos, size).Contains(mouse)) {
-					player.mouseInterface = true;
-					string str = MinionSlotsIconText.Format(Math.Round(player.slotsMinions, 2), player.maxMinions);
-					if (!string.IsNullOrEmpty(str))
-						Main.hoverItemName = str;
-				}
+			spriteBatch.Draw(tex, drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
+			string text = player.maxMinions.ToString();
+			DynamicSpriteFont font = FontAssets.MouseText.Value;
+			Vector2 stringLength = font.MeasureString(text);
+			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, font, text, drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
+			var mouse = new Point(Main.mouseX, Main.mouseY);
+			if (Utils.CenteredRectangle(drawPos, size).Contains(mouse)) {
+				player.mouseInterface = true;
+				string str = MinionSlotsIconText.Format(Math.Round(player.slotsMinions, 2), player.maxMinions);
+				if (!string.IsNullOrEmpty(str))
+					Main.hoverItemName = str;
+			}
 
-				var sentryNameToCount = GetSentryNameToCount(out int sentryCount);
+			var sentryNameToCount = GetSentryNameToCount(out int sentryCount);
 
-				drawPos.Y -= size.Y * 1.5f;
+			drawPos.Y -= size.Y * 1.5f;
 
-				tex = TextureAssets.Buff[BuffID.Summoning].Value;
+			tex = TextureAssets.Buff[BuffID.Summoning].Value;
 
-				spriteBatch.Draw(tex, drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
-				text = sentryCount.ToString();
-				stringLength = font.MeasureString(text);
-				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, font, text, drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
-				if (Utils.CenteredRectangle(drawPos, size).Contains(mouse)) {
-					player.mouseInterface = true;
-					string str = SentrySlotsIconText.Format(sentryCount, player.maxTurrets);
-					if (sentryCount > 0) {
-						foreach (var item in sentryNameToCount) {
-							str += $"\n{SentrySlotsIconCountedText.Format(item.Value, item.Key)}";
-						}
+			spriteBatch.Draw(tex, drawPos, null, Color.White, 0.0f, size / 2f, inventoryScale, SpriteEffects.None, 0f);
+			text = sentryCount.ToString();
+			stringLength = font.MeasureString(text);
+			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, font, text, drawPos - stringLength * 0.5f * inventoryScale, Color.White, 0f, Vector2.Zero, new Vector2(inventoryScale), -1f, 2f);
+			if (Utils.CenteredRectangle(drawPos, size).Contains(mouse)) {
+				player.mouseInterface = true;
+				string str = SentrySlotsIconText.Format(sentryCount, player.maxTurrets);
+				if (sentryCount > 0) {
+					foreach (var item in sentryNameToCount) {
+						str += $"\n{SentrySlotsIconCountedText.Format(item.Value, item.Key)}";
 					}
-					if (!string.IsNullOrEmpty(str))
-						Main.hoverItemName = str;
 				}
+				if (!string.IsNullOrEmpty(str))
+					Main.hoverItemName = str;
 			}
 		}
 

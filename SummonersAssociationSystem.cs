@@ -30,20 +30,24 @@ namespace SummonersAssociation
 			var projectile = new Projectile();
 			for (int i = ItemID.Count; i < ItemLoader.ItemCount; i++) {
 				item = ItemLoader.GetItem(i).Item;
-				if (item.buffType > 0 && item.shoot >= ProjectileID.Count) {
-					projectile = ProjectileLoader.GetProjectile(item.shoot).Projectile;
-					if (projectile.minionSlots > 0) {
-						// Avoid automatic support for manually supported
-						if (!SummonersAssociation.SupportedMinions.Any(x => x.ItemID == i || x.ContainsProjID(projectile.type) || x.BuffID == item.buffType)) {
-							AddMinion(new MinionModel(item.type, item.buffType, projectile.type));
-						}
-					}
+				if (!(item.buffType > 0 && item.shoot >= ProjectileID.Count)) {
+					continue;
+				}
+
+				projectile = ProjectileLoader.GetProjectile(item.shoot).Projectile;
+				if (projectile.minionSlots <= 0) {
+					continue;
+				}
+
+				// Avoid automatic support for manually supported
+				if (!SummonersAssociation.SupportedMinions.Any(x => x.ItemID == i || x.ContainsProjID(projectile.type) || x.BuffID == item.buffType)) {
+					AddMinion(new MinionModel(item.type, item.buffType, projectile.type));
 				}
 			}
 
 			SupportedMinionsFinalized = true;
 
-			var group = new RecipeGroup(() => RecipeGroupGenericText.Format(Language.GetTextValue("LegacyMisc.37") , Lang.GetItemNameValue(ItemID.MagicMirror)), new int[]
+			var group = new RecipeGroup(() => RecipeGroupGenericText.Format(Language.GetTextValue("LegacyMisc.37"), Lang.GetItemNameValue(ItemID.MagicMirror)), new int[]
 			{
 				ItemID.MagicMirror,
 				ItemID.IceMirror
@@ -227,8 +231,7 @@ namespace SummonersAssociation
 				}
 				else if (message == "GetSupportedMinions") {
 					//New with v0.4.7
-					var mod = args[1] as Mod;
-					if (mod == null) {
+					if (args[1] is not Mod mod) {
 						throw new Exception($"Call Error: The Mod argument for the attempted message, \"{message}\" has returned null.");
 					}
 					var apiVersion = args[2] is string ? new Version(args[2] as string) : modSA.Version; // Future-proofing. Allowing new info to be returned while maintaining backwards compat if necessary.
