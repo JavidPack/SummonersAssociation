@@ -13,17 +13,40 @@ namespace <YourModNameHere>
 	{
 		// Summoners' Association might add new features, so a version is passed into GetSupportedMinions. 
 		// If a new version of the GetSupportedMinions Call is implemented, find this class in the Summoners' Association Github once again and replace this version with the new version: https://github.com/JavidPack/SummonersAssociation/blob/master/SummonersAssociationIntegrationExample.cs
-		private static readonly Version SummonersAssociationAPIVersion = new Version(0, 4, 7); // Do not change this yourself.
+		private static readonly Version SummonersAssociationAPIVersion = new Version(0, 5); // Do not change this yourself.
+
+		public record struct ProjModel(int ProjID, float Slot);
 
 		public class MinionModel
 		{
-			public int ItemID { get; set; } //The item ID associated with the minion(s)
-			public int BuffID { get; set; } //The buff ID associated with the minion(s)
-			public List<int> ProjectileIDs { get; set; } //The projectile ID(s) of the minion(s) (Usually contains only 1 element)
-			public List<float> Slots { get; set; } //The minionSlots of the minion(s) (matching the index of ProjectileIDs)
+			public int ItemID { get; set; } // The item ID associated with the minion(s)
+			public int BuffID { get; set; } // The buff ID associated with the minion(s)
+			public List<ProjModel> ProjData { get; set; } // The projectile ID(s) and additional data of the minion(s) (Usually contains only 1 element)
 
-			//Helper method to represent the item this minion model is associated with
-			public override string ToString() => Lang.GetItemNameValue(ItemID);
+			// Helper method to represent the item this minion model is associated with
+			public override string ToString() => ItemID < Terraria.ID.ItemID.Count ? Lang.GetItemNameValue(ItemID) : ItemLoader.GetItem(ItemID).DisplayName.ToString();
+
+			// Helper method to convert from dictionary to class
+			public static MinionModel FromDictionary(Dictionary<string, object> dict) {
+				var model = new MinionModel {
+					ItemID = dict.ContainsKey("ItemID") ? Convert.ToInt32(dict["ItemID"]) : 0,
+					BuffID = dict.ContainsKey("BuffID") ? Convert.ToInt32(dict["BuffID"]) : 0
+				};
+
+				if (dict.ContainsKey("ProjData")) {
+					var projDataDict = dict["ProjData"] as List<Dictionary<string, object>>;
+					model.ProjData = projDataDict.Select(pDict =>
+						new ProjModel(
+							pDict.ContainsKey("ProjID") ? Convert.ToInt32(pDict["ProjID"]) : 0,
+							pDict.ContainsKey("Slot") ? Convert.ToSingle(pDict["Slot"]) : 1f)
+						).ToList();
+				}
+				else {
+					model.ProjData = new List<ProjModel>();
+				}
+
+				return model;
+			}
 		}
 
 		public static List<MinionModel> supportedMinions = new List<MinionModel>();
@@ -33,24 +56,21 @@ namespace <YourModNameHere>
 		public override void PostAddRecipes() {
 			// For best results, this code is in PostAddRecipes
 			supportedMinions.Clear();
+			IntegrationSuccessful = false;
 
 			if (ModLoader.TryGetMod("SummonersAssociation", out var summonersAssociation) && summonersAssociation.Version >= SummonersAssociationAPIVersion) {
-				object currentSupportedMinionsResponse = summonersAssociation.Call("GetSupportedMinions", Mod, SummonersAssociationAPIVersion.ToString());
-				if (currentSupportedMinionsResponse is List<Dictionary<string, object>> supportedMinionsList) {
-					supportedMinions = supportedMinionsList.Select(dict => new MinionModel() {
-						ItemID = dict.ContainsKey("ItemID") ? Convert.ToInt32(dict["ItemID"]) : 0,
-						BuffID = dict.ContainsKey("BuffID") ? Convert.ToInt32(dict["BuffID"]) : 0,
-						ProjectileIDs = dict.ContainsKey("ProjectileIDs") ? dict["ProjectileIDs"] as List<int> : new List<int>(),
-						Slots = dict.ContainsKey("Slots") ? dict["Slots"] as List<float> : new List<float>(),
-					}).ToList();
+				object getSupportedMinionsResponse = summonersAssociation.Call("GetSupportedMinions", Mod, SummonersAssociationAPIVersion.ToString());
+				if (getSupportedMinionsResponse is List<Dictionary<string, object>> supportedMinionsList) {
+					supportedMinions = supportedMinionsList.Select(dict => MinionModel.FromDictionary(dict)).ToList();
 
 					IntegrationSuccessful = true;
 				}
 			}
 		}
 
-		public override void Unload() {
+		public override void OnModUnload() {
 			supportedMinions.Clear();
+			IntegrationSuccessful = false;
 		}
 
 		// This method shows an example of using the supportedMinions data for something cool in your mod.
@@ -73,7 +93,7 @@ namespace <YourModNameHere>
 			List<int> projectileIDs = new List<int>();
 			foreach (var model in supportedMinions) {
 				if (model.ItemID > 0 && model.BuffID == buffType) {
-					projectileIDs = model.ProjectileIDs;
+					projectileIDs = model.ProjData.Select(d => d.ProjID).ToList();
 					break;
 				}
 			}
@@ -86,7 +106,7 @@ namespace <YourModNameHere>
 			List<int> projectileIDs = new List<int>();
 			foreach (var model in supportedMinions) {
 				if (model.BuffID > 0 && model.ItemID == itemType) {
-					projectileIDs = model.ProjectileIDs;
+					projectileIDs = model.ProjData.Select(d => d.ProjID).ToList();
 					break;
 				}
 			}

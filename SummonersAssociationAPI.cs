@@ -61,7 +61,7 @@ namespace SummonersAssociation
 			List<int> projectileIDs = new List<int>();
 			foreach (var model in SummonersAssociation.SupportedMinions) {
 				if (model.ItemID > 0 && model.BuffID == buffType) {
-					projectileIDs = model.ProjectileIDs;
+					projectileIDs = model.ProjData.Select(d => d.ProjID).ToList();
 					break;
 				}
 			}
@@ -78,7 +78,7 @@ namespace SummonersAssociation
 			List<int> projectileIDs = new List<int>();
 			foreach (var model in SummonersAssociation.SupportedMinions) {
 				if (model.BuffID > 0 && model.ItemID == itemType) {
-					projectileIDs = model.ProjectileIDs;
+					projectileIDs = model.ProjData.Select(d => d.ProjID).ToList();
 					break;
 				}
 			}
@@ -123,7 +123,7 @@ namespace SummonersAssociation
 		/// <returns>Buff ID. 0 if projectile is not associated with a minion</returns>
 		public static int GetBuffIDAssociatedWithProjectile(int projType) {
 			foreach (var model in SummonersAssociation.SupportedMinions) {
-				if (model.BuffID > 0 && model.ProjectileIDs.Contains(projType)) {
+				if (model.BuffID > 0 && model.ContainsProjID(projType)) {
 					return model.BuffID;
 				}
 			}
@@ -138,7 +138,7 @@ namespace SummonersAssociation
 		/// <returns>Item ID. 0 if projectile is not associated with a minion</returns>
 		public static int GetItemIDAssociatedWithProjectile(int projType) {
 			foreach (var model in SummonersAssociation.SupportedMinions) {
-				if (model.ItemID > 0 && model.ProjectileIDs.Contains(projType)) {
+				if (model.ItemID > 0 && model.ContainsProjID(projType)) {
 					return model.ItemID;
 				}
 			}

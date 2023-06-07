@@ -13,10 +13,6 @@ namespace SummonersAssociation
 	public class SummonersAssociation : Mod
 	{
 		internal static List<MinionModel> SupportedMinions;
-		/// <summary>
-		/// Hardcoded special vanilla minions that summon a non-1f amount of minions on use
-		/// </summary>
-		internal static Dictionary<int, float> SlotsFilledPerUse;
 
 		/// <summary>
 		/// Mainly for "Counter" projectiles that count as minions but should not be teleported (by the Minion Control Rod)
@@ -39,6 +35,13 @@ namespace SummonersAssociation
 		public override void Load() {
 			Instance = this;
 
+			LoadData();
+
+			string category = $"Configs.Common.";
+			AcceptClientChangesText ??= Language.GetOrRegister(this.GetLocalizationKey($"{category}AcceptClientChanges"));
+		}
+
+		private static void LoadData() {
 			SupportedMinions = new List<MinionModel>() {
 				new MinionModel(ItemID.BabyBirdStaff, BuffID.BabyBird, ProjectileID.BabyBird),
 				new MinionModel(ItemID.AbigailsFlower, BuffID.AbigailMinion, ProjectileID.AbigailCounter),
@@ -58,23 +61,21 @@ namespace SummonersAssociation
 				new MinionModel(ItemID.RavenStaff, BuffID.Ravens, ProjectileID.Raven),
 				new MinionModel(ItemID.TempestStaff, BuffID.SharknadoMinion, ProjectileID.Tempest),
 				new MinionModel(ItemID.DeadlySphereStaff, BuffID.DeadlySphere, ProjectileID.DeadlySphere),
-				new MinionModel(ItemID.StardustDragonStaff, BuffID.StardustDragonMinion, ProjectileID.StardustDragon2, 1f),
+				// StardustDragonStaff: special treatment to count the 4 summoned projectiles (2x0.5f and 2x0f slots) by only concidering the second body part as 1 minion
+				new MinionModel(ItemID.StardustDragonStaff, BuffID.StardustDragonMinion, new List<ProjModel>(){
+					new ProjModel(ProjectileID.StardustDragon1, 0f),
+					new ProjModel(ProjectileID.StardustDragon2, 1f),
+					new ProjModel(ProjectileID.StardustDragon3, 0f),
+					new ProjModel(ProjectileID.StardustDragon4, 0f),
+				}),
 				new MinionModel(ItemID.StardustCellStaff, BuffID.StardustMinion, ProjectileID.StardustCellMinion),
 				new MinionModel(ItemID.EmpressBlade, BuffID.EmpressBlade, ProjectileID.EmpressBlade)
-			};
-
-			//For SlotsFilledPerUse we can't use MinionModel.GetSlotsPerProjectile because thats just a list of projectiles, and not those that are summoned once on use
-			SlotsFilledPerUse = new Dictionary<int, float> {
-				//[ItemID.SpiderStaff] = 0.75f //Changed to 1 in 1.4
 			};
 
 			TeleportConditionMinions = new Dictionary<int, Func<Projectile, bool>>() {
 				[ProjectileID.StormTigerGem] = ProjectileFalse,
 				[ProjectileID.AbigailCounter] = ProjectileFalse
 			};
-
-			string category = $"Configs.Common.";
-			AcceptClientChangesText ??= Language.GetOrRegister(this.GetLocalizationKey($"{category}AcceptClientChanges"));
 		}
 
 		public override void PostSetupContent()
@@ -87,7 +88,6 @@ namespace SummonersAssociation
 
 		public override void Unload() {
 			SupportedMinions = null;
-			SlotsFilledPerUse = null;
 			TeleportConditionMinions = null;
 			BookTypes = null;
 
