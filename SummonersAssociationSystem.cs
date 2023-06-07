@@ -121,14 +121,6 @@ namespace SummonersAssociation
 		//	    (Func<Projectile, bool>) ((Projectile p) => false) //return false here to prevent it from teleporting, otherwise, true
 		//	);
 		//
-		//	Summon weapons that occupy a non-whole number amount of minionSlots on use should use this to be compatible with loadouts.
-		//	Otherwise it will assume the value in ItemID.Sets.StaffMinionSlotsRequired (which defaults to 1)
-		//	summonersAssociation.Call(
-		//		"AddSlotsFilledPerUse",
-		//		ItemType<MinionItem>(),
-		//		0.5f
-		//	);
-		//
 		//  Get a copy of the stored information about all minions (See SummonersAssociationIntegrationExample.cs for more info)
 		//  var data = (List<Dictionary<string, object>>)summonersAssociation.Call(
 		//		"GetSupportedMinions",
