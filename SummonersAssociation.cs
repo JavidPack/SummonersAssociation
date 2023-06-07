@@ -62,7 +62,12 @@ namespace SummonersAssociation
 				new MinionModel(ItemID.TempestStaff, BuffID.SharknadoMinion, ProjectileID.Tempest),
 				new MinionModel(ItemID.DeadlySphereStaff, BuffID.DeadlySphere, ProjectileID.DeadlySphere),
 				// StardustDragonStaff: special treatment to count the 4 summoned projectiles (2x0.5f and 2x0f slots) by only concidering the second body part as 1 minion
-				new MinionModel(ItemID.StardustDragonStaff, BuffID.StardustDragonMinion, new ProjModel(ProjectileID.StardustDragon2, 1f)),
+				new MinionModel(ItemID.StardustDragonStaff, BuffID.StardustDragonMinion, new List<ProjModel>(){
+					new ProjModel(ProjectileID.StardustDragon1, 0f),
+					new ProjModel(ProjectileID.StardustDragon2, 1f),
+					new ProjModel(ProjectileID.StardustDragon3, 0f),
+					new ProjModel(ProjectileID.StardustDragon4, 0f),
+				}),
 				new MinionModel(ItemID.StardustCellStaff, BuffID.StardustMinion, ProjectileID.StardustCellMinion),
 				new MinionModel(ItemID.EmpressBlade, BuffID.EmpressBlade, ProjectileID.EmpressBlade)
 			};

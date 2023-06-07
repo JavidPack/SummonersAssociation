@@ -173,12 +173,17 @@ namespace SummonersAssociation
 						foreach (var data in projData) {
 							int num = player.ownedProjectileCounts[data.ProjID];
 							if (num > 0) {
-								number += num;
 								float slot = data.Slot;
-								if (slot < lowestSlots)
-									lowestSlots = slot;
+								// Checking for slots existing is required as it's a prerequisite for being concidered a minion (no MinionModel otherwise) and contributing to the minion limit
+								// Stardust Dragon has a custom model that sets all segments to 0 except one to 1, don't want it to count as 4/1 minions
+								if (slot > 0) {
+									number += num;
 
-								slots += num * data.Slot;
+									if (slot < lowestSlots)
+										lowestSlots = slot;
+
+									slots += num * data.Slot;
+								}
 							}
 						}
 
