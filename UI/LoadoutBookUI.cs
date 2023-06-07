@@ -209,7 +209,7 @@ namespace SummonersAssociation.UI
 					#region Setup weapon tooltip
 					tooltip.Add(itemModel.Name);
 
-					if (itemModel.SlotsFilledPerUse > 1) {
+					if (itemModel.SlotsFilledPerUse != 1) {
 						tooltip.Add(UISystem.LoadoutBookSlotsRequired.Format(itemModel.SlotsFilledPerUse));
 					}
 

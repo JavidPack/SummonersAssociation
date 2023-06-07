@@ -13,10 +13,6 @@ namespace SummonersAssociation
 	public class SummonersAssociation : Mod
 	{
 		internal static List<MinionModel> SupportedMinions;
-		/// <summary>
-		/// Special weapons that summon a non-1f amount of minions on use
-		/// </summary>
-		internal static Dictionary<int, float> SlotsFilledPerUse;
 
 		/// <summary>
 		/// Mainly for "Counter" projectiles that count as minions but should not be teleported (by the Minion Control Rod)
@@ -71,11 +67,6 @@ namespace SummonersAssociation
 				new MinionModel(ItemID.EmpressBlade, BuffID.EmpressBlade, ProjectileID.EmpressBlade)
 			};
 
-			//TODO API extension for slot count on item, store as static because it's actually referenced via ItemModel which is created dynamically
-			SlotsFilledPerUse = new Dictionary<int, float> {
-				//[ItemID.SpiderStaff] = 0.75f //Changed to 1 in 1.4
-			};
-
 			TeleportConditionMinions = new Dictionary<int, Func<Projectile, bool>>() {
 				[ProjectileID.StormTigerGem] = ProjectileFalse,
 				[ProjectileID.AbigailCounter] = ProjectileFalse
@@ -92,7 +83,6 @@ namespace SummonersAssociation
 
 		public override void Unload() {
 			SupportedMinions = null;
-			SlotsFilledPerUse = null;
 			TeleportConditionMinions = null;
 			BookTypes = null;
 

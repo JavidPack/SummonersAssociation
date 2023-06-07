@@ -101,7 +101,7 @@ namespace SummonersAssociation
 		//				["Slot"] = 0.25f
 		//			},
 		//			new Dictionary<string, object>() {
-		//				["ProjID"] = ProjectileType<MinionProjectile2>(),
+		//				["ProjID"] =  ProjectileType<MinionProjectile2>(),
 		//				["Slot"] = 1f //This can be omitted aswell (then it'll default to Projectile.minionSlots), only ProjID is mandatory
 		//			}
 		//		}
@@ -111,14 +111,22 @@ namespace SummonersAssociation
 		//  Or if a minion hovers over your head and should never move
 		//	summonersAssociation.Call(
 		//		"AddTeleportConditionMinion",
-		//		ProjectileType<MinionCounterProjectile>()
+		//		 ProjectileType<MinionCounterProjectile>()
 		//	);
 		//	
 		//  Customizable condition (no condition: defaults to false):
 		//	summonersAssociation.Call(
 		//		"AddTeleportConditionMinion",
-		//	    ModContent.ProjectileType<MinionProjectile>(),
+		//	    ProjectileType<MinionProjectile>(),
 		//	    (Func<Projectile, bool>) ((Projectile p) => false) //return false here to prevent it from teleporting, otherwise, true
+		//	);
+		//
+		//	Summon weapons that occupy a non-whole number amount of minionSlots on use should use this to be compatible with loadouts.
+		//	Otherwise it will assume the value in ItemID.Sets.StaffMinionSlotsRequired (which defaults to 1)
+		//	summonersAssociation.Call(
+		//		"AddSlotsFilledPerUse",
+		//		ItemType<MinionItem>(),
+		//		0.5f
 		//	);
 		//
 		//  Get a copy of the stored information about all minions (See SummonersAssociationIntegrationExample.cs for more info)
