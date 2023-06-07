@@ -208,7 +208,7 @@ namespace SummonersAssociation
 						AddMinion(new MinionModel(itemID, buffID, projID));
 					}
 					else {
-						throw new Exception($"{projArg} does not have a suitable type for \"{message}\"");
+						throw new Exception($"\"{projArg}\" does not have a suitable type for \"{message}\"");
 					}
 					return "Success";
 				}
