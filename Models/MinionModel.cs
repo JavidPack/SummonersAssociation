@@ -44,7 +44,7 @@ namespace SummonersAssociation.Models
 		public MinionModel(MinionModel other) {
 			ItemID = other.ItemID;
 			BuffID = other.BuffID;
-			ProjData = other.ProjData;
+			ProjData = new List<ProjModel>(other.ProjData);
 		}
 
 		internal static List<ProjModel> GetProjDataFromProjIDs(List<int> projIDs) {
