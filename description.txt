@@ -20,6 +20,7 @@ Changelog:
 v0.5:
 * Fix missing apostrophe in "Summoners Association"
 * Fix whips appearing in the Minion Books
+* Fix Minion Books not properly counting modded weapons that summon non-whole number amount of minion slots on use (as long as the modders implement it properly)
 * Renamed (Automatic) Minion History Book to (Automatic) Minion Loadout Book
 * Updated the API. Modders will likely need to change their Mod.Call code. See the GitHub wiki for details
 
