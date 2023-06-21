@@ -19,6 +19,7 @@ If you experience issues with Minion Control Rods' reticle feature, let us know 
 Changelog:
 v0.5.1:
 * Fix "uncountable mod minions" text overlapping with second row of buffs
+* Fix Finch Staff minion not despawning properly upon Loadout Book use
 * Added "Loadout Book Speed" slider in Server Config, allowing faster summoning through the Loadout Books. Can be set to instant, defaults to 250% faster
 
 v0.5.0.1:

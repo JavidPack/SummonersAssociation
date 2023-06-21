@@ -113,6 +113,9 @@ namespace SummonersAssociation.Items
 					for (int i = 0; i < Main.maxProjectiles; i++) {
 						Projectile p = Main.projectile[i];
 						if (p.active && p.owner == Main.myPlayer && p.minion) {
+							if (SummonersAssociation.SupportedMinions.FirstOrDefault(m => m.ContainsProjID(p.type)) is MinionModel model)
+								player.ClearBuff(model.BuffID); // This makes sure minions spawned from buffs properly despawn (Finch Staff)
+
 							p.Kill();
 						}
 					}

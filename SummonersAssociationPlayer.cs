@@ -261,7 +261,7 @@ namespace SummonersAssociation
 			if (speedUpItemUse) {
 				float speed = ServerConfig.Instance.LoadoutBookSpeed;
 				if (speed == ServerConfig.LoadoutBookSpeed_Max)
-					speed = 10000;
+					speed = 10000; //Make it "instant"
 
 				return speed;
 			}
