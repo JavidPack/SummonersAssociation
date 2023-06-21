@@ -136,7 +136,7 @@ Mods: {
 				}
 
 				LoadoutBookSpeed: {
-					Label: Loadout Book Speed Acceleration
+					Label: Loadout Book Speed
 					Tooltip: Select how fast minion weapons are used through Loadout Books. At maximum value, it will get used instantly
 				}
 			}
