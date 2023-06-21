@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Runtime.Serialization;
+using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
@@ -30,5 +32,12 @@ namespace SummonersAssociation
 		[JsonIgnore]
 		[ShowDespiteJsonIgnore]
 		public bool Hint => true;
+
+		[OnDeserialized]
+		internal void OnDeserializedMethod(StreamingContext context) {
+			//Correct invalid values
+			Offset.X = Utils.Clamp(Offset.X, 0f, 1f);
+			Offset.Y = Utils.Clamp(Offset.Y, 0f, 1f);
+		}
 	}
 }
