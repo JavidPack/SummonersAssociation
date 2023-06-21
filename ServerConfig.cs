@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,6 +25,14 @@ namespace SummonersAssociation
 		[DefaultValue(false)]
 		public bool PersistentReticle;
 
+		public const float LoadoutBookSpeed_Min = 1f;
+		public const float LoadoutBookSpeed_Max = 20f;
+		[Slider]
+		[Increment(0.5f)]
+		[Range(LoadoutBookSpeed_Min, LoadoutBookSpeed_Max)]
+		[DefaultValue(2.5f)]
+		public float LoadoutBookSpeed;
+
 		[Header("HintToClientConfig")]
 		[JsonIgnore]
 		[ShowDespiteJsonIgnore]
@@ -44,6 +53,12 @@ namespace SummonersAssociation
 				return false;
 			}
 			return base.AcceptClientChanges(pendingConfig, whoAmI, ref message);
+		}
+
+		[OnDeserialized]
+		internal void OnDeserializedMethod(StreamingContext context) {
+			//Correct invalid values
+			LoadoutBookSpeed = Utils.Clamp(LoadoutBookSpeed, LoadoutBookSpeed_Min, LoadoutBookSpeed_Max);
 		}
 	}
 }

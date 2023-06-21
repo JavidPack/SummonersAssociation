@@ -25,6 +25,11 @@ namespace SummonersAssociation
 		internal Queue<Tuple<int, int>> pendingCasts = new Queue<Tuple<int, int>>();
 
 		/// <summary>
+		/// true during item use when <see cref="pendingCasts"/>.Count > 0. Clientside
+		/// </summary>
+		private bool speedUpItemUse = false;
+
+		/// <summary>
 		/// Checks if player can open LoadoutBookUI
 		/// </summary>
 		private bool AllowedToOpenLoadoutBookUI;
@@ -251,6 +256,19 @@ namespace SummonersAssociation
 			justOpenedInventory = PlayerInput.Triggers.JustPressed.Inventory && !Main.playerInventory;
 		}
 
+		public override float UseSpeedMultiplier(Item item)
+		{
+			if (speedUpItemUse) {
+				float speed = ServerConfig.Instance.LoadoutBookSpeed;
+				if (speed == ServerConfig.LoadoutBookSpeed_Max)
+					speed = 10000;
+
+				return speed;
+			}
+
+			return base.UseSpeedMultiplier(item);
+		}
+
 		public override void PreUpdate() {
 			if (Player.whoAmI == Main.myPlayer) {
 				if (autoRevertSelectedItem) {
@@ -262,8 +280,12 @@ namespace SummonersAssociation
 
 				if (Player.itemTime == 0 && Player.itemAnimation == 0) {
 					if (pendingCasts.Count > 0) {
+						speedUpItemUse = true;
 						var cast = pendingCasts.Dequeue();
 						QuickUseItemOfType(cast.Item1);
+					}
+					else {
+						speedUpItemUse = false;
 					}
 				}
 
@@ -297,7 +319,7 @@ namespace SummonersAssociation
 				!Player.cursorItemIconEnabled &&
 				Player.talkNPC == -1 &&
 				Player.itemTime == 0 && Player.itemAnimation == 0 &&
-				!(Player.frozen || Player.webbed || Player.stoned);
+				!Player.CCed;
 		}
 
 		public override void OnRespawn() => UseAutomaticLoadoutBook();

@@ -134,6 +134,11 @@ Mods: {
 					Label: Hint
 					Tooltip: ""
 				}
+
+				LoadoutBookSpeed: {
+					Label: Loadout Book Speed Acceleration
+					Tooltip: Select how fast minion weapons are used through Loadout Books. At maximum value, it will get used instantly
+				}
 			}
 
 			Common.AcceptClientChanges: You are not the server owner so you can not change this config
