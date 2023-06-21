@@ -155,13 +155,15 @@ namespace SummonersAssociation
 					continue;
 				}
 
+				// Used outside of minion buff context below
+				lineOffset = b / buffsPerLine;
+
 				// Check to see if this buff represents a minion or not
 				MinionModel minion = SummonersAssociation.SupportedMinions.SingleOrDefault(minionEntry => minionEntry.BuffID == buffID);
 				if (minion == null) {
 					continue;
 				}
 
-				lineOffset = b / buffsPerLine;
 				xPosition = 32 + (b - lineOffset * buffsPerLine) * 38;
 				yPosition = 76 + lineOffset * 50 + TextureAssets.Buff[buffID].Height();
 				color = new Color(new Vector4(Main.buffAlpha[b]));
