@@ -2,177 +2,177 @@ Mods: {
 	SummonersAssociation: {
 		Items: {
 			BloodTalisman: {
-				// DisplayName: Blood Talisman
-				/* Tooltip:
+				DisplayName: Кровавый талисман
+				Tooltip:
 					'''
-					Sacrifice your lifeforce to greatly strengthen minions
-					'Try not to fall into madness'
-					''' */
+					Пожертвуйте своей жизненной силой, чтобы значительно усилить миньонов
+					'Постарайся не впасть в безумие'
+					'''
 			}
 
 			MinionControlRod: {
-				// DisplayName: Minion Control Rod
-				/* Tooltip:
+				DisplayName: Посох управления миньонами
+				Tooltip:
 					'''
-					'Dominate and direct your minions'
-					Left click to teleport all your minions to the cursor
-					''' */
-				// Rightclick1: Right click on an enemy to target it
-				// Rightclick2Remove: or right click on the reticle to remove it again
-				// Rightclick2Spawn: or right click somewhere else to spawn a reticle your minions will attack
-				// Rightclick3: Right click another players' reticle so he has control over your minions' target
+					'Доминируйте и управляйте своими миньонами'
+					ЛКМ, чтобы телепортировать всех своих миньонов к курсору.
+					'''
+				Rightclick1: ПКМ, чтобы нацелить миньонов на врага
+				Rightclick2Remove: или ПКМ, чтобы удалить цель
+				Rightclick2Spawn: или ПКМ, чтобы установить цель, которую будут атаковать ваши миньоны.
+				Rightclick3: ПКМ по игроку, чтобы он мог контролировать цель ваших миньонов.
 			}
 
 			MinionLoadoutBook: {
-				// DisplayName: Minion Loadout Book
-				/* Tooltip:
+				DisplayName: Книга призыва миньонов
+				Tooltip:
 					'''
-					Left click to summon minions based on loadout
-					Right click to open an UI
-					Scroll wheel over the item icons to adjust the summon count
-					''' */
-				// NoLoadout: No summon loadout specified
-				// ExpectedManaCost: Expected {0} additional mana from current loadout
-				// LoadoutHeader: Loadout:
-				// SummonsPerUse: "{0}: {1}"
+					ЛКМ, чтобы вызвать миньонов в зависимости от снаряжения.
+					ПКМ, чтобы открыть книгу
+					Прокрутите колесиком мыши по значкам предметов, чтобы настроить количество вызовов.
+					'''
+				NoLoadout: Снаряжение призыва не указано
+				ExpectedManaCost: Ожидается {0} маны
+				LoadoutHeader: Призыв:
+				SummonsPerUse: "{0}: {1}"
 			}
 
 			MinionLoadoutBookAuto: {
-				// DisplayName: Automatic Minion Loadout Book
-				/* Tooltip:
+				DisplayName: Книга автоматического призыва миньонов
+				Tooltip:
 					'''
 					{$Items.MinionLoadoutBook.Tooltip}
-					Automatically summons minions when you respawn
-					''' */
+					Автоматически призывает миньонов при возрождении.
+					'''
 			}
 
 			MinionLoadoutBookSimple: {
-				// DisplayName: Minion Selection Book
-				/* Tooltip:
+				DisplayName: Книга выбора миньонов
+				Tooltip:
 					'''
-					Right click to open the UI
-					Left/Right click on the item icon to select it
-					Left click to use the selected item
-					''' */
-				// SelectedNotInInventory: Selected item not found
-				// NoSelected: No item specified
+					ПКМ, чтобы открыть интерфейс
+					ЛКМ/ПКМ по значку предмета, чтобы выбрать
+					ЛКМ, чтобы использовать выбранный предмет
+					'''
+				SelectedNotInInventory: Выбранный предмет не найден
+				NoSelected: Предмет не указан
 			}
 
 			SummonersAssociationCard: {
-				// DisplayName: Summoners' Association Card
-				/* Tooltip:
+				DisplayName: Карта ассоциации призывателей
+				Tooltip:
 					'''
-					'Welcome to the Summoners' Association'
-					Displays Summoner-related information
-					''' */
+					'Добро пожаловать в ассоциацию Призывателей'
+					Отображает информацию о призывателях
+					'''
 			}
 		}
 
 		InfoDisplays: {
-			// MinionInfoDisplay.DisplayName: Minion Slots
-			// SentryInfoDisplay.DisplayName: Sentry Slots
+			MinionInfoDisplay.DisplayName: Слоты миньонов
+			SentryInfoDisplay.DisplayName: Слоты часовых
 		}
 
 		NPCs: {
 			MinionTarget: {
-				// DisplayName: Minion Target
-				// GivenName: "{0} ({1})"
+				DisplayName: Мишень для миньонов
+				GivenName: "{0} ({1})"
 			}
 		}
 
 		Projectiles: {
-			// BloodTalismanProjectile.DisplayName: Blood Talisman Projectile
-			// BloodTalismanTargetProjectile.DisplayName: Blood Talisman Target Projectile
+			BloodTalismanProjectile.DisplayName: Blood Talisman Projectile
+			BloodTalismanTargetProjectile.DisplayName: Blood Talisman Target Projectile
 		}
 
 		Configs: {
 			Config: {
-				// DisplayName: Client Config
+				DisplayName: Конфигурация игрока
 
 				InventoryIcon: {
-					// Label: Inventory Icon Toggle
-					// Tooltip: Toggle the minion/sentry inventory slot elements
+					Label: Переключение значка инвентаря
+					Tooltip: Открыть слоты инвентаря миньона/часового
 				}
 
 				InfoIcon: {
-					// Label: Info Icon Toggle
-					// Tooltip: Toggle the minion/sentry info display entries
+					Label: Переключение значка информации
+					Tooltip: Открыть сведения о миньонах/часовых.
 				}
 
 				Headers: {
-					// Blank: ""
-					// HintToServerConfig: Hint: To go to the server config containing feature toggles, press the '>' arrow in the bottom right
+					Blank: ""
+					HintToServerConfig: Подсказка: чтобы перейти к конфигурации сервера, нажмите стрелку «>» в ​​правом нижнем углу.
 				}
 
 				Offset: {
-					// Label: Inventory Icon Offset
-					// Tooltip: Change the position of the 'Inventory Icons' relative to the screen
-				}
+					Label: Смещение значка инвентаря
+					Tooltip: Изменить положение «значков инвентаря» относительно экрана.
+}
 
 				Hint: {
-					// Label: Hint
-					// Tooltip: ""
+					Label: Подсказка
+					Tooltip: ""
 				}
 			}
 
 			ServerConfig: {
-				// DisplayName: Server Config
+				DisplayName: Конфигурация сервера
 
 				DisableAdvancedTargetingFeature: {
-					// Label: Disable Advanced Targeting Feature
-					// Tooltip: If toggled, disables the targeting reticle feature from the Minion Control Rod
+					Label: Отключить функцию расширенного таргетинга
+					Tooltip: При переключении отключает функцию цели с посоха управления миньонами.
 				}
 
 				PersistentReticle: {
-					// Label: Enable Persistent Reticle
-					// Tooltip: If toggled, makes the reticle from the Minion Control Rod never disappear when going out of range
+					Label: Включить постоянный прицел
+					Tooltip: Если этот параметр включен, цель посоха управления миньонами никогда не исчезает при выходе за пределы досягаемости.
 				}
 
-				// Headers.HintToClientConfig: Hint: To go to the client config containing UI adjustments, press the '<' arrow in the bottom left
+				Headers.HintToClientConfig: Подсказка: чтобы перейти к конфигурации клиента, нажмите стрелку «<» в левом нижнем углу.
 
 				Hint: {
-					// Label: Hint
-					// Tooltip: ""
+					Label: Подсказка
+					Tooltip: ""
 				}
 
 				LoadoutBookSpeed: {
-					// Label: Loadout Book Speed
-					// Tooltip: Select how fast minion weapons are used through Loadout Books. At maximum value, it will get used instantly
+					Label: Скорость призыва миньонов
+					Tooltip: Выберите, насколько быстро миньоны используются с помощью книг призыва. При максимальном значении он будет использоваться мгновенно
 				}
 			}
 
-			// Common.AcceptClientChanges: You are not the server owner so you can not change this config
+			Common.AcceptClientChanges: Вы не являетесь владельцем сервера, поэтому вы не можете изменить эту конфигурацию.
 		}
 
-		// RecipeGroups.RecipeGroupGeneric: "{0} {1}"
+		RecipeGroups.RecipeGroupGeneric: "{0} {1}"
 
 		UI: {
 			Buffs: {
-				// MinionSlots: "{0} / {1}"
-				// UncountableMinions: Uncountable mod minion slots: {0} / {1}
+				MinionSlots: "{0} / {1}"
+				UncountableMinions: Неисчисляемое количество слотов для миньонов: {0} / {1}
 			}
 
-			// MinionSlotsIcon.MinionSlots: "{0} / {1} Minion Slots"
+			MinionSlotsIcon.MinionSlots: "{0} / {1} Слоты миньонов"
 
 			SentrySlotsIcon: {
-				// SentrySlots: "{0} / {1} Sentry Slots"
-				// Counted: "{0}: {1}"
-				// Uncountable: Uncountable
+				SentrySlots: "{0} / {1} Слоты часовых"
+				Counted: "{0}: {1}"
+				Uncountable: Неисчисляемый
 			}
 
 			LoadoutBook: {
-				// SlotsRequired: Slots required: {0}
-				// Selected: (Selected)
-				// NotFoundInInventory: Not found in inventory
-				// SummonCountTotal: "{0}/{1}"
-				// LeftClickClear: Click left to clear loadout
-				// RightClickCancel: Click right to cancel
-				// LeftClickTwiceClear: Click left twice to clear loadout
-				// RightClickSave: Click right to save loadout
-				// OnUseNoWeapons: No summon weapons found
-				// OnUseReset: Reset loadout
-				// OnUseSaved: Saved loadout
-				// OnUseSelected: Selected: {0}
+				SlotsRequired: Требуемые слоты: {0}
+				Selected: (Выбрано)
+				NotFoundInInventory: Не найдено в инвентаре
+				SummonCountTotal: "{0}/{1}"
+				LeftClickClear: Нажмите ЛКМ, чтобы очистить призыв
+				RightClickCancel: Нажмите ПКМ, чтобы отменить
+				LeftClickTwiceClear: Дважды нажмите ЛКМ, чтобы очистить призыв
+				RightClickSave: Нажмите ПКМ, чтобы сохранить призыв
+				OnUseNoWeapons: Оружие призыва не найдено
+				OnUseReset: Сбросить призыв
+				OnUseSaved: Сохраненный призыв
+				OnUseSelected: Выбрано: {0}
 			}
 		}
 	}
