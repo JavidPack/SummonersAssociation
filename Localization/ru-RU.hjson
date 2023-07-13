@@ -17,21 +17,21 @@ Mods: {
 					'Доминируйте и управляйте своими миньонами'
 					ЛКМ, чтобы телепортировать всех своих миньонов к курсору.
 					'''
-				Rightclick1: ПКМ, чтобы нацелить миньонов на врага
+				Rightclick1: ПКМ, чтобы направить миньонов на врага
 				Rightclick2Remove: или ПКМ, чтобы удалить цель
 				Rightclick2Spawn: или ПКМ, чтобы установить цель, которую будут атаковать ваши миньоны.
-				Rightclick3: ПКМ по игроку, чтобы он мог контролировать цель ваших миньонов.
+				Rightclick3: ПКМ по цели другого игрока, чтобы он получил контроль над целью ваших прислужников 
 			}
 
 			MinionLoadoutBook: {
 				DisplayName: Книга призыва миньонов
 				Tooltip:
 					'''
-					ЛКМ, чтобы вызвать миньонов в зависимости от снаряжения.
+					ЛКМ, чтобы вызвать миньонов при помощи выбранного предмета для призыва.
 					ПКМ, чтобы открыть книгу
-					Прокрутите колесиком мыши по значкам предметов, чтобы настроить количество вызовов.
+					Прокрутите колесиком мыши по предмету, чтобы настроить количество призывов.
 					'''
-				NoLoadout: Снаряжение призыва не указано
+				NoLoadout: Предмет не указан
 				ExpectedManaCost: Ожидается {0} маны
 				LoadoutHeader: Призыв:
 				SummonsPerUse: "{0}: {1}"
@@ -50,8 +50,8 @@ Mods: {
 				DisplayName: Книга выбора миньонов
 				Tooltip:
 					'''
-					ПКМ, чтобы открыть интерфейс
-					ЛКМ/ПКМ по значку предмета, чтобы выбрать
+					ПКМ, чтобы открыть меню выбора предмета для призыва
+					ЛКМ/ПКМ по предмета, чтобы выбрать
 					ЛКМ, чтобы использовать выбранный предмет
 					'''
 				SelectedNotInInventory: Выбранный предмет не найден
@@ -63,7 +63,7 @@ Mods: {
 				Tooltip:
 					'''
 					'Добро пожаловать в ассоциацию Призывателей'
-					Отображает информацию о призывателях
+					Отображает информацию, связанную с Призывателями
 					'''
 			}
 		}
@@ -75,14 +75,14 @@ Mods: {
 
 		NPCs: {
 			MinionTarget: {
-				DisplayName: Мишень для миньонов
+				DisplayName: Цель для миньонов
 				GivenName: "{0} ({1})"
 			}
 		}
 
 		Projectiles: {
-			BloodTalismanProjectile.DisplayName: Blood Talisman Projectile
-			BloodTalismanTargetProjectile.DisplayName: Blood Talisman Target Projectile
+			BloodTalismanProjectile.DisplayName: Снаряд Кровавого Талисмана
+			BloodTalismanTargetProjectile.DisplayName: Снаряд, целью которого является Кровавый Талисман
 		}
 
 		Configs: {
@@ -124,7 +124,7 @@ Mods: {
 				}
 
 				PersistentReticle: {
-					Label: Включить постоянный прицел
+					Label: Включить функцию постоянного таргетинга
 					Tooltip: Если этот параметр включен, цель посоха управления миньонами никогда не исчезает при выходе за пределы досягаемости.
 				}
 
@@ -149,29 +149,29 @@ Mods: {
 		UI: {
 			Buffs: {
 				MinionSlots: "{0} / {1}"
-				UncountableMinions: Неисчисляемое количество слотов для миньонов: {0} / {1}
+				UncountableMinions: Неисчисляемое кол-во слотов для миньонов: {0} / {1}
 			}
 
-			MinionSlotsIcon.MinionSlots: "{0} / {1} Слоты миньонов"
+			MinionSlotsIcon.MinionSlots: "{0} / {1} слотов для миньонов"
 
 			SentrySlotsIcon: {
-				SentrySlots: "{0} / {1} Слоты часовых"
+				SentrySlots: "{0} / {1} слотов для часовых"
 				Counted: "{0}: {1}"
-				Uncountable: Неисчисляемый
+				Uncountable: Неисчисляемое кол-во
 			}
 
 			LoadoutBook: {
-				SlotsRequired: Требуемые слоты: {0}
+				SlotsRequired: Требуется слотов: {0}
 				Selected: (Выбрано)
 				NotFoundInInventory: Не найдено в инвентаре
 				SummonCountTotal: "{0}/{1}"
-				LeftClickClear: Нажмите ЛКМ, чтобы очистить призыв
+				LeftClickClear: Нажмите ЛКМ, чтобы очистить выбор
 				RightClickCancel: Нажмите ПКМ, чтобы отменить
-				LeftClickTwiceClear: Дважды нажмите ЛКМ, чтобы очистить призыв
-				RightClickSave: Нажмите ПКМ, чтобы сохранить призыв
-				OnUseNoWeapons: Оружие призыва не найдено
-				OnUseReset: Сбросить призыв
-				OnUseSaved: Сохраненный призыв
+				LeftClickTwiceClear: Дважды нажмите ЛКМ, чтобы очистить выбор
+				RightClickSave: Нажмите ПКМ, чтобы сохранить выбор
+				OnUseNoWeapons: Предмет для призыва не найден
+				OnUseReset: Сбросить выбор
+				OnUseSaved: Выбор был успешно сохранен
 				OnUseSelected: Выбрано: {0}
 			}
 		}
