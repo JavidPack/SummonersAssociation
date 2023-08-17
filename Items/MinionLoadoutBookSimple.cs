@@ -120,13 +120,13 @@ namespace SummonersAssociation.Items
 						}
 					}
 				}
+			}
 
-				var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
-				mPlayer.pendingCasts.Clear();
-				foreach (var item in loadout) {
-					for (int i = 0; i < item.SummonCount; i++) {
-						mPlayer.pendingCasts.Enqueue(new Tuple<int, int>(item.ItemType, 1));
-					}
+			var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
+			mPlayer.pendingCasts.Clear();
+			foreach (var item in loadout) {
+				for (int i = 0; i < item.SummonCount; i++) {
+					mPlayer.pendingCasts.Enqueue(new Tuple<int, int>(item.ItemType, 1));
 				}
 			}
 		}

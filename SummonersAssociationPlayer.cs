@@ -9,6 +9,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using System.IO;
 
 namespace SummonersAssociation
 {
@@ -18,7 +19,7 @@ namespace SummonersAssociation
 		internal int originalSelectedItem;
 		internal bool autoRevertSelectedItem = false;
 
-		internal bool enteredWorld = false;
+		internal bool enteredWorld = false; //Because OnEnterWorld is unreliable
 
 		internal double lastOtherMinions = 0;
 
@@ -271,26 +272,42 @@ namespace SummonersAssociation
 
 		public override void PreUpdate() {
 			if (Player.whoAmI == Main.myPlayer) {
-				if (autoRevertSelectedItem) {
-					if (Player.itemTime == 0 && Player.itemAnimation == 0) {
-						Player.selectedItem = originalSelectedItem;
-						autoRevertSelectedItem = false;
-					}
-				}
-
-				if (Player.itemTime == 0 && Player.itemAnimation == 0) {
-					if (pendingCasts.Count > 0) {
-						speedUpItemUse = true;
-						var cast = pendingCasts.Dequeue();
-						QuickUseItemOfType(cast.Item1);
-					}
-					else {
-						speedUpItemUse = false;
-					}
-				}
-
 				UpdateLoadoutBookUI();
 			}
+
+			//Player.ItemTimeIsZero checks don't work on multiplayer properly, the code works without them
+			if (autoRevertSelectedItem) {
+				if (Player.ItemAnimationEndingOrEnded /*&& Player.ItemTimeIsZero*/) {
+					Player.selectedItem = originalSelectedItem;
+					autoRevertSelectedItem = false;
+				}
+			}
+
+			if (Player.ItemAnimationEndingOrEnded /*&& Player.ItemTimeIsZero*/) {
+				if (pendingCasts.Count > 0) {
+					speedUpItemUse = true;
+					var cast = pendingCasts.Dequeue();
+					QuickUseItemOfType(cast.Item1);
+				}
+				else {
+					speedUpItemUse = false;
+				}
+			}
+		}
+
+		public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) {
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)PacketType.SyncPlayer);
+			packet.Write((byte)Player.whoAmI);
+			packet.Write((bool)enteredWorld);
+			packet.Send(toWho, fromWho);
+		}
+
+		public static void ReceiveSyncPlayer(BinaryReader reader) {
+			byte whoAmI = reader.ReadByte();
+			Player player = Main.player[whoAmI];
+			var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
+			mPlayer.enteredWorld = reader.ReadBoolean();
 		}
 
 		public override void PostUpdate() {

@@ -110,6 +110,9 @@ namespace SummonersAssociation
 					case PacketType.ConfirmTargetToClient:
 						MinionControlRod.HandleConfirmTargetToClient(reader);
 						break;
+					case PacketType.SyncPlayer:
+						SummonersAssociationPlayer.ReceiveSyncPlayer(reader);
+						break;
 					default:
 						Logger.Warn("'None' packet type received");
 						break;
