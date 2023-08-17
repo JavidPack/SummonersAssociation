@@ -211,6 +211,7 @@ namespace SummonersAssociation
 					otherMinions += p.minionSlots;
 				}
 			}
+			otherMinions = Math.Round(otherMinions, 5); //Account for floating point inaccuracy
 			otherMinions -= workingMinions;
 			//Projectiles spawn one tick after the buff is applied, causing "one tick delay" for otherMinion ?? Fix through ModPlayer
 			var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
