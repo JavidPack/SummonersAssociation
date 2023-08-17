@@ -1,0 +1,179 @@
+Mods: {
+	SummonersAssociation: {
+		Items: {
+			BloodTalisman: {
+				DisplayName: 血符
+				Tooltip:
+					'''
+					献祭你的生命以增强召唤物
+					“尽量不要陷入疯狂”
+					'''
+			}
+
+			MinionControlRod: {
+				DisplayName: 召唤物控制杖
+				Tooltip:
+					'''
+					左键点击将你所有的召唤物传送到光标
+					“谁不喜欢令行禁止的召唤物呢？”
+					'''
+				Rightclick1: 右键点击敌人制造一个准星以指引召唤物攻击
+				Rightclick2Remove: 右键再次单击准星可以将其移除
+				Rightclick2Spawn: 右键点击空白地方生成一个准星让你的召唤物强制攻击
+				Rightclick3: 右键点击其它玩家的准星可以让他控制你的召唤物
+			}
+
+			MinionLoadoutBook: {
+				DisplayName: 召唤物配置书
+				Tooltip:
+					'''
+					左键以按照存储好的配置召唤仆从和哨兵
+					右键打开召唤物配置界面
+					在召唤物图标滚动鼠标滚轮或左键单击以调整召唤次数
+					'''
+				NoLoadout: 未指定召唤物配置
+				ExpectedManaCost: 使用当前存储的召唤物配置需要 {0} 魔力
+				LoadoutHeader: 召唤物配置:
+				SummonsPerUse: "{0}: {1}"
+			}
+
+			MinionLoadoutBookAuto: {
+				DisplayName: 召唤物配置自动使用书
+				Tooltip:
+					'''
+					{$Items.MinionLoadoutBook.Tooltip}
+					当你重生时自动使用召唤物配置书
+					'''
+			}
+
+			MinionLoadoutBookSimple: {
+				DisplayName: 召唤物选择书
+				Tooltip:
+					'''
+					右键打开召唤物选择界面
+					左键/右键以选择要召唤的仆从
+					左键以召唤选择的仆从
+					'''
+				SelectedNotInInventory: 选定的召唤物未在背包中检测到
+				NoSelected: 未选中召唤物
+			}
+
+			SummonersAssociationCard: {
+				DisplayName: 召唤物管理卡
+				Tooltip:
+					'''
+					在Buff栏显示召唤物的相关信息
+					“欢迎加入召唤物管理协会”
+					'''
+			}
+		}
+
+		InfoDisplays: {
+			MinionInfoDisplay.DisplayName: 仆从栏位
+			SentryInfoDisplay.DisplayName: 哨兵栏位
+		}
+
+		NPCs: {
+			MinionTarget: {
+				DisplayName: 召唤物目标
+				GivenName: "{0} ({1})"
+			}
+		}
+
+		Projectiles: {
+			BloodTalismanProjectile.DisplayName: Blood Talisman Projectile
+			BloodTalismanTargetProjectile.DisplayName: Blood Talisman Target Projectile
+		}
+
+		Configs: {
+			Config: {
+				DisplayName: 召唤物管理模组本地端设置
+
+				InventoryIcon: {
+					Label: 饰品栏召唤物使用情况显示
+					Tooltip: 是否在饰品栏显示仆从栏/哨兵栏使用情况
+				}
+
+				InfoIcon: {
+					Label: 信息栏召唤物使用情况显示
+					Tooltip: 是否在信息栏显示仆从栏/哨兵栏使用情况
+				}
+
+				Headers: {
+					Blank: ""
+					HintToServerConfig: 提示: 若要修改服务器设置，请按当前界面底部右侧的'>'箭头
+				}
+
+				Offset: {
+					Label: 饰品栏召唤物使用情况显示位置
+					Tooltip: 修改饰品栏召唤物使用情况在屏幕上的显示位置
+				}
+
+				Hint: {
+					Label: 提示
+					Tooltip: ""
+				}
+			}
+
+			ServerConfig: {
+				DisplayName: 召唤物管理模组服务器设置
+
+				DisableAdvancedTargetingFeature: {
+					Label: 禁用召唤物高级控制
+					Tooltip: 如果开启，会禁用召唤物控制杖对召唤物的准星指引
+				}
+
+				PersistentReticle: {
+					Label: 准星永久显示
+					Tooltip: 如果开启，召唤物控制杖的准星在屏幕显示画面外将不会消失
+				}
+
+				Headers.HintToClientConfig: 提示: 若要修改本地端设置，请按当前界面底部左侧的'<'箭头
+
+				Hint: {
+					Label: 提示
+					Tooltip: ""
+				}
+
+				LoadoutBookSpeed: {
+					Label: 召唤物配置书使用速度
+					Tooltip: 调整召唤物配置书使用召唤杖的速度。在最大值时，召唤物将被立即召唤出来。
+				}
+			}
+
+			Common.AcceptClientChanges: 你不是服务器所有者，无法更改此界面的设置选项
+		}
+
+		RecipeGroups.RecipeGroupGeneric: "{0} {1}"
+
+		UI: {
+			Buffs: {
+				MinionSlots: "{0} / {1}"
+				UncountableMinions: 来源模组但无法统计的召唤物栏位: {0} / {1}
+			}
+
+			MinionSlotsIcon.MinionSlots: "{0} / {1} 召唤物栏位"
+
+			SentrySlotsIcon: {
+				SentrySlots: "{0} / {1} 哨兵栏位"
+				Counted: "{0}: {1}"
+				Uncountable: 无法统计的
+			}
+
+			LoadoutBook: {
+				SlotsRequired: 栏位需求: {0}
+				Selected: (当前选择)
+				NotFoundInInventory: 未在背包中检测到此召唤杖
+				SummonCountTotal: "{0}/{1}"
+				LeftClickClear: 左键继续单击以重置配置
+				RightClickCancel: 右键单击以取消
+				LeftClickTwiceClear: 左键双击以重置配置
+				RightClickSave: 右键单击以存储配置
+				OnUseNoWeapons: 未找到召唤武器
+				OnUseReset: 重置配置
+				OnUseSaved: 保存配置
+				OnUseSelected: 当前选择: {0}
+			}
+		}
+	}
+}

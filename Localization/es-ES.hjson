@@ -1,0 +1,179 @@
+Mods: {
+	SummonersAssociation: {
+		Items: {
+			BloodTalisman: {
+				// DisplayName: Blood Talisman
+				/* Tooltip:
+					'''
+					Sacrifice your lifeforce to greatly strengthen minions
+					'Try not to fall into madness'
+					''' */
+			}
+
+			MinionControlRod: {
+				// DisplayName: Minion Control Rod
+				/* Tooltip:
+					'''
+					'Dominate and direct your minions'
+					Left click to teleport all your minions to the cursor
+					''' */
+				// Rightclick1: Right click on an enemy to target it
+				// Rightclick2Remove: or right click on the reticle to remove it again
+				// Rightclick2Spawn: or right click somewhere else to spawn a reticle your minions will attack
+				// Rightclick3: Right click another players' reticle so he has control over your minions' target
+			}
+
+			MinionLoadoutBook: {
+				// DisplayName: Minion Loadout Book
+				/* Tooltip:
+					'''
+					Left click to summon minions based on loadout
+					Right click to open an UI
+					Scroll wheel over the item icons to adjust the summon count
+					''' */
+				// NoLoadout: No summon loadout specified
+				// ExpectedManaCost: Expected {0} additional mana from current loadout
+				// LoadoutHeader: Loadout:
+				// SummonsPerUse: "{0}: {1}"
+			}
+
+			MinionLoadoutBookAuto: {
+				// DisplayName: Automatic Minion Loadout Book
+				/* Tooltip:
+					'''
+					{$Items.MinionLoadoutBook.Tooltip}
+					Automatically summons minions when you respawn
+					''' */
+			}
+
+			MinionLoadoutBookSimple: {
+				// DisplayName: Minion Selection Book
+				/* Tooltip:
+					'''
+					Right click to open the UI
+					Left/Right click on the item icon to select it
+					Left click to use the selected item
+					''' */
+				// SelectedNotInInventory: Selected item not found
+				// NoSelected: No item specified
+			}
+
+			SummonersAssociationCard: {
+				// DisplayName: Summoners' Association Card
+				/* Tooltip:
+					'''
+					'Welcome to the Summoners' Association'
+					Displays Summoner-related information
+					''' */
+			}
+		}
+
+		InfoDisplays: {
+			// MinionInfoDisplay.DisplayName: Minion Slots
+			// SentryInfoDisplay.DisplayName: Sentry Slots
+		}
+
+		NPCs: {
+			MinionTarget: {
+				// DisplayName: Minion Target
+				// GivenName: "{0} ({1})"
+			}
+		}
+
+		Projectiles: {
+			// BloodTalismanProjectile.DisplayName: Blood Talisman Projectile
+			// BloodTalismanTargetProjectile.DisplayName: Blood Talisman Target Projectile
+		}
+
+		Configs: {
+			Config: {
+				// DisplayName: Client Config
+
+				InventoryIcon: {
+					// Label: Inventory Icon Toggle
+					// Tooltip: Toggle the minion/sentry inventory slot elements
+				}
+
+				InfoIcon: {
+					// Label: Info Icon Toggle
+					// Tooltip: Toggle the minion/sentry info display entries
+				}
+
+				Headers: {
+					// Blank: ""
+					// HintToServerConfig: Hint: To go to the server config containing feature toggles, press the '>' arrow in the bottom right
+				}
+
+				Offset: {
+					// Label: Inventory Icon Offset
+					// Tooltip: Change the position of the 'Inventory Icons' relative to the screen
+				}
+
+				Hint: {
+					// Label: Hint
+					// Tooltip: ""
+				}
+			}
+
+			ServerConfig: {
+				// DisplayName: Server Config
+
+				DisableAdvancedTargetingFeature: {
+					// Label: Disable Advanced Targeting Feature
+					// Tooltip: If toggled, disables the targeting reticle feature from the Minion Control Rod
+				}
+
+				PersistentReticle: {
+					// Label: Enable Persistent Reticle
+					// Tooltip: If toggled, makes the reticle from the Minion Control Rod never disappear when going out of range
+				}
+
+				// Headers.HintToClientConfig: Hint: To go to the client config containing UI adjustments, press the '<' arrow in the bottom left
+
+				Hint: {
+					// Label: Hint
+					// Tooltip: ""
+				}
+
+				LoadoutBookSpeed: {
+					// Label: Loadout Book Speed
+					// Tooltip: Select how fast minion weapons are used through Loadout Books. At maximum value, it will get used instantly
+				}
+			}
+
+			// Common.AcceptClientChanges: You are not the server owner so you can not change this config
+		}
+
+		// RecipeGroups.RecipeGroupGeneric: "{0} {1}"
+
+		UI: {
+			Buffs: {
+				// MinionSlots: "{0} / {1}"
+				// UncountableMinions: Uncountable mod minion slots: {0} / {1}
+			}
+
+			// MinionSlotsIcon.MinionSlots: "{0} / {1} Minion Slots"
+
+			SentrySlotsIcon: {
+				// SentrySlots: "{0} / {1} Sentry Slots"
+				// Counted: "{0}: {1}"
+				// Uncountable: Uncountable
+			}
+
+			LoadoutBook: {
+				// SlotsRequired: Slots required: {0}
+				// Selected: (Selected)
+				// NotFoundInInventory: Not found in inventory
+				// SummonCountTotal: "{0}/{1}"
+				// LeftClickClear: Click left to clear loadout
+				// RightClickCancel: Click right to cancel
+				// LeftClickTwiceClear: Click left twice to clear loadout
+				// RightClickSave: Click right to save loadout
+				// OnUseNoWeapons: No summon weapons found
+				// OnUseReset: Reset loadout
+				// OnUseSaved: Saved loadout
+				// OnUseSelected: Selected: {0}
+			}
+		}
+	}
+}

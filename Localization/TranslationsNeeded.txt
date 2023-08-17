@@ -1,0 +1,9 @@
+en-US, 66/66, 100%, missing 0
+de-DE, 0/66, 0%, missing 66
+it-IT, 0/66, 0%, missing 66
+fr-FR, 0/66, 0%, missing 66
+es-ES, 0/66, 0%, missing 66
+ru-RU, 66/66, 100%, missing 0
+zh-Hans, 66/66, 100%, missing 0
+pt-BR, 0/66, 0%, missing 66
+pl-PL, 0/66, 0%, missing 66
