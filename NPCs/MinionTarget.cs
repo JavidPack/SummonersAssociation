@@ -93,10 +93,7 @@ namespace SummonersAssociation.NPCs
 				Hide = true, //Hides this NPC from the Bestiary
 			};
 
-			NPCID.Sets.DebuffImmunitySets[NPC.type] = new Terraria.DataStructures.NPCDebuffImmunityData() {
-				ImmuneToAllBuffsThatAreNotWhips = true,
-				ImmuneToWhips = true
-			};
+			NPCID.Sets.ImmuneToAllBuffs[NPC.type] = true;
 
 			GivenNameText = this.GetLocalization("GivenName");
 		}
