@@ -43,12 +43,12 @@ Contains two configs: 'Server Config' contains settings related to the reticle f
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 [b]Changelog:[/b]
+v0.5.1.6
+* Updated mod to work for stable in October
+
 v0.5.1.5
 * Fixed rounding issue when displaying "Uncountable mod minion slots"
 * Fixed item use not displaying for other players when using the Selection/Loadout Books
-
-v0.5.1.4
-* Chinese localization
 
 [h1]Links[/h1]
 Source code hosted on [url=github.com/JavidPack/SummonersAssociation]GitHub[/url], collaboration welcome
