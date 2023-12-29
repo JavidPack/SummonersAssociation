@@ -277,13 +277,13 @@ namespace SummonersAssociation
 
 			//Player.ItemTimeIsZero checks don't work on multiplayer properly, the code works without them
 			if (autoRevertSelectedItem) {
-				if (Player.ItemAnimationEndingOrEnded /*&& Player.ItemTimeIsZero*/) {
+				if (Player.ItemAnimationEndingOrEnded && Player.reuseDelay == 0 /*&& Player.ItemTimeIsZero*/) {
 					Player.selectedItem = originalSelectedItem;
 					autoRevertSelectedItem = false;
 				}
 			}
 
-			if (Player.ItemAnimationEndingOrEnded /*&& Player.ItemTimeIsZero*/) {
+			if (Player.ItemAnimationEndingOrEnded && Player.reuseDelay == 0 /*&& Player.ItemTimeIsZero*/) {
 				if (pendingCasts.Count > 0) {
 					speedUpItemUse = true;
 					var cast = pendingCasts.Dequeue();
