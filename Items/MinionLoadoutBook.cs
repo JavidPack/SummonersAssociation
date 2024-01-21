@@ -78,7 +78,9 @@ namespace SummonersAssociation.Items
 							loadoutTooltips.Add(new TooltipLine(Mod, "Loadout", LoadoutHeaderText.ToString()));
 						}
 
-						totalManaCost += itemModel.SummonCount * ContentSamples.ItemsByType[itemModel.ItemType].mana; //Rough estimate, could've added this to ItemModel itself, but mana changes through ModifyManaCost won't get detected through this either way
+						if (itemModel.Active) {
+							totalManaCost += itemModel.SummonCount * ContentSamples.ItemsByType[itemModel.ItemType].mana; //Rough estimate, could've added this to ItemModel itself, but mana changes through ModifyManaCost won't get detected through this either way
+						}
 
 						loadoutTooltips.Add(new TooltipLine(Mod, $"ItemModel_{itemModel.Name}", SummonsPerUseText.Format(itemModel.Name, itemModel.SummonCount)) {
 							OverrideColor = itemModel.Active ? Color.White : Color.Red
