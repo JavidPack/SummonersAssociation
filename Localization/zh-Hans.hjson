@@ -140,8 +140,6 @@ Mods: {
 					Tooltip: 调整召唤物配置书使用召唤杖的速度。在最大值时，召唤物将被立即召唤出来。
 				}
 			}
-
-			Common.AcceptClientChanges: 你不是服务器所有者，无法更改此界面的设置选项
 		}
 
 		RecipeGroups.RecipeGroupGeneric: "{0} {1}"

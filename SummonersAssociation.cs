@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace SummonersAssociation
@@ -30,15 +29,10 @@ namespace SummonersAssociation
 		/// </summary>
 		public static int[] BookTypes;
 
-		public static LocalizedText AcceptClientChangesText { get; private set; }
-
 		public override void Load() {
 			Instance = this;
 
 			LoadData();
-
-			string category = $"Configs.Common.";
-			AcceptClientChangesText ??= Language.GetOrRegister(this.GetLocalizationKey($"{category}AcceptClientChanges"));
 		}
 
 		private static void LoadData() {
