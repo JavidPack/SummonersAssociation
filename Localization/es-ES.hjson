@@ -80,11 +80,6 @@ Mods: {
 			}
 		}
 
-		Projectiles: {
-			// BloodTalismanProjectile.DisplayName: Blood Talisman Projectile
-			// BloodTalismanTargetProjectile.DisplayName: Blood Talisman Target Projectile
-		}
-
 		Configs: {
 			Config: {
 				// DisplayName: Client Config
