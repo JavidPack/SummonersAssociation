@@ -2,7 +2,7 @@
 
 This mod aims to fix a few grievances with summons and flesh out Summoner to be a fully developed class. This vision is of a summoner who has their hands full buffing and controlling minions and has little time for other weapons.
 
-[h1]Includes 6 items[/h1]
+[h1]Includes 5 items[/h1]
 [b]Summoners' Association Card[/b] - Displays summoner-related information
 [list]
 [*] Shows the amount of minions summoned (out of the total available) under every minion buff
@@ -12,11 +12,6 @@ This mod aims to fix a few grievances with summons and flesh out Summoner to be 
 [list]
 [*] Left click to teleport all your minions to the cursor
 [*] Right click to target an enemy, or spawn a reticle as a target
-[/list]
-[b]Blood Talisman[/b] - Sacrifice your lifeforce to greatly strengthen minions
-[list]
-[*] Buffs minions at your cursor, gets more powerful the longer you channel it
-[*] Sacrifices your own abilities as a trade off
 [/list]
 [b]Minion Selection Book[/b] - Allows summoning any minion from the inventory
 [list]
@@ -43,11 +38,11 @@ Contains two configs: 'Server Config' contains settings related to the reticle f
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 [b]Changelog:[/b]
+v0.5.2
+* Removed Blood Talisman. Reasons: Wasn't working with sentries, on multi segment enemies, and didn't fit with the direction of a QoL mod. It's also a relic of 1.3 when summoner did not have whips and stronger minions.
+
 v0.5.1.8
 * Fixed Loadout Books estimated mana tooltip counting inactive items
-
-v0.5.1.7
-* Fixed Loadout Books not fully summoning if items with "reuse delay" were selected (for example Spider Staff)
 
 [h1]Links[/h1]
 Source code hosted on [url=github.com/JavidPack/SummonersAssociation]GitHub[/url], collaboration welcome

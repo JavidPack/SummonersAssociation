@@ -1,9 +1,8 @@
 ﻿This mod aims to fix a few grievances with summons and flesh out Summoner to be a fully developed class. This vision is of a summoner who has their hands full buffing and controlling minions and has little time for other weapons.
 
-Includes 6 items:
+Includes 5 items:
 Summoners' Association Card - Displays summoner-related information
 Minion Control Rod - Teleport your minions, select an enemy or spawn a reticle as a target
-Blood Talisman - Sacrifice your own abilities to buff your minions at the cursor
 Minion Selection Book - Allows summoning any minion from the inventory
 Minion Loadout Book - Allows summoning a set of minions from the inventory with one click
 Automatic Minion Loadout Book - Upgraded Minion Loadout Book that summons a minion set automatically after respawn
@@ -17,8 +16,8 @@ Contains two configs: 'Server Config' contains settings related to the reticle f
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 Changelog:
+v0.5.2
+* Removed Blood Talisman. Reasons: Wasn't working with sentries, on multi segment enemies, and didn't fit with the direction of a QoL mod. It's also a relic of 1.3 when summoner did not have whips and stronger minions.
+
 v0.5.1.8
 * Fixed Loadout Books estimated mana tooltip counting inactive items
-
-v0.5.1.7
-* Fixed Loadout Books not fully summoning if items with "reuse delay" were selected (for example Spider Staff)
