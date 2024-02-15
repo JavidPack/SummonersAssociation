@@ -1,15 +1,6 @@
 Mods: {
 	SummonersAssociation: {
 		Items: {
-			BloodTalisman: {
-				DisplayName: 血符
-				Tooltip:
-					'''
-					献祭你的生命以增强召唤物
-					“尽量不要陷入疯狂”
-					'''
-			}
-
 			MinionControlRod: {
 				DisplayName: 召唤物控制杖
 				Tooltip:

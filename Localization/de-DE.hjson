@@ -1,15 +1,6 @@
 Mods: {
 	SummonersAssociation: {
 		Items: {
-			BloodTalisman: {
-				// DisplayName: Blood Talisman
-				/* Tooltip:
-					'''
-					Sacrifice your lifeforce to greatly strengthen minions
-					'Try not to fall into madness'
-					''' */
-			}
-
 			MinionControlRod: {
 				// DisplayName: Minion Control Rod
 				/* Tooltip:

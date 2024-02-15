@@ -1,15 +1,6 @@
 Mods: {
 	SummonersAssociation: {
 		Items: {
-			BloodTalisman: {
-				DisplayName: Кровавый талисман
-				Tooltip:
-					'''
-					Пожертвуйте своей жизненной силой, чтобы значительно усилить прислужников
-					'Постарайся не впасть в безумие'
-					'''
-			}
-
 			MinionControlRod: {
 				DisplayName: Посох управления прислужниками
 				Tooltip:
