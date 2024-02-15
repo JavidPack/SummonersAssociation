@@ -80,11 +80,6 @@ Mods: {
 			}
 		}
 
-		Projectiles: {
-			BloodTalismanProjectile.DisplayName: Снаряд Кровавого Талисмана
-			BloodTalismanTargetProjectile.DisplayName: Снаряд, целью которого является Кровавый Талисман
-		}
-
 		Configs: {
 			Config: {
 				DisplayName: Конфигурация игрока
