@@ -1,163 +1,163 @@
 Mods: {
-	SummonersAssociation: {
-		Items: {
-			MinionControlRod: {
-				// DisplayName: Minion Control Rod
-				/* Tooltip:
-					'''
-					'Dominate and direct your minions'
-					Left click to teleport all your minions to the cursor
-					''' */
-				// Rightclick1: Right click on an enemy to target it
-				// Rightclick2Remove: or right click on the reticle to remove it again
-				// Rightclick2Spawn: or right click somewhere else to spawn a reticle your minions will attack
-				// Rightclick3: Right click another players' reticle so he has control over your minions' target
-			}
+    SummonersAssociation: {
+        Items: {
+            MinionControlRod: {
+                DisplayName: Varita de Control de Súbditos
+                Tooltip:
+                    '''
+                    'Domina y dirige tus súbditos'
+                    Clic izquierdo para teletransportar todos tus súbditos al cursor
+                    '''
+                Rightclick1: Clic derecho en un enemigo para fijarlo como objetivo
+                Rightclick2Remove: o clic derecho en la retícula para removerla de nuevo
+                Rightclick2Spawn: o clic derecho en algún lugar para invocar una retícula que tus súbditos atacarán
+                Rightclick3: Clic derecho en la retícula de otro jugador para que controle el objetivo de tus súbditos
+            }
 
-			MinionLoadoutBook: {
-				// DisplayName: Minion Loadout Book
-				/* Tooltip:
-					'''
-					Left click to summon minions based on loadout
-					Right click to open an UI
-					Scroll wheel over the item icons to adjust the summon count
-					''' */
-				// NoLoadout: No summon loadout specified
-				// ExpectedManaCost: Expected {0} additional mana from current loadout
-				// LoadoutHeader: Loadout:
-				// SummonsPerUse: "{0}: {1}"
-			}
+            MinionLoadoutBook: {
+                DisplayName: Libro de Equipamento de Súbditos
+                Tooltip:
+                    '''
+                    Clic izquierdo para invocar súbditos en función del equipamento
+                    Clic derecho para abrir una interfaz
+                    Usa la rueda del ratón sobre los iconos de los objetos para ajustar el número de invocaciones
+                    '''
+                NoLoadout: No se especificó un equipamento de invocaciones
+                ExpectedManaCost: Se necesita {0} maná adicional para el equipamento actual
+                LoadoutHeader: Equipamento:
+                SummonsPerUse: "{0}: {1}"
+            }
 
-			MinionLoadoutBookAuto: {
-				// DisplayName: Automatic Minion Loadout Book
-				/* Tooltip:
-					'''
-					{$Items.MinionLoadoutBook.Tooltip}
-					Automatically summons minions when you respawn
-					''' */
-			}
+            MinionLoadoutBookAuto: {
+                DisplayName: Libro de Equipamento de Súbditos Automático
+                Tooltip:
+                    '''
+                    {$Items.MinionLoadoutBook.Tooltip}
+                    Automáticamente invoca tus súbditos cuando reapareces
+                    '''
+            }
 
-			MinionLoadoutBookSimple: {
-				// DisplayName: Minion Selection Book
-				/* Tooltip:
-					'''
-					Right click to open the UI
-					Left/Right click on the item icon to select it
-					Left click to use the selected item
-					''' */
-				// SelectedNotInInventory: Selected item not found
-				// NoSelected: No item specified
-			}
+            MinionLoadoutBookSimple: {
+                DisplayName: Libro de Selección de Súbditos
+                Tooltip:
+                    '''
+                    Clic derecho para abrir la interfaz
+                    Clic izquierdo/derecho en el icono del objeto para seleccionarlo
+                    Clic izquierdo para usar el objeto seleccionado
+                    '''
+                SelectedNotInInventory: No se encontró el objeto seleccionado
+                NoSelected: No se especificó ningún objeto
+            }
 
-			SummonersAssociationCard: {
-				// DisplayName: Summoners' Association Card
-				/* Tooltip:
-					'''
-					'Welcome to the Summoners' Association'
-					Displays Summoner-related information
-					''' */
-			}
-		}
+            SummonersAssociationCard: {
+                DisplayName: Tarjeta de la Asociación de Invocadores
+                Tooltip:
+                    '''
+                    'Bienvenido(a) a la Asociación de Invocadores'
+                    Muestra información relacionada con los invocadores
+                    '''
+            }
+        }
 
-		InfoDisplays: {
-			// MinionInfoDisplay.DisplayName: Minion Slots
-			// SentryInfoDisplay.DisplayName: Sentry Slots
-		}
+        InfoDisplays: {
+            MinionInfoDisplay.DisplayName: Espacios de Súbditos
+            SentryInfoDisplay.DisplayName: Espacios de Centinelas
+        }
 
-		NPCs: {
-			MinionTarget: {
-				// DisplayName: Minion Target
-				// GivenName: "{0} ({1})"
-			}
-		}
+        NPCs: {
+            MinionTarget: {
+                DisplayName: Objetivo del Súbdito
+                GivenName: "{0} ({1})"
+            }
+        }
 
-		Configs: {
-			Config: {
-				// DisplayName: Client Config
+        Configs: {
+            Config: {
+                DisplayName: Configuración del Cliente
 
-				InventoryIcon: {
-					// Label: Inventory Icon Toggle
-					// Tooltip: Toggle the minion/sentry inventory slot elements
-				}
+                InventoryIcon: {
+                    Label: Activar Iconos del Inventario
+                    Tooltip: Activa los elementos de la ranura del inventario de súbditos/centinelas
+                }
 
-				InfoIcon: {
-					// Label: Info Icon Toggle
-					// Tooltip: Toggle the minion/sentry info display entries
-				}
+                InfoIcon: {
+                    Label: Activar Icono de Información
+                    Tooltip: Activa la información de súbditos/centinelas
+                }
 
-				Headers: {
-					// Blank: ""
-					// HintToServerConfig: Hint: To go to the server config containing feature toggles, press the '>' arrow in the bottom right
-				}
+                Headers: {
+                    Blank: ""
+                    HintToServerConfig: Sugerencia: Para ir a la configuración del servidor que contiene las funciones, pulsa la flecha «>» en la parte inferior derecha
+                }
 
-				Offset: {
-					// Label: Inventory Icon Offset
-					// Tooltip: Change the position of the 'Inventory Icons' relative to the screen
-				}
+                Offset: {
+                    Label: Ajuste de Iconos del Inventario
+                    Tooltip: Cambia la posición de los ‘Iconos del Inventario’ en relación con la pantalla
+                }
 
-				Hint: {
-					// Label: Hint
-					// Tooltip: ""
-				}
-			}
+                Hint: {
+                    Label: Sugerencia
+                    Tooltip: ""
+                }
+            }
 
-			ServerConfig: {
-				// DisplayName: Server Config
+            ServerConfig: {
+                DisplayName: Configuración del Servidor
 
-				DisableAdvancedTargetingFeature: {
-					// Label: Disable Advanced Targeting Feature
-					// Tooltip: If toggled, disables the targeting reticle feature from the Minion Control Rod
-				}
+                DisableAdvancedTargetingFeature: {
+                    Label: Desactivar Característica de Fijación Avanzada
+                    Tooltip: Si está activado, desactiva la función de retícula de la Varita de Control de Súbditos
+                }
 
-				PersistentReticle: {
-					// Label: Enable Persistent Reticle
-					// Tooltip: If toggled, makes the reticle from the Minion Control Rod never disappear when going out of range
-				}
+                PersistentReticle: {
+                    Label: Activar Retícula Persistente
+                    Tooltip: Si está activado, hace que la retícula de la Varita de Control de Súbditos nunca desaparezca al salir del rango
+                }
 
-				// Headers.HintToClientConfig: Hint: To go to the client config containing UI adjustments, press the '<' arrow in the bottom left
+                Headers.HintToClientConfig: Sugerencia: Para ir a la configuración del cliente que contiene ajustes de la interfaz, pulsa la flecha «<» en la parte inferior izquierda
 
-				Hint: {
-					// Label: Hint
-					// Tooltip: ""
-				}
+                Hint: {
+                    Label: Sugerencia
+                    Tooltip: ""
+                }
 
-				LoadoutBookSpeed: {
-					// Label: Loadout Book Speed
-					// Tooltip: Select how fast minion weapons are used through Loadout Books. At maximum value, it will get used instantly
-				}
-			}
-		}
+                LoadoutBookSpeed: {
+                    Label: Velocidad del Libro de Equipamento
+                    Tooltip: Selecciona qué tan rápido se usan las armas de invocación mediante los Libros de Equipamento. Si se selecciona el valor máximo, se usarán instantáneamente
+                }
+            }
+        }
 
-		// RecipeGroups.RecipeGroupGeneric: "{0} {1}"
+        RecipeGroups.RecipeGroupGeneric: "{0} {1}"
 
-		UI: {
-			Buffs: {
-				// MinionSlots: "{0} / {1}"
-				// UncountableMinions: Uncountable mod minion slots: {0} / {1}
-			}
+        UI: {
+            Buffs: {
+                MinionSlots: "{0} / {1}"
+                UncountableMinions: Espacios de súbditos de mods no contables: {0} / {1}
+            }
 
-			// MinionSlotsIcon.MinionSlots: "{0} / {1} Minion Slots"
+            MinionSlotsIcon.MinionSlots: "{0} / {1} Espacios de Súbditos"
 
-			SentrySlotsIcon: {
-				// SentrySlots: "{0} / {1} Sentry Slots"
-				// Counted: "{0}: {1}"
-				// Uncountable: Uncountable
-			}
+            SentrySlotsIcon: {
+                SentrySlots: "{0} / {1} Espacios de Centinelas"
+                Counted: "{0}: {1}"
+                Uncountable: Incontable
+            }
 
-			LoadoutBook: {
-				// SlotsRequired: Slots required: {0}
-				// Selected: (Selected)
-				// NotFoundInInventory: Not found in inventory
-				// SummonCountTotal: "{0}/{1}"
-				// LeftClickClear: Click left to clear loadout
-				// RightClickCancel: Click right to cancel
-				// LeftClickTwiceClear: Click left twice to clear loadout
-				// RightClickSave: Click right to save loadout
-				// OnUseNoWeapons: No summon weapons found
-				// OnUseReset: Reset loadout
-				// OnUseSaved: Saved loadout
-				// OnUseSelected: Selected: {0}
-			}
-		}
-	}
+            LoadoutBook: {
+                SlotsRequired: Espacios requeridos: {0}
+                Selected: (Seleccionado)
+                NotFoundInInventory: No se encontró en el inventario
+                SummonCountTotal: "{0}/{1}"
+                LeftClickClear: Clic izquierdo para limpiar el equipamento
+                RightClickCancel: Clic derecho para cancelar
+                LeftClickTwiceClear: Clic izquierdo dos veces para limpiar el equipamento
+                RightClickSave: Clic derecho para guardar el equipamento
+                OnUseNoWeapons: No se encontraron armas de invocación
+                OnUseReset: Equipamento restablecido
+                OnUseSaved: Equipamento guardado
+                OnUseSelected: Seleccionados: {0}
+            }
+        }
+    }
 }
