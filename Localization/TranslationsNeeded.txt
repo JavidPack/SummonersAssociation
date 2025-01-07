@@ -2,7 +2,7 @@ en-US, 61/61, 100%, missing 0
 de-DE, 0/61, 0%, missing 61
 it-IT, 0/61, 0%, missing 61
 fr-FR, 0/61, 0%, missing 61
-es-ES, 0/61, 0%, missing 61
+es-ES, 61/61, 100%, missing 0
 ru-RU, 61/61, 100%, missing 0
 zh-Hans, 61/61, 100%, missing 0
 pt-BR, 0/61, 0%, missing 61

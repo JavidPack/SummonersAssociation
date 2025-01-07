@@ -1,163 +1,163 @@
 Mods: {
-    SummonersAssociation: {
-        Items: {
-            MinionControlRod: {
-                DisplayName: Varita de Control de Súbditos
-                Tooltip:
-                    '''
-                    'Domina y dirige tus súbditos'
-                    Clic izquierdo para teletransportar todos tus súbditos al cursor
-                    '''
-                Rightclick1: Clic derecho en un enemigo para fijarlo como objetivo
-                Rightclick2Remove: o clic derecho en la retícula para removerla de nuevo
-                Rightclick2Spawn: o clic derecho en algún lugar para invocar una retícula que tus súbditos atacarán
-                Rightclick3: Clic derecho en la retícula de otro jugador para que controle el objetivo de tus súbditos
-            }
+	SummonersAssociation: {
+		Items: {
+			MinionControlRod: {
+				DisplayName: Varita de Control de Súbditos
+				Tooltip:
+					'''
+					'Domina y dirige tus súbditos'
+					Clic izquierdo para teletransportar todos tus súbditos al cursor
+					'''
+				Rightclick1: Clic derecho en un enemigo para fijarlo como objetivo
+				Rightclick2Remove: o clic derecho en la retícula para removerla de nuevo
+				Rightclick2Spawn: o clic derecho en algún lugar para invocar una retícula que tus súbditos atacarán
+				Rightclick3: Clic derecho en la retícula de otro jugador para que controle el objetivo de tus súbditos
+			}
 
-            MinionLoadoutBook: {
-                DisplayName: Libro de Equipamento de Súbditos
-                Tooltip:
-                    '''
-                    Clic izquierdo para invocar súbditos en función del equipamento
-                    Clic derecho para abrir una interfaz
-                    Usa la rueda del ratón sobre los iconos de los objetos para ajustar el número de invocaciones
-                    '''
-                NoLoadout: No se especificó un equipamento de invocaciones
-                ExpectedManaCost: Se necesita {0} maná adicional para el equipamento actual
-                LoadoutHeader: Equipamento:
-                SummonsPerUse: "{0}: {1}"
-            }
+			MinionLoadoutBook: {
+				DisplayName: Libro de Equipamento de Súbditos
+				Tooltip:
+					'''
+					Clic izquierdo para invocar súbditos en función del equipamento
+					Clic derecho para abrir una interfaz
+					Usa la rueda del ratón sobre los iconos de los objetos para ajustar el número de invocaciones
+					'''
+				NoLoadout: No se especificó un equipamento de invocaciones
+				ExpectedManaCost: Se necesita {0} maná adicional para el equipamento actual
+				LoadoutHeader: Equipamento:
+				SummonsPerUse: "{0}: {1}"
+			}
 
-            MinionLoadoutBookAuto: {
-                DisplayName: Libro de Equipamento de Súbditos Automático
-                Tooltip:
-                    '''
-                    {$Items.MinionLoadoutBook.Tooltip}
-                    Automáticamente invoca tus súbditos cuando reapareces
-                    '''
-            }
+			MinionLoadoutBookAuto: {
+				DisplayName: Libro de Equipamento de Súbditos Automático
+				Tooltip:
+					'''
+					{$Items.MinionLoadoutBook.Tooltip}
+					Automáticamente invoca tus súbditos cuando reapareces
+					'''
+			}
 
-            MinionLoadoutBookSimple: {
-                DisplayName: Libro de Selección de Súbditos
-                Tooltip:
-                    '''
-                    Clic derecho para abrir la interfaz
-                    Clic izquierdo/derecho en el icono del objeto para seleccionarlo
-                    Clic izquierdo para usar el objeto seleccionado
-                    '''
-                SelectedNotInInventory: No se encontró el objeto seleccionado
-                NoSelected: No se especificó ningún objeto
-            }
+			MinionLoadoutBookSimple: {
+				DisplayName: Libro de Selección de Súbditos
+				Tooltip:
+					'''
+					Clic derecho para abrir la interfaz
+					Clic izquierdo/derecho en el icono del objeto para seleccionarlo
+					Clic izquierdo para usar el objeto seleccionado
+					'''
+				SelectedNotInInventory: No se encontró el objeto seleccionado
+				NoSelected: No se especificó ningún objeto
+			}
 
-            SummonersAssociationCard: {
-                DisplayName: Tarjeta de la Asociación de Invocadores
-                Tooltip:
-                    '''
-                    'Bienvenido(a) a la Asociación de Invocadores'
-                    Muestra información relacionada con los invocadores
-                    '''
-            }
-        }
+			SummonersAssociationCard: {
+				DisplayName: Tarjeta de la Asociación de Invocadores
+				Tooltip:
+					'''
+					'Bienvenido(a) a la Asociación de Invocadores'
+					Muestra información relacionada con los invocadores
+					'''
+			}
+		}
 
-        InfoDisplays: {
-            MinionInfoDisplay.DisplayName: Espacios de Súbditos
-            SentryInfoDisplay.DisplayName: Espacios de Centinelas
-        }
+		InfoDisplays: {
+			MinionInfoDisplay.DisplayName: Espacios de Súbditos
+			SentryInfoDisplay.DisplayName: Espacios de Centinelas
+		}
 
-        NPCs: {
-            MinionTarget: {
-                DisplayName: Objetivo del Súbdito
-                GivenName: "{0} ({1})"
-            }
-        }
+		NPCs: {
+			MinionTarget: {
+				DisplayName: Objetivo del Súbdito
+				GivenName: "{0} ({1})"
+			}
+		}
 
-        Configs: {
-            Config: {
-                DisplayName: Configuración del Cliente
+		Configs: {
+			Config: {
+				DisplayName: Configuración del Cliente
 
-                InventoryIcon: {
-                    Label: Activar Iconos del Inventario
-                    Tooltip: Activa los elementos de la ranura del inventario de súbditos/centinelas
-                }
+				InventoryIcon: {
+					Label: Activar Iconos del Inventario
+					Tooltip: Activa los elementos de la ranura del inventario de súbditos/centinelas
+				}
 
-                InfoIcon: {
-                    Label: Activar Icono de Información
-                    Tooltip: Activa la información de súbditos/centinelas
-                }
+				InfoIcon: {
+					Label: Activar Icono de Información
+					Tooltip: Activa la información de súbditos/centinelas
+				}
 
-                Headers: {
-                    Blank: ""
-                    HintToServerConfig: Sugerencia: Para ir a la configuración del servidor que contiene las funciones, pulsa la flecha «>» en la parte inferior derecha
-                }
+				Headers: {
+					Blank: ""
+					HintToServerConfig: Sugerencia: Para ir a la configuración del servidor que contiene las funciones, pulsa la flecha «>» en la parte inferior derecha
+				}
 
-                Offset: {
-                    Label: Ajuste de Iconos del Inventario
-                    Tooltip: Cambia la posición de los ‘Iconos del Inventario’ en relación con la pantalla
-                }
+				Offset: {
+					Label: Ajuste de Iconos del Inventario
+					Tooltip: Cambia la posición de los ‘Iconos del Inventario’ en relación con la pantalla
+				}
 
-                Hint: {
-                    Label: Sugerencia
-                    Tooltip: ""
-                }
-            }
+				Hint: {
+					Label: Sugerencia
+					Tooltip: ""
+				}
+			}
 
-            ServerConfig: {
-                DisplayName: Configuración del Servidor
+			ServerConfig: {
+				DisplayName: Configuración del Servidor
 
-                DisableAdvancedTargetingFeature: {
-                    Label: Desactivar Característica de Fijación Avanzada
-                    Tooltip: Si está activado, desactiva la función de retícula de la Varita de Control de Súbditos
-                }
+				DisableAdvancedTargetingFeature: {
+					Label: Desactivar Característica de Fijación Avanzada
+					Tooltip: Si está activado, desactiva la función de retícula de la Varita de Control de Súbditos
+				}
 
-                PersistentReticle: {
-                    Label: Activar Retícula Persistente
-                    Tooltip: Si está activado, hace que la retícula de la Varita de Control de Súbditos nunca desaparezca al salir del rango
-                }
+				PersistentReticle: {
+					Label: Activar Retícula Persistente
+					Tooltip: Si está activado, hace que la retícula de la Varita de Control de Súbditos nunca desaparezca al salir del rango
+				}
 
-                Headers.HintToClientConfig: Sugerencia: Para ir a la configuración del cliente que contiene ajustes de la interfaz, pulsa la flecha «<» en la parte inferior izquierda
+				Headers.HintToClientConfig: Sugerencia: Para ir a la configuración del cliente que contiene ajustes de la interfaz, pulsa la flecha «<» en la parte inferior izquierda
 
-                Hint: {
-                    Label: Sugerencia
-                    Tooltip: ""
-                }
+				Hint: {
+					Label: Sugerencia
+					Tooltip: ""
+				}
 
-                LoadoutBookSpeed: {
-                    Label: Velocidad del Libro de Equipamento
-                    Tooltip: Selecciona qué tan rápido se usan las armas de invocación mediante los Libros de Equipamento. Si se selecciona el valor máximo, se usarán instantáneamente
-                }
-            }
-        }
+				LoadoutBookSpeed: {
+					Label: Velocidad del Libro de Equipamento
+					Tooltip: Selecciona qué tan rápido se usan las armas de invocación mediante los Libros de Equipamento. Si se selecciona el valor máximo, se usarán instantáneamente
+				}
+			}
+		}
 
-        RecipeGroups.RecipeGroupGeneric: "{0} {1}"
+		RecipeGroups.RecipeGroupGeneric: "{0} {1}"
 
-        UI: {
-            Buffs: {
-                MinionSlots: "{0} / {1}"
-                UncountableMinions: Espacios de súbditos de mods no contables: {0} / {1}
-            }
+		UI: {
+			Buffs: {
+				MinionSlots: "{0} / {1}"
+				UncountableMinions: Espacios de súbditos de mods no contables: {0} / {1}
+			}
 
-            MinionSlotsIcon.MinionSlots: "{0} / {1} Espacios de Súbditos"
+			MinionSlotsIcon.MinionSlots: "{0} / {1} Espacios de Súbditos"
 
-            SentrySlotsIcon: {
-                SentrySlots: "{0} / {1} Espacios de Centinelas"
-                Counted: "{0}: {1}"
-                Uncountable: Incontable
-            }
+			SentrySlotsIcon: {
+				SentrySlots: "{0} / {1} Espacios de Centinelas"
+				Counted: "{0}: {1}"
+				Uncountable: Incontable
+			}
 
-            LoadoutBook: {
-                SlotsRequired: Espacios requeridos: {0}
-                Selected: (Seleccionado)
-                NotFoundInInventory: No se encontró en el inventario
-                SummonCountTotal: "{0}/{1}"
-                LeftClickClear: Clic izquierdo para limpiar el equipamento
-                RightClickCancel: Clic derecho para cancelar
-                LeftClickTwiceClear: Clic izquierdo dos veces para limpiar el equipamento
-                RightClickSave: Clic derecho para guardar el equipamento
-                OnUseNoWeapons: No se encontraron armas de invocación
-                OnUseReset: Equipamento restablecido
-                OnUseSaved: Equipamento guardado
-                OnUseSelected: Seleccionados: {0}
-            }
-        }
-    }
+			LoadoutBook: {
+				SlotsRequired: Espacios requeridos: {0}
+				Selected: (Seleccionado)
+				NotFoundInInventory: No se encontró en el inventario
+				SummonCountTotal: "{0}/{1}"
+				LeftClickClear: Clic izquierdo para limpiar el equipamento
+				RightClickCancel: Clic derecho para cancelar
+				LeftClickTwiceClear: Clic izquierdo dos veces para limpiar el equipamento
+				RightClickSave: Clic derecho para guardar el equipamento
+				OnUseNoWeapons: No se encontraron armas de invocación
+				OnUseReset: Equipamento restablecido
+				OnUseSaved: Equipamento guardado
+				OnUseSelected: Seleccionados: {0}
+			}
+		}
+	}
 }
