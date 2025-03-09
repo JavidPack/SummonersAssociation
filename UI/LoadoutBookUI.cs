@@ -552,7 +552,7 @@ namespace SummonersAssociation.UI
             for (int i = 0; i < itemModels.Count; i++) {
                 ItemModel itemModel = itemModels[i];
                 if (itemModel.Active) {
-                    newSum += itemModel.SummonCount * itemModel.GetMinionSlotsExtended();;
+                    newSum += itemModel.SummonCount * itemModel.GetMinionSlotsExtended();
                 }
             }
 
