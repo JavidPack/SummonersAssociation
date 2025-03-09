@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using SummonersAssociation.ModSupport;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -92,6 +94,14 @@ namespace SummonersAssociation.Models
 			InventoryIndex = Main.InventorySlotsTotal + i;
 			Active = false;
 		}
+
+        /// <summary>
+		/// Get amount of minion slots consumed by a summoner item in a more trustable way,
+        /// potentially supporting different mods
+		/// </summary>
+        public int GetMinionSlotsExtended() {
+            return CalamityMod.MinionToSlotsMap.GetValueOrDefault(this.Name, 1);
+        }
 
 		public override string ToString() =>
 			"Name: " + Name + "; Active: " + Active + "; Index: " + InventoryIndex + "; Count: " + SummonCount;

@@ -545,17 +545,20 @@ namespace SummonersAssociation.UI
 		/// <summary>
 		/// summonCountTotal minus all the summon counts weighted with the slots needed
 		/// </summary>
-		public static float GetSummonCountDelta() {
-			float sum = summonCountTotal;
-			float newSum = 0;
-			for (int i = 0; i < itemModels.Count; i++) {
-				ItemModel itemModel = itemModels[i];
-				if (itemModel.Active) {
-					newSum += itemModel.SummonCount * itemModel.SlotsFilledPerUse;
-				}
-			}
-			return sum - newSum;
-		}
+        public static float GetSummonCountDelta() {
+            float sum = summonCountTotal;
+            float newSum = 0;
+
+            for (int i = 0; i < itemModels.Count; i++) {
+                ItemModel itemModel = itemModels[i];
+                if (itemModel.Active) {
+                    int minionSlots = itemModel.GetMinionSlotsExtended();
+                    newSum += itemModel.SummonCount * minionSlots;
+                }
+            }
+
+            return sum - newSum;
+        }
 
 		/// <summary>
 		/// Called when the UI is about to appear

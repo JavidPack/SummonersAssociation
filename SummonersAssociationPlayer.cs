@@ -152,7 +152,7 @@ namespace SummonersAssociation
 									PlayerInput.ScrollWheelDelta = 0;
 									//Only allow to increase if total summon count differential is above or
 									//equal to the number of slots needed to summon
-									if (LoadoutBookUI.summonCountDelta >= highlighted.SlotsFilledPerUse) {
+									if (LoadoutBookUI.summonCountDelta >= highlighted.GetMinionSlotsExtended()) {
 										triggered = true;
 
 										highlighted.SummonCount++;
