@@ -20,7 +20,7 @@ namespace SummonersAssociation.ModSupport
                 { "Endogenesis", 10 },
                 { "Flowers of Mortality", 3 },
                 { "King of Constellations, Tenryū", 4 },
-                { "Lilies of finality", 2 },
+                { "Lilies of Finality", 2 },
                 { "Metastasis", 4 },
                 { "Mutated Truffle", 3 },
                 { "Perdition", 5 },
