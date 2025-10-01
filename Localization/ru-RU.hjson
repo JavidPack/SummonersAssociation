@@ -162,6 +162,9 @@ Mods: {
 				OnUseReset: Выбор был успешно сброшен
 				OnUseSaved: Выбор был успешно сохранен
 				OnUseSelected: Выбрано: {0}
+				// FillToggleTooltip: Click to fill remaining slots
+				// FillToggleEnabled: "[c/{0}:Enabled]"
+				// FillToggleDisabled: Disabled
 			}
 		}
 	}

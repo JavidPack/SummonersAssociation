@@ -162,6 +162,9 @@ Mods: {
 				OnUseReset: 重置配置
 				OnUseSaved: 保存配置
 				OnUseSelected: 当前选择: {0}
+				// FillToggleTooltip: Click to fill remaining slots
+				// FillToggleEnabled: "[c/{0}:Enabled]"
+				// FillToggleDisabled: Disabled
 			}
 		}
 	}

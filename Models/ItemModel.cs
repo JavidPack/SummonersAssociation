@@ -36,6 +36,11 @@ namespace SummonersAssociation.Models
 		public byte SummonCount { get; set; }
 
 		/// <summary>
+		/// If this is marked to fill remaining (unused) slots
+		/// </summary>
+		public bool FillRemainingSlots { get; set; }
+
+		/// <summary>
 		/// How many minion slots the weapon "creates" on use
 		/// </summary>
 		public float SlotsFilledPerUse => ItemType > -1 && ItemType < ItemLoader.ItemCount ? ItemID.Sets.StaffMinionSlotsRequired[ItemType] : 1;
@@ -46,12 +51,18 @@ namespace SummonersAssociation.Models
 		public bool Active { get; set; }
 
 		/// <summary>
+		/// If it has any uses in it. Check <see cref="Active"/> separately if needed
+		/// </summary>
+		public bool NonEmpty => FillRemainingSlots || SummonCount > 0;
+
+		/// <summary>
 		/// Default constructor. Used in Load
 		/// </summary>
 		public ItemModel() {
 			ItemType = 0;
 			InventoryIndex = 0;
 			SummonCount = 0;
+			FillRemainingSlots = false;
 			Active = false;
 		}
 
@@ -62,25 +73,28 @@ namespace SummonersAssociation.Models
 			ItemType = itemModel.ItemType;
 			InventoryIndex = itemModel.InventoryIndex;
 			SummonCount = itemModel.SummonCount;
+			FillRemainingSlots = itemModel.FillRemainingSlots;
 			Active = itemModel.Active;
 		}
 
 		/// <summary>
 		/// Convenience constructor
 		/// </summary>
-		public ItemModel(Item item, int inventoryIndex, byte summonCount = 0, bool active = true) {
+		public ItemModel(Item item, int inventoryIndex, byte summonCount = 0, bool fillRemainingSlots = false, bool active = true) {
 			//If created from an item, it is by definition active
 			ItemType = item.type;
 			InventoryIndex = inventoryIndex;
 			SummonCount = summonCount;
+			FillRemainingSlots = fillRemainingSlots;
 			Active = active;
 		}
 
 		/// <summary>
-		/// Set current itemModel SummonCount to what the loadout had
+		/// Set current itemModel values to what the loadout had
 		/// </summary>
 		public void OverrideValuesFromLoadout(ItemModel loadoutModel) {
 			SummonCount = loadoutModel.SummonCount;
+			FillRemainingSlots = loadoutModel.FillRemainingSlots;
 			Active = true;
 		}
 
@@ -94,7 +108,7 @@ namespace SummonersAssociation.Models
 		}
 
 		public override string ToString() =>
-			"Name: " + Name + "; Active: " + Active + "; Index: " + InventoryIndex + "; Count: " + SummonCount;
+			"Name: " + Name + "; Active: " + Active + "; Index: " + InventoryIndex + "; Count: " + SummonCount + "; Fill: " + FillRemainingSlots;
 
 		public TagCompound SerializeData() {
 			var item = new Item();
@@ -103,10 +117,10 @@ namespace SummonersAssociation.Models
 				{"item", item },
 				{nameof(InventoryIndex), InventoryIndex },
 				{nameof(SummonCount), SummonCount },
+				{nameof(FillRemainingSlots), FillRemainingSlots },
 				{nameof(Active), Active },
 			};
 		}
-
 
 		/// <summary>
 		/// Sorted by InventoryIndex
@@ -115,26 +129,46 @@ namespace SummonersAssociation.Models
 
 		public static ItemModel Load(TagCompound tag) {
 			var item = tag.Get<Item>("item");
-			return new ItemModel {
-				ItemType = item.type,
-				InventoryIndex = tag.GetInt(nameof(InventoryIndex)),
-				SummonCount = tag.GetByte(nameof(SummonCount)),
-				Active = tag.GetBool(nameof(Active))
-			};
+			//Previous versions here
+			//v0.5.4: FillRemainingSlots feature
+			if (!tag.ContainsKey(nameof(FillRemainingSlots))) {
+				return new ItemModel {
+					ItemType = item.type,
+					InventoryIndex = tag.GetInt(nameof(InventoryIndex)),
+					SummonCount = tag.GetByte(nameof(SummonCount)),
+					FillRemainingSlots = false,
+					Active = tag.GetBool(nameof(Active))
+				};
+			}
+			else {
+				//Latest version here
+				return new ItemModel {
+					ItemType = item.type,
+					InventoryIndex = tag.GetInt(nameof(InventoryIndex)),
+					SummonCount = tag.GetByte(nameof(SummonCount)),
+					FillRemainingSlots = tag.GetBool(nameof(FillRemainingSlots)),
+					Active = tag.GetBool(nameof(Active))
+				};
+			}
 		}
 
 		public void NetReceive(BinaryReader reader) {
 			ItemType = reader.ReadInt32();
 			InventoryIndex = reader.ReadInt32();
 			SummonCount = reader.ReadByte();
-			Active = reader.ReadBoolean();
+			BitsByte flags = reader.ReadByte();
+			FillRemainingSlots = flags[0];
+			Active = flags[1];
 		}
 
 		public void NetSend(BinaryWriter writer) {
 			writer.Write((int)ItemType);
 			writer.Write((int)InventoryIndex);
 			writer.Write((byte)SummonCount);
-			writer.Write((bool)Active);
+			BitsByte flags = new BitsByte();
+			flags[0] = FillRemainingSlots;
+			flags[1] = Active;
+			writer.Write((byte)flags);
 		}
 	}
 }

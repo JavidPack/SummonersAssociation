@@ -103,9 +103,12 @@ namespace SummonersAssociation.Items
 		}
 
 		public void EnqueueSpawns(Player player) {
+			bool containsSummons = loadout.Any(x => x.Active && x.NonEmpty);
+
+			if (!containsSummons) return;
+
 			if (player.whoAmI == Main.myPlayer) {
-				int count = loadout.Sum(x => x.Active ? x.SummonCount : 0);
-				bool canKillMinions = count >= 1;
+				bool canKillMinions = true;
 				if (Array.IndexOf(SummonersAssociation.BookTypes, player.HeldItem.type) == 0) {
 					canKillMinions = false;
 				}
@@ -124,9 +127,30 @@ namespace SummonersAssociation.Items
 
 			var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
 			mPlayer.pendingCasts.Clear();
+
+			float slotCount = 0;
+
+			//Based on selected count
 			foreach (var item in loadout) {
 				for (int i = 0; i < item.SummonCount; i++) {
+					slotCount += item.SlotsFilledPerUse;
 					mPlayer.pendingCasts.Enqueue(new Tuple<int, int>(item.ItemType, 1));
+				}
+			}
+			
+			//Based on filling remaining slots
+			if (slotCount < player.maxMinions && loadout.Any(x => x.Active && x.FillRemainingSlots)) {
+				//Round-robin through each selected until max reached
+				while (slotCount < player.maxMinions) {
+					foreach (var item in loadout) {
+						if (!item.FillRemainingSlots) continue;
+
+						float slotsFilled = item.SlotsFilledPerUse;
+						if (slotsFilled <= 0) slotsFilled = 1; //This prevents an infinite loop, just in case
+
+						slotCount += slotsFilled;
+						mPlayer.pendingCasts.Enqueue(new Tuple<int, int>(item.ItemType, 1));
+					}
 				}
 			}
 		}
