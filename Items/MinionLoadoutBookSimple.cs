@@ -125,34 +125,43 @@ namespace SummonersAssociation.Items
 				}
 			}
 
-			var mPlayer = player.GetModPlayer<SummonersAssociationPlayer>();
-			mPlayer.pendingCasts.Clear();
+			var queue = player.GetModPlayer<SummonersAssociationPlayer>().pendingCasts;
+			queue.Clear();
 
 			float slotCount = 0;
+			FillSelectedSlots(queue, ref slotCount);
 
-			//Based on selected count
+			FillRemainingSlots(player.maxMinions, queue, ref slotCount);
+		}
+
+		private void FillSelectedSlots(Queue<Tuple<int, int>> queue, ref float slotCount) {
 			foreach (var item in loadout) {
 				for (int i = 0; i < item.SummonCount; i++) {
 					slotCount += item.SlotsFilledPerUse;
-					mPlayer.pendingCasts.Enqueue(new Tuple<int, int>(item.ItemType, 1));
-				}
-			}
-			
-			//Based on filling remaining slots
-			if (slotCount < player.maxMinions && loadout.Any(x => x.Active && x.FillRemainingSlots)) {
-				//Round-robin through each selected until max reached
-				while (slotCount < player.maxMinions) {
-					foreach (var item in loadout) {
-						if (!item.FillRemainingSlots) continue;
-
-						float slotsFilled = item.SlotsFilledPerUse;
-						if (slotsFilled <= 0) slotsFilled = 1; //This prevents an infinite loop, just in case
-
-						slotCount += slotsFilled;
-						mPlayer.pendingCasts.Enqueue(new Tuple<int, int>(item.ItemType, 1));
-					}
+					queue.Enqueue(new Tuple<int, int>(item.ItemType, 1));
 				}
 			}
 		}
+
+		private void FillRemainingSlots(int maxMinions, Queue<Tuple<int, int>> queue, ref float slotCount) {
+			if (!FreeSlots(slotCount, maxMinions) || !loadout.Any(x => x.Active && x.FillRemainingSlots)) return;
+
+			//Round-robin through each selected until max reached
+			while (FreeSlots(slotCount, maxMinions)) {
+				foreach (var item in loadout) {
+					if (!item.FillRemainingSlots) continue;
+
+					float slotsFilled = item.SlotsFilledPerUse;
+					if (slotsFilled <= 0) slotsFilled = 1; //This prevents an infinite loop, just in case
+
+					slotCount += slotsFilled;
+					queue.Enqueue(new Tuple<int, int>(item.ItemType, 1));
+
+					if (!FreeSlots(slotCount, maxMinions)) return;
+				}
+			}
+		}
+
+		private static bool FreeSlots(float slotsFilled, int maxSlots) => slotsFilled < maxSlots;
 	}
 }
