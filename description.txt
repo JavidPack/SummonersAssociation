@@ -17,9 +17,10 @@ Contains two configs: 'Server Config' contains settings related to the reticle f
 If you experience issues with Minion Control Rods' reticle feature, let us know on the homepage; You can continue using this mod by disabling the feature in the 'Server Config'
 
 Changelog:
+v0.5.4
+* Added a small mod icon
+* Removed blank space around the Summoner's Association Card sprite
+
 v0.5.3
 * Added "Toggle Persistent Buffs" server config setting, on by default
 * Added "AddPersistentBuff" Mod Call
-
-v0.5.2.1
-* Fixed a bug where Automatic Minion Loadout Book would not work on respawn if an item was used at the moment of death
