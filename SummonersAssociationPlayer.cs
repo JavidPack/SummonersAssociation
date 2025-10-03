@@ -72,7 +72,7 @@ namespace SummonersAssociation
 				Item item = Player.inventory[i];
 				if (item.type == SummonersAssociation.BookTypes[2]) {
 					var book = (MinionLoadoutBookSimple)item.ModItem;
-					if (book.loadout.Sum(x => x.Active ? x.SummonCount : 0) > 0) slot = i;
+					if (book.loadout.Any(x => x.Active && x.NonEmpty)) slot = i;
 				}
 			}
 			if (slot != -1) {
@@ -101,7 +101,7 @@ namespace SummonersAssociation
 				LoadoutBookUI.visible = false;
 				if (LoadoutBookUI.heldItemIndex == Main.LocalPlayer.selectedItem) {
 					//Keep it updated
-					LoadoutBookUI.summonCountTotal = Player.maxMinions;
+					LoadoutBookUI.summonCountTotal = Main.maxProjectiles;
 
 					if (LoadoutBookUI.middle) {
 						if (!LoadoutBookUI.simple) {
@@ -148,7 +148,11 @@ namespace SummonersAssociation
 							if (!LoadoutBookUI.simple) {
 								bool triggered = false;
 
-								if (TriggerInc) {
+								if ((mouseLeftPressed || mouseRightPressed) && LoadoutBookUI.isMouseWithinFillToggle) {
+									triggered = true;
+									highlighted.FillRemainingSlots ^= true;
+								}
+								else if (TriggerInc) {
 									PlayerInput.ScrollWheelDelta = 0;
 									//Only allow to increase if total summon count differential is above or
 									//equal to the number of slots needed to summon

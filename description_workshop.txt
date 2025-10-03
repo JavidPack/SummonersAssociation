@@ -48,6 +48,9 @@ If you experience issues with Minion Control Rods' reticle feature, let us know 
 
 [b]Changelog:[/b]
 v0.5.4
+* Added additional behaviors to Minion Loadout Book and its upgrade:
+    * Can now select regardless of player's minion limit
+    * Added an additional button next to each weapon that when clicked, fills any remaining minion slots with this weapon
 * Added a small mod icon
 * Removed blank space around the Summoner's Association Card sprite
 

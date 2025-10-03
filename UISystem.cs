@@ -46,6 +46,10 @@ namespace SummonersAssociation
 		public static LocalizedText LoadoutBookOnUseSaved { get; private set; }
 		public static LocalizedText LoadoutBookOnUseSelected { get; private set; }
 
+		public static LocalizedText LoadoutBookFillToggleTooltip { get; private set; }
+		public static LocalizedText LoadoutBookFillToggleEnabled { get; private set; }
+		public static LocalizedText LoadoutBookFillToggleDisabled { get; private set; }
+
 		/// <summary>
 		/// Accurate in-UI Mouse position used to spawn UI outside UpdateUI()
 		/// </summary>
@@ -56,21 +60,22 @@ namespace SummonersAssociation
 			LoadoutBookUI.Activate();
 			LoadoutBookUIInterface = new UserInterface();
 			LoadoutBookUIInterface.SetState(LoadoutBookUI);
-			LoadoutBookUI.redCrossTexture = SummonersAssociation.Instance.Assets.Request<Texture2D>("UI/UIRedCross", AssetRequestMode.ImmediateLoad);
+			LoadoutBookUI.redCrossTexture = Mod.Assets.Request<Texture2D>("UI/UIRedCross");
+			LoadoutBookUI.fillToggleButtonTexture = Mod.Assets.Request<Texture2D>("UI/ButtonFillToggle");
 
-			string category = $"UI.Buffs.";
+			string category = "UI.Buffs";
 			MinionSlotsBuffText ??= GetText(category, "MinionSlots");
 			UncountableMinionsText ??= GetText(category, "UncountableMinions");
 
-			category = $"UI.MinionSlotsIcon.";
+			category = "UI.MinionSlotsIcon";
 			MinionSlotsIconText ??= GetText(category, "MinionSlots");
 
-			category = $"UI.SentrySlotsIcon.";
+			category = "UI.SentrySlotsIcon";
 			SentrySlotsIconText ??= GetText(category, "SentrySlots");
 			SentrySlotsIconCountedText ??= GetText(category, "Counted");
 			SentrySlotsIconUncountableText ??= GetText(category, "Uncountable");
 
-			category = $"UI.LoadoutBook.";
+			category = "UI.LoadoutBook";
 			LoadoutBookSlotsRequired ??= GetText(category, "SlotsRequired");
 			LoadoutBookSelected ??= GetText(category, "Selected");
 			LoadoutBookNotFoundInInventory ??= GetText(category, "NotFoundInInventory");
@@ -84,15 +89,20 @@ namespace SummonersAssociation
 			LoadoutBookOnUseReset ??= GetText(category, "OnUseReset");
 			LoadoutBookOnUseSaved ??= GetText(category, "OnUseSaved");
 			LoadoutBookOnUseSelected ??= GetText(category, "OnUseSelected");
+
+			LoadoutBookFillToggleTooltip ??= GetText(category, "FillToggleTooltip");
+			LoadoutBookFillToggleEnabled ??= GetText(category, "FillToggleEnabled");
+			LoadoutBookFillToggleDisabled ??= GetText(category, "FillToggleDisabled");
 		}
 
 		private LocalizedText GetText(string category, string name)
-			=> Language.GetOrRegister(Mod.GetLocalizationKey($"{category}{name}"));
+			=> Language.GetOrRegister(Mod.GetLocalizationKey($"{category}.{name}"));
 
 		public override void Unload() {
 			LoadoutBookUIInterface = null;
 			LoadoutBookUI = null;
 			LoadoutBookUI.redCrossTexture = null;
+			LoadoutBookUI.fillToggleButtonTexture = null;
 			LoadoutBookUI.uiModels?.Clear();
 			LoadoutBookUI.itemModels?.Clear();
 		}

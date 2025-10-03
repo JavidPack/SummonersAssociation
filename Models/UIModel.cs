@@ -7,6 +7,9 @@ namespace SummonersAssociation.Models
 	{
 		public Rectangle BackgroundRect { get; set; }
 		public Color BackgroundColor { get; set; }
+		public Rectangle FillToggleDestinationRect { get; set; }
+		public Rectangle FillToggleSourceRect { get; set; }
+		public Color FillToggleColor { get; set; }
 		public Rectangle DestRect { get; set; }
 		public Rectangle SourceRect { get; set; }
 		public Color ItemColor { get; set; }
@@ -16,12 +19,15 @@ namespace SummonersAssociation.Models
 		public int ItemType { get; set; }
 		public bool Mouseover { get; set; }
 
-		public UIModel(bool mouseOver, int itemType, Rectangle bgRect, Color bgCol, Rectangle itemRect, Rectangle sourceRect,
-			Color iCol, List<string> tooltip, Color nCol, string number) {
+		public UIModel(bool mouseOver, int itemType, Rectangle bgRect, Color bgCol, Rectangle fillDestRect, Rectangle fillSourceRect,
+			Color fillCol, Rectangle itemRect, Rectangle sourceRect, Color iCol, List<string> tooltip, Color nCol, string number) {
 			Mouseover = mouseOver;
 			ItemType = itemType;
 			BackgroundRect = bgRect;
 			BackgroundColor = bgCol;
+			FillToggleDestinationRect = fillDestRect;
+			FillToggleSourceRect = fillSourceRect;
+			FillToggleColor = fillCol;
 			DestRect = itemRect;
 			SourceRect = sourceRect;
 			ItemColor = iCol;

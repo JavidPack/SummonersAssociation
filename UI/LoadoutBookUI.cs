@@ -63,14 +63,19 @@ namespace SummonersAssociation.UI
 		internal static Vector2 spawnPosition = default(Vector2);
 
 		/// <summary>
-		/// Number of casts in total (player.maxMinions)
+		/// Number of possible slots in total
 		/// </summary>
 		internal static int summonCountTotal = -1;
 
 		/// <summary>
-		/// Difference of summonCountTotal - sum of SlotsFilledPerUse
+		/// Difference of summonCountTotal - summonCount
 		/// </summary>
 		internal static float summonCountDelta = 0;
+
+		/// <summary>
+		/// sum of SlotsFilledPerUse
+		/// </summary>
+		internal static float summonCount = 0;
 
 		/// <summary>
 		/// Held item index
@@ -108,6 +113,11 @@ namespace SummonersAssociation.UI
 		internal static bool isMouseWithinUI = false;
 
 		/// <summary>
+		/// Is cursor currently inside the fill toggle button?
+		/// </summary>
+		internal static bool isMouseWithinFillToggle = false;
+
+		/// <summary>
 		/// Was the delete initiated once?
 		/// </summary>
 		internal static bool aboutToDelete = false;
@@ -126,6 +136,14 @@ namespace SummonersAssociation.UI
 		/// Red cross for when to reset
 		/// </summary>
 		internal static Asset<Texture2D> redCrossTexture;
+
+		internal const int fillToggleButtonFrameSize = 18;
+		internal const int fillToggleButtonFrameOffset = fillToggleButtonFrameSize + 2;
+		internal const int fillToggleButtonRadius = fillToggleButtonFrameSize / 2;
+		/// <summary>
+		/// Sheet for the Fill Toggle button
+		/// </summary>
+		internal static Asset<Texture2D> fillToggleButtonTexture;
 
 		/// <summary>
 		/// Holds data about each ItemModel
@@ -156,6 +174,7 @@ namespace SummonersAssociation.UI
 			if (!active) return;
 			base.Update(gameTime);
 			Main.LocalPlayer.mouseInterface = true;
+			float alpha = Main.mouseTextColor / 255f;
 
 			int outerRadius = 48;
 			//Increase by 6 after having more than 5 options, starts getting clumped at about 30(?) circles
@@ -168,9 +187,11 @@ namespace SummonersAssociation.UI
 			//Set some values that will be accessed here and outside the UI
 			middle = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, mainRadius);
 
-			isMouseWithinUI = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, outerRadius + mainRadius);
+			isMouseWithinUI = CheckMouseWithinCircle(Main.MouseScreen, spawnPosition, outerRadius + (simple ? 0 : fillToggleButtonRadius) + mainRadius);
+			isMouseWithinFillToggle = false;
 
-			summonCountDelta = GetSummonCountDelta();
+			summonCount = GetSummonCount();
+			summonCountDelta = summonCountTotal - summonCount;
 
 			int width;
 			int height;
@@ -182,8 +203,11 @@ namespace SummonersAssociation.UI
 			string number = "";
 			Rectangle bgRect;
 			Rectangle destRect;
+			Rectangle fillToggleDestRect;
+			Rectangle fillToggleSourceRect;
 			Rectangle sourceRect;
 			Color bgColor;
+			Color fillToggleColor;
 			Color itemColor;
 			Color numberColor = default;
 			ItemModel itemModel;
@@ -200,17 +224,50 @@ namespace SummonersAssociation.UI
 				int itemType = itemModel.ItemType;
 				tooltip = new List<string>();
 
-				isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius, itemModels.Count, done);
+				isMouseWithinSegment = CheckMouseWithinWheelSegment(Main.MouseScreen, spawnPosition, mainRadius, outerRadius + (simple ? 0 : fillToggleButtonRadius), itemModels.Count, done);
+
+				#region Setup weapon background circle
+				bgColor = Color.White;
+				if (!itemModel.Active) bgColor = Color.Gray;
+				if (selected == done) {
+					if (itemModel.Active) bgColor = Color.LimeGreen;
+					else bgColor = Color.Red;
+				}
+				bgRect = new Rectangle((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y), mainDiameter, mainDiameter);
+				#endregion
+
+				#region Setup fill toggle button
+				fillToggleColor = Color.White;
+				if (!itemModel.Active) fillToggleColor = Color.Gray;
+				//Center it to the bottom right corner of bgRect, slightly pushed inwards
+				fillToggleDestRect = Utils.CenteredRectangle(bgRect.BottomRight() - new Vector2(4), new Vector2(fillToggleButtonFrameSize));
+				fillToggleSourceRect = new Rectangle(0, 0, fillToggleButtonFrameSize, fillToggleButtonFrameSize);
+				if (itemModel.FillRemainingSlots) {
+					fillToggleSourceRect.X = fillToggleButtonFrameOffset;
+				}
+				if (fillToggleDestRect.Contains(Main.MouseScreen.ToPoint())) {
+					isMouseWithinFillToggle = true;
+					fillToggleSourceRect.Y = fillToggleButtonFrameOffset;
+				}
+				#endregion
 
 				if (isMouseWithinSegment) {
 					//Set the returned thing
 					returned = done;
 
-					#region Setup weapon tooltip
+					#region Setup tooltips
 					tooltip.Add(itemModel.Name);
 
 					if (itemModel.SlotsFilledPerUse != 1) {
 						tooltip.Add(UISystem.LoadoutBookSlotsRequired.Format(itemModel.SlotsFilledPerUse));
+					}
+
+					if (!simple && isMouseWithinFillToggle) {
+						tooltip.Add(UISystem.LoadoutBookFillToggleTooltip.ToString());
+						string green = (new Color(13, 253, 112) * alpha).Hex3();
+						tooltip.Add(itemModel.FillRemainingSlots ?
+							UISystem.LoadoutBookFillToggleEnabled.Format(green) :
+							UISystem.LoadoutBookFillToggleDisabled.ToString());
 					}
 
 					if (simple && selected == done) {
@@ -222,16 +279,6 @@ namespace SummonersAssociation.UI
 					}
 					#endregion
 				}
-
-				#region Setup weapon background circle
-				bgColor = Color.White;
-				if (!itemModel.Active) bgColor = Color.Gray;
-				if (selected == done) {
-					if (itemModel.Active) bgColor = Color.LimeGreen;
-					else bgColor = Color.Red;
-				}
-				bgRect = new Rectangle((int)(TopLeftCorner.X + x), (int)(TopLeftCorner.Y + y), mainDiameter, mainDiameter);
-				#endregion
 
 				#region Setup weapon sprite
 				Main.instance.LoadItem(itemType);
@@ -276,6 +323,9 @@ namespace SummonersAssociation.UI
 					itemType,
 					bgRect,
 					bgColor,
+					fillToggleDestRect,
+					fillToggleSourceRect,
+					fillToggleColor,
 					destRect,
 					sourceRect,
 					itemColor,
@@ -316,6 +366,11 @@ namespace SummonersAssociation.UI
 				texture = TextureAssets.Item[model.ItemType].Value;
 				spriteBatch.Draw(texture, model.DestRect, model.SourceRect, model.ItemColor);
 
+				//Draw fill toggle button
+				if (!simple) {
+					spriteBatch.Draw(fillToggleButtonTexture.Value, model.FillToggleDestinationRect, model.FillToggleSourceRect, model.FillToggleColor);
+				}
+
 				//Draw SummonCount
 				if (!simple) {
 					drawPos = model.BackgroundRect.BottomLeft() + new Vector2(-4, -mainRadius + 4);
@@ -339,17 +394,24 @@ namespace SummonersAssociation.UI
 
 			#region Draw summonCountTotal
 			if (!simple) {
+				Color warningColor = Color.Red;
+				bool ignoredSlotLimit = summonCount >= Main.LocalPlayer.maxMinions;
+				if (ignoredSlotLimit) {
+					warningColor = Color.Orange;
+				}
+
 				if (colorFadeIn > 0f) {
 					//Do a fade out on the number if clicked when it can't be incremented
-					fontColor = new Color(Color.White.ToVector4() * (1f - colorFadeIn) + Color.Red.ToVector4() * colorFadeIn);
+					fontColor = new Color(Color.White.ToVector4() * (1f - colorFadeIn) + warningColor.ToVector4() * colorFadeIn);
 				}
 				else {
 					fontColor = Color.White;
 				}
 				drawPos = new Vector2((int)TopLeftCorner.X, (int)TopLeftCorner.Y + height) + new Vector2(-4, mainRadius - 20);
 
-				if (summonCountDelta < 0) fontColor = Color.Red;
-				middleTip = UISystem.LoadoutBookSummonCountTotal.Format(Math.Round(summonCountDelta, 2), summonCountTotal);
+				if (summonCountDelta < 0 || ignoredSlotLimit) fontColor = warningColor;
+
+				middleTip = UISystem.LoadoutBookSummonCountTotal.Format(Math.Round(summonCount, 2), Main.LocalPlayer.maxMinions);
 
 				DrawText(spriteBatch, middleTip, drawPos, fontColor);
 			}
@@ -510,14 +572,14 @@ namespace SummonersAssociation.UI
 
 			//Here, loadout only contains "old" items that don't exist in the inventory
 			//set their InventoryIndex to a high value (so they are all sorted last)
-			//and add them in if there was atleast one summonCount specified,
+			//and add them in if there was atleast one use specified,
 			//or this is the simple book
 
 			for (int i = 0; i < loadout.Count; i++) {
 				itemModel = loadout[i];
 				itemModel.OverrideValuesToInactive(i);
 				//If simple, keep "last selected" item in the UI
-				if (itemModel.SummonCount > 0 || simple) passedModels.Add(itemModel);
+				if (itemModel.NonEmpty || simple) passedModels.Add(itemModel);
 			}
 
 			//Sorted by InventoryIndex
@@ -542,19 +604,15 @@ namespace SummonersAssociation.UI
 			}
 		}
 
-		/// <summary>
-		/// summonCountTotal minus all the summon counts weighted with the slots needed
-		/// </summary>
-		public static float GetSummonCountDelta() {
-			float sum = summonCountTotal;
-			float newSum = 0;
+		public static float GetSummonCount() {
+			float sum = 0;
 			for (int i = 0; i < itemModels.Count; i++) {
 				ItemModel itemModel = itemModels[i];
 				if (itemModel.Active) {
-					newSum += itemModel.SummonCount * itemModel.SlotsFilledPerUse;
+					sum += itemModel.SummonCount * itemModel.SlotsFilledPerUse;
 				}
 			}
-			return sum - newSum;
+			return sum;
 		}
 
 		/// <summary>

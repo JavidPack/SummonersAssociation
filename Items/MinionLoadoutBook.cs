@@ -42,7 +42,7 @@ namespace SummonersAssociation.Items
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
-			GetLoadoutInfo(out List<TooltipLine> loadoutTooltips, out int totalManaCost);
+			GetLoadoutInfo(out List<TooltipLine> loadoutTooltips, out int totalManaCost, out bool anyFilled);
 			bool hasLoadout = loadoutTooltips.Count > 0;
 
 			//Append loadout stuff to the end
@@ -53,7 +53,8 @@ namespace SummonersAssociation.Items
 				if (totalManaCost > 0) {
 					int manaCostIndex = tooltips.FindIndex(t => t.Mod == "Terraria" && t.Name == "UseMana");
 					if (manaCostIndex > -1) {
-						tooltips.Insert(manaCostIndex + 1, new TooltipLine(Mod, "LoadoutManaCost", ExpectedManaCostText.Format(totalManaCost)));
+						string filled = anyFilled ? "+" : string.Empty;
+						tooltips.Insert(manaCostIndex + 1, new TooltipLine(Mod, "LoadoutManaCost", ExpectedManaCostText.Format(totalManaCost + filled)));
 					}
 				}
 
@@ -61,9 +62,10 @@ namespace SummonersAssociation.Items
 			}
 		}
 
-		private void GetLoadoutInfo(out List<TooltipLine> loadoutTooltips, out int totalManaCost) {
+		private void GetLoadoutInfo(out List<TooltipLine> loadoutTooltips, out int totalManaCost, out bool anyFilled) {
 			loadoutTooltips = new List<TooltipLine>();
 			totalManaCost = 0;
+			anyFilled = false;
 
 			bool loadout = false;
 			List<ItemModel> localLoadout = LoadoutBookUI.MergeLoadoutIntoInventory(this);
@@ -71,18 +73,24 @@ namespace SummonersAssociation.Items
 				for (int i = 0; i < localLoadout.Count; i++) {
 					ItemModel itemModel = localLoadout[i];
 
-					//Only show in the tooltip if there is a number assigned
-					if (itemModel.SummonCount > 0) {
+					//Only show in the tooltip if there is anything to summon
+					if (itemModel.NonEmpty) {
 						if (!loadout) {
 							loadout = true;
 							loadoutTooltips.Add(new TooltipLine(Mod, "Loadout", LoadoutHeaderText.ToString()));
 						}
 
 						if (itemModel.Active) {
-							totalManaCost += itemModel.SummonCount * ContentSamples.ItemsByType[itemModel.ItemType].mana; //Rough estimate, could've added this to ItemModel itself, but mana changes through ModifyManaCost won't get detected through this either way
+							anyFilled |= itemModel.FillRemainingSlots;
+
+							//Rough estimate, could've added this to ItemModel itself, but mana changes through ModifyManaCost won't get detected through this either way
+							totalManaCost += itemModel.SummonCount * ContentSamples.ItemsByType[itemModel.ItemType].mana;
 						}
 
-						loadoutTooltips.Add(new TooltipLine(Mod, $"ItemModel_{itemModel.Name}", SummonsPerUseText.Format(itemModel.Name, itemModel.SummonCount)) {
+						string filled = itemModel.FillRemainingSlots ? "+" : string.Empty;
+
+						loadoutTooltips.Add(new TooltipLine(Mod, $"ItemModel_{itemModel.Name}",
+							SummonsPerUseText.Format(itemModel.Name, itemModel.SummonCount.ToString() + filled)) {
 							OverrideColor = itemModel.Active ? Color.White : Color.Red
 						});
 					}
