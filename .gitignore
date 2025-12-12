@@ -1,5 +1,6 @@
 bin
 obj
 .vs
+.idea
 *.user
 App.config
