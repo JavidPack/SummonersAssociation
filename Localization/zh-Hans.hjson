@@ -115,8 +115,8 @@ Mods: {
 				}
 
 				PersistentBuffs: {
-					// Label: Enable Persistent Buffs
-					// Tooltip: If toggled, makes buffs that provide max minion or sentry slots such as {$ItemName.SummoningPotion} preserve on death or world exit
+					Label: 启用保留Buff
+					Tooltip: 如果启用，将使提供最大召唤物栏位或哨兵栏位的 Buff(例如 {$ItemName.SummoningPotion})在死亡或退出世界后仍然保留
 				}
 
 				Headers.HintToClientConfig: 提示: 若要修改本地端设置，请按当前界面底部左侧的'<'箭头
@@ -162,9 +162,9 @@ Mods: {
 				OnUseReset: 重置配置
 				OnUseSaved: 保存配置
 				OnUseSelected: 当前选择: {0}
-				// FillToggleTooltip: Click to fill remaining slots
-				// FillToggleEnabled: "[c/{0}:Enabled]"
-				// FillToggleDisabled: Disabled
+				FillToggleTooltip: 点击以填充剩余召唤物栏位
+				FillToggleEnabled: "[c/{0}:启用]"
+				FillToggleDisabled: 禁用
 			}
 		}
 	}
